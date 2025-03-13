@@ -1,6 +1,9 @@
 {
   "name": "projet-pfe",
   "version": "0.1.0",
+  "type": "module",
+  "description": "Projet PFE Next.js",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -9,19 +12,33 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "daisyui": "^4.12.23",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "next": "^15.1.7",
+    "pg": "^8.13.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.2.0"
+    "react-fontawesome": "^1.7.1",
+    "react-icons": "^5.5.0",
+    "recharts": "^2.15.1",
+    "sweetalert2": "^11.17.2"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "15.2.0",
-    "@eslint/eslintrc": "^3"
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
