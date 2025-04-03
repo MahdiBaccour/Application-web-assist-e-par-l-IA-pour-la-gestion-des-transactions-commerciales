@@ -1,0 +1,19 @@
+{
+    "ai_section": {
+      "title": "KI-gestützte Erkenntnisse zur Lieferkette",
+      "description": "Unser intelligenter Chatbot und unsere prädiktive Analyse helfen Lieferanten und Kunden, bessere Entscheidungen zu treffen."
+    },
+    "security_section": {
+      "title": "Erweiterte Sicherheit & Überwachung",
+      "point1": "Echtzeit-Audit-Protokolle",
+      "point2": "KI-Anomalieerkennung",
+      "point3": "Rollenbasierte Zugriffskontrolle"
+    },
+    "faq": {
+      "title": "Häufig gestellte Fragen",
+      "secure": "Wie sicher sind meine Daten?",
+      "secure_answer": "Alle Daten sind sowohl im Ruhezustand als auch bei der Übertragung verschlüsselt...",
+      "chatbot": "Wie funktioniert der KI-Chatbot?",
+      "chatbot_answer": "Unser Chatbot verwendet natürliche Sprachverarbeitung..."
+    }
+  }

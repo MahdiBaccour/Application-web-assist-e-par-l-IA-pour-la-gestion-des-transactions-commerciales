@@ -1,14 +1,20 @@
 import { Router } from "express";
 import pool from "../db.js";
 const router = Router();
-
+import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new client
-router.post("/", async (req, res) => {
-  const { name, email, phone, address } = req.body;
+router.post("/",middleware.auth, (req, res, next) => {
+  // Check if the user is  an owner
+  if (req.user.role === "owner" )  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+  
+  const { name, email, phone, address,note } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO clients (name, email, phone, address) VALUES ($1, $2, $3, $4) RETURNING *",
-      [name, email, phone, address]
+      "INSERT INTO clients (name, email, phone, address,note) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+      [name, email, phone, address,note]
     );
     
     res.status(201).json({ success: true, client: result.rows[0] });
@@ -18,9 +24,24 @@ router.post("/", async (req, res) => {
 });
 
 // 📌 READ all clients
-router.get("/", async (req, res) => {
+router.get("/",middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+ 
+  const { status } = req.query;
+  let query = "SELECT * FROM clients";
+  const params = [];
+
+  if (status && status !== 'all') {
+    query += " WHERE status_client = $1";
+    params.push(status);
+  }
+
   try {
-    const result = await pool.query("SELECT * FROM clients");
+    const result = await pool.query(query, params);
     res.status(200).json({ success: true, clients: result.rows });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error fetching clients", error: error.message });
@@ -28,7 +49,13 @@ router.get("/", async (req, res) => {
 });
 
 // 📌 READ a single client by ID
-router.get("/:id", async (req, res) => {
+router.get("/:id",middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+  
   const { id } = req.params;
   try {
     const result = await pool.query("SELECT * FROM clients WHERE id = $1", [id]);
@@ -41,10 +68,44 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// 📌 Check if a phone number already exists for clients
+router.post("/check-phone",middleware.auth , (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+
+
+  const { phone } = req.body;
+
+  if (!phone) {
+    return res.status(400).json({ success: false, message: "Phone number is required" });
+  }
+
+  try {
+    const result = await pool.query("SELECT * FROM clients WHERE phone = $1", [phone]);
+
+    if (result.rows.length > 0) {
+      return res.status(200).json({ success: true, client: result.rows[0] });
+    }
+
+    res.status(200).json({ success: false, message: "Phone number is available" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "Error checking phone number", error: error.message });
+  }
+});
+
 // 📌 UPDATE a client
-router.put("/:id", async (req, res) => {
+router.put("/:id",middleware.auth, (req, res, next) => {
+  // Check if the user is  an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+ 
   const { id } = req.params;
-  const { name, email, phone, address } = req.body;
+  const { name, email, phone, address,note } = req.body;
 
   try {
     // Fetch the existing client data
@@ -59,6 +120,7 @@ router.put("/:id", async (req, res) => {
       email: email ?? existingClient.rows[0].email,
       phone: phone ?? existingClient.rows[0].phone,
       address: address ?? existingClient.rows[0].address,
+      note: note ?? existingClient.rows[0].note,
     };
 
     // Update only the changed fields dynamically
@@ -90,17 +152,31 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// 📌 DELETE a client
-router.delete("/:id", async (req, res) => {
+
+// Update status endpoint
+router.patch("/:id/status",middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+
   const { id } = req.params;
+  const { status } = req.body;
+  
   try {
-    const result = await pool.query("DELETE FROM clients WHERE id = $1 RETURNING *", [id]);
+    const result = await pool.query(
+      "UPDATE clients SET status_client = $1 WHERE id = $2 RETURNING *",
+      [status, id]
+    );
+    
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: "Client not found" });
     }
-    res.status(200).json({ success: true, message: "Client deleted successfully" });
+    
+    res.status(200).json({ success: true, client: result.rows[0] });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error deleting client", error: error.message });
+    res.status(500).json({ success: false, message: "Error updating status", error: error.message });
   }
 });
 

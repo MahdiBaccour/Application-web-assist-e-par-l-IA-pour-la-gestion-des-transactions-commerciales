@@ -1,1 +1,0 @@
-//lenna code te3ek w tableau

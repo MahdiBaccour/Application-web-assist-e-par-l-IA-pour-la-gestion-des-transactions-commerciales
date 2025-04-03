@@ -19,7 +19,8 @@ const generateAccessToken = (user) => {
 
 // Generate Refresh Token
 const generateRefreshToken = (user) => {
-    payload = { id: user.id, username: user.username, role: user.role };
+  console.log("user:","id:",user.id,"username:",user.username,"role:",user.role);
+    let payload = { id: user.id, username: user.username, role: user.role };
   return sign(
     payload,
     process.env.REFRESH_TOKEN_SECRET,
@@ -60,25 +61,60 @@ router.post("/register", async (req, res) => {
 
 // LOGIN
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body; // Use identifier instead of email
+
   try {
-    const user = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    // Check if identifier is an email or a username
+    const user = await pool.query(
+      "SELECT * FROM users WHERE email = $1 OR username = $1", 
+      [identifier]
+    );
 
     if (user.rows.length === 0) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+    // Check if password matches
     const isMatch = await compare(password, user.rows[0].password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid credentials" });
+      return res.status(400).json({ success: false, message: "Invalid password" });
     }
 
     const accessToken = generateAccessToken(user.rows[0]);
     const refreshToken = generateRefreshToken(user.rows[0]);
 
+    // Update last login timestamp
     await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [user.rows[0].id]);
 
-    res.status(200).json({ success: true, accessToken, refreshToken, user: user.rows[0] });
+    // Fetch user settings (language, timezone, notification_enabled, theme)
+    const settings = await pool.query(
+      "SELECT language, timezone, notification_enabled, theme FROM settings WHERE user_id = $1",
+      [user.rows[0].id]
+    );
+
+    const userSettings = settings.rows[0] || {
+      language: "en", // Default values if no settings found
+      timezone: "UTC",
+      notification_enabled: true,
+      theme: "dark",
+    };
+
+    // Return user details directly at the root level
+    res.status(200).json({ 
+      success: true, 
+      accessToken, 
+      refreshToken, 
+      id: user.rows[0].id,
+      username: user.rows[0].username,
+      email: user.rows[0].email,
+      role: user.rows[0].role,
+      image: user.rows[0].image,
+      language: userSettings.language,
+      timezone: userSettings.timezone,
+      notification_enabled: userSettings.notification_enabled,
+      theme: userSettings.theme
+    });
+
   } catch (error) {
     res.status(500).json({ success: false, message: "Error logging in", error: error.message });
   }

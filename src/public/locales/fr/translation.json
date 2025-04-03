@@ -1,0 +1,19 @@
+{
+    "ai_section": {
+      "title": "Aperçus de la chaîne d'approvisionnement alimentés par l'IA",
+      "description": "Notre chatbot intelligent et notre analyse prédictive aident les fournisseurs et les clients à prendre de meilleures décisions."
+    },
+    "security_section": {
+      "title": "Sécurité et surveillance avancées",
+      "point1": "Journaux d'audit en temps réel",
+      "point2": "Détection des anomalies par IA",
+      "point3": "Contrôle d'accès basé sur les rôles"
+    },
+    "faq": {
+      "title": "Foire aux questions",
+      "secure": "Mes données sont-elles sécurisées ?",
+      "secure_answer": "Toutes les données sont chiffrées à la fois au repos et en transit...",
+      "chatbot": "Comment fonctionne le chatbot IA ?",
+      "chatbot_answer": "Notre chatbot utilise le traitement du langage naturel..."
+    }
+  }

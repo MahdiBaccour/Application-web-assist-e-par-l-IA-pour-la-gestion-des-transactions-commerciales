@@ -1,9 +1,15 @@
 import { query } from "../db.js";
 const router = express.Router();
-
+import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 DUE DATE (CRUD)
 // GET all due dates (from the transactions table)
-router.get("/due-dates", async (req, res) => {
+router.get("/due-dates",middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+   
     try {
       const result = await query("SELECT id, due_date, status FROM transactions WHERE due_date IS NOT NULL");
       res.status(200).json({ success: true, dueDates: result.rows });
@@ -13,7 +19,13 @@ router.get("/due-dates", async (req, res) => {
 });
 
 // DELETE due date (from transactions table)
-router.delete("/due-dates/:id", async (req, res) => {
+router.delete("/due-dates/:id",middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res,) => {
+  
     const { id } = req.params;
     try {
       // Set due_date and status to null to effectively delete it

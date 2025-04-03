@@ -1,9 +1,14 @@
 import { Router } from "express";
 import pool from "../db.js";
 const router = Router();
-
+import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new category
-router.post("/", async (req, res) => {
+router.post("/",  middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
   const { name } = req.body;
   try {
     const result = await pool.query("INSERT INTO categories (name) VALUES ($1) RETURNING *", [name]);
@@ -14,7 +19,12 @@ router.post("/", async (req, res) => {
 });
 
 // 📌 READ all categories
-router.get("/", async (req, res) => {
+router.get("/",  middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM categories");
     res.status(200).json({ success: true, categories: result.rows });
@@ -24,7 +34,12 @@ router.get("/", async (req, res) => {
 });
 
 // 📌 UPDATE a category
-router.put("/:id", async (req, res) => {
+router.put("/:id",  middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
 
@@ -37,7 +52,12 @@ router.put("/:id", async (req, res) => {
 });
 
 // 📌 DELETE a category
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",  middleware.auth, (req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("DELETE FROM categories WHERE id = $1 RETURNING *", [id]);
