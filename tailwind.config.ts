@@ -15,7 +15,13 @@ export default {
     },
   },
   plugins: [require("daisyui")],
+  // daisyui: {
+  //   themes: "all", // ✅ Enable all DaisyUI themes
+  // },
   daisyui: {
-    themes: ["light", "dark", "cupcake"], // Choose your preferred themes
+    themes: [
+      "light", "dark", "cupcake", "abyss", "valentine", "night", 
+      "synthwave", "retro", "nord", "dim", "dracula", "lemonade", "caramellatte"
+    ],
   },
 } satisfies Config;

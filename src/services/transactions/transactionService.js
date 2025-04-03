@@ -1,10 +1,17 @@
-export const createTransaction = async (transactionData, token) => {
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_URL) {
+  console.error("API_URL is not defined. Make sure to set NEXT_PUBLIC_API_URL in your .env file.");
+}
+const TRANSACTIONS_API_URL = `${API_URL}/transactions`;
+export const createTransaction = async (transactionData,token) => {
     try {
       const response = await fetch(`${TRANSACTIONS_API_URL}/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-         // 'Authorization': `Bearer ${token}`
+         'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(transactionData)
       });
@@ -15,27 +22,34 @@ export const createTransaction = async (transactionData, token) => {
     }
   };
   
-  export const getTransactions = async (token) => {
+  export const getTransactions = async (type = "all",token) => {
     try {
-      const response = await fetch(`${TRANSACTIONS_API_URL}/`, {
-        method: 'GET',
+      const url = new URL(TRANSACTIONS_API_URL);
+      if (type !== "all") url.searchParams.append("type", type);
+  
+      const response = await fetch(url
+      ,{
         headers: {
-          //'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         }
-      });
-      return await response.json();
+      }
+      );
+       if (!response.ok) throw new Error(`Failed to fetch transactions: ${response.statusText}`);
+  
+      const data = await response.json();
+      return data.transactions || [];
     } catch (error) {
-      console.error('Error fetching transactions:', error);
-      return null;
+      console.error("Error fetching transactions:", error);
+      return [];
     }
   };
   
-  export const getTransactionById = async (transactionId, token) => {
+  export const getTransactionById = async (transactionId,token) => {
     try {
       const response = await fetch(`${TRANSACTIONS_API_URL}/${transactionId}`, {
         method: 'GET',
         headers: {
-         // 'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}`
         }
       });
       return await response.json();
@@ -45,13 +59,53 @@ export const createTransaction = async (transactionData, token) => {
     }
   };
   
-  export const updateTransaction = async (transactionId, transactionData, token) => {
+  export const getActiveTransactionsByType = async (type, token) => {
+    try {
+      // Validate type before making the request
+      if (!type || !['credit', 'debit'].includes(type.toLowerCase())) {
+        throw new Error("Invalid transaction type. Use 'credit' or 'debit'");
+      }
+  
+      const response = await fetch(
+        `${TRANSACTIONS_API_URL}/active?type=${encodeURIComponent(type)}`, 
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message || "Failed to fetch transactions");
+      }
+  
+      return {
+        success: true,
+        count: data.count,
+        transactions: data.transactions
+      };
+    } catch (error) {
+      console.error("Transaction Service Error:", error);
+      return {
+        success: false,
+        message: error.message
+      };
+    }
+  };
+  
+  export const updateTransaction = async (transactionId, transactionData,token) => {
     try {
       const response = await fetch(`${TRANSACTIONS_API_URL}/${transactionId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-         // 'Authorization': `Bearer ${token}`
+         'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(transactionData)
       });
@@ -62,12 +116,12 @@ export const createTransaction = async (transactionData, token) => {
     }
   };
   
-  export const deleteTransaction = async (transactionId, token) => {
+  export const deleteTransaction = async (transactionId,token) => {
     try {
       const response = await fetch(`${TRANSACTIONS_API_URL}/${transactionId}`, {
         method: 'DELETE',
         headers: {
-        //  'Authorization': `Bearer ${token}`
+         'Authorization': `Bearer ${token}`
         }
       });
       return await response.json();
@@ -76,3 +130,4 @@ export const createTransaction = async (transactionData, token) => {
       return null;
     }
   };
+  

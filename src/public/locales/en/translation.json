@@ -1,0 +1,19 @@
+{
+    "ai_section": {
+      "title": "AI-Powered Supply Chain Insights",
+      "description": "Our intelligent chatbot and predictive analytics help suppliers and clients make better decisions."
+    },
+    "security_section": {
+      "title": "Advanced Security & Monitoring",
+      "point1": "Real-time audit logs",
+      "point2": "AI anomaly detection",
+      "point3": "Role-based access control"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "secure": "How secure is my data?",
+      "secure_answer": "All data is encrypted both at rest and in transit...",
+      "chatbot": "How does the AI chatbot work?",
+      "chatbot_answer": "Our chatbot uses natural language processing..."
+    }
+  }

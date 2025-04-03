@@ -1,22 +1,20 @@
 import { Inter } from "next/font/google";
-import "./globals.css";
-import AuthProvider from '../providers/authProvider';
+import AuthProvider from '@/providers/authProvider';
+import DashboardLayout from '@/components/dashboard/DashboardLayout';
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Admin Dashboard",
-  description: "Admin Dashboard charts",
+  title: "Home Dashboard",
+  description: "Dashboard charts",
 };
 
-export default function RootLayout({ children }) {
+export default function HomeLayout({ children }) {
   return (
-    <html lang="en">
-<body className={inter.className}>
+    <div className={inter.className}>
       <AuthProvider>
-        //lenna DashboardLayout
-      {children}
+      <DashboardLayout>{children}</DashboardLayout>
       </AuthProvider>
-      </body>
-    </html>
+     
+    </div>
   );
 }

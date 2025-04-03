@@ -1,9 +1,16 @@
 import { Router } from "express";
 import pool from "../db.js";
 const router = Router();
+import middleware from "../middleware/auth.js"; // Import middleware
 
 // 📌 READ all products with stock details
-router.get("/", async (req, res) => {
+router.get("/",middleware.auth,(req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+
   try {
     const result = await pool.query(`
       SELECT id, name AS product_name, status, stock_quantity 
@@ -17,7 +24,13 @@ router.get("/", async (req, res) => {
 });
 
 // 📌 CREATE or UPDATE stock (stock_quantity) for a product
-router.post("/:id/stock", async (req, res) => {
+router.post("/:id/stock",middleware.auth,(req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
+  
   const { id } = req.params;
   const { quantity } = req.body;
 
@@ -43,7 +56,13 @@ router.post("/:id/stock", async (req, res) => {
 });
 
 // 📌 Decrease stock (for a sale or transaction)
-router.put("/:id/stock/decrease", async (req, res) => {
+router.put("/:id/stock/decrease",middleware.auth ,(req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+},async (req, res) => {
+    
   const { id } = req.params;
   const { quantity } = req.body;
 
@@ -75,7 +94,12 @@ router.put("/:id/stock/decrease", async (req, res) => {
 });
 
 // 📌 Increase stock (for a purchase or restock)
-router.put("/:id/stock/increase", async (req, res) => {
+router.put("/:id/stock/increase",middleware.auth,(req, res, next) => {
+  // Check if the user is either an employee or an owner
+  if (req.user.role === "owner" || req.user.role === "employee")  {
+   return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+  }
+}, async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
 

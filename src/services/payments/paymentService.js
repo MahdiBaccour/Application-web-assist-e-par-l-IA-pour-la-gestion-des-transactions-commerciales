@@ -1,12 +1,13 @@
 const TRANSACTIONS_API_URL = process.env.NEXT_PUBLIC_API_URL; // Ensure the API URL is set correctly in .env
 
 // Get list of payments
-export const getPayments = async () => {
+export const getPayments = async (token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       }
     });
 
@@ -22,12 +23,13 @@ export const getPayments = async () => {
 };
 
 // Get a specific payment by ID
-export const getPaymentById = async (paymentId) => {
+export const getPaymentById = async (paymentId,token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments/${paymentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       }
     });
 
@@ -43,12 +45,13 @@ export const getPaymentById = async (paymentId) => {
 };
 
 // Create a new payment
-export const createPayment = async (transaction_id, amount_paid, payment_method_id) => {
+export const createPayment = async (transaction_id, amount_paid, payment_method_id, token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         transaction_id,
@@ -57,24 +60,37 @@ export const createPayment = async (transaction_id, amount_paid, payment_method_
       })
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    const data = await response.json(); // Parse JSON response
+
+    // Handle response codes
+    if (response.status === 400) {
+      return { success: false, message: data.message || "Payment validation error" };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "Transaction not found" };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later" };
+    }
+    if (response.ok) {
+      return { success: true, payment: data.payment, message: "Payment recorded successfully" };
     }
 
-    return await response.json();
+    return { success: false, message: "Unexpected error occurred" };
   } catch (error) {
     console.error("Error creating payment:", error);
-    return { success: false, message: "Failed to create payment" };
+    return { success: false, message: "Failed to create payment. Please check your connection." };
   }
 };
 
 // Delete a payment
-export const deletePayment = async (paymentId) => {
+export const deletePayment = async (paymentId,token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments/${paymentId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -90,12 +106,13 @@ export const deletePayment = async (paymentId) => {
 };
 
 // Update an existing payment (if you want this functionality)
-export const updatePayment = async (paymentId, transaction_id, amount_paid, payment_method_id) => {
+export const updatePayment = async (paymentId, transaction_id, amount_paid, payment_method_id,token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments/${paymentId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         transaction_id,
@@ -112,5 +129,36 @@ export const updatePayment = async (paymentId, transaction_id, amount_paid, paym
   } catch (error) {
     console.error(`Error updating payment ${paymentId}:`, error);
     return { success: false, message: `Failed to update payment ${paymentId}` };
+  }
+};
+
+// Get payments by transaction ID
+export const getPaymentsByTransactionId = async (transaction_id, token) => {
+  try {
+    const response = await fetch(`${TRANSACTIONS_API_URL}/transactions/${transaction_id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+
+    const data = await response.json(); // Parse JSON response
+
+    // Handle response codes
+    if (response.status === 404) {
+      return { success: false, message: "No payments found for this transaction" };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later" };
+    }
+    if (response.ok) {
+      return { success: true, payments: data.payments };
+    }
+
+    return { success: false, message: "Unexpected error occurred" };
+  } catch (error) {
+    console.error("Error fetching payments:", error);
+    return { success: false, message: "Failed to fetch payments. Please check your connection." };
   }
 };
