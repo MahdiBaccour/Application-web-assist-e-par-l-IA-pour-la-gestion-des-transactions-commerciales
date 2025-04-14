@@ -18,6 +18,12 @@ export default function TransactionsTable() {
   const { data: session } = useSession();
 
   useEffect(() => {
+    if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
+      router.push("/forbidden");
+    }
+  }, []);
+
+  useEffect(() => {
     const loadTransactions = async () => {
       setLoading(true);
       try {

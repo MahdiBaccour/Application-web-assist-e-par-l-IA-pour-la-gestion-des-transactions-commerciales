@@ -10,7 +10,7 @@ export default function ProductCard({ product, onEdit, onToggleStatus, isLoading
   return (
     <tr className="hover">
       <td>{product.name}</td>
-      <td>{product.category_name || "Uncategorized"}</td>
+      <td>{product.category_name || "Non classé"}</td>
       <td>${product.selling_price}</td>
       <td>{product.stock_quantity}</td>
       <td>
@@ -25,7 +25,7 @@ export default function ProductCard({ product, onEdit, onToggleStatus, isLoading
             onClick={() => onEdit(product.id)}
             className="btn btn-xs btn-primary flex items-center gap-1"
           >
-            <FaEdit /> Edit
+            <FaEdit /> Editer
           </button>
 
           {/* ✅ View Details Button */}
@@ -33,7 +33,7 @@ export default function ProductCard({ product, onEdit, onToggleStatus, isLoading
             onClick={() => onViewDetails(product.id)}
             className="btn btn-xs btn-info flex items-center gap-1"
           >
-            <FaEye /> View
+            <FaEye /> Voir
           </button>
 
           <button
@@ -45,11 +45,11 @@ export default function ProductCard({ product, onEdit, onToggleStatus, isLoading
               <ImSpinner2 className="animate-spin" />
             ) : product.status === "active" ? (
               <>
-                <FaToggleOff /> Deactivate
+                <FaToggleOff /> Désactiver
               </>
             ) : (
               <>
-                <FaToggleOn /> Activate
+                <FaToggleOn /> Activer
               </>
             )}
           </button>

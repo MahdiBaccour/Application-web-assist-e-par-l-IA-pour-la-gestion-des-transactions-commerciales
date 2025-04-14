@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { showSuccessAlert, showErrorAlert } from '@/utils/swalConfig';
-import { updateSupplier, getSupplier,getSupplierByPhone } from "@/services/suppliers/supplierService";
+import { updateSupplier, getSupplier, getSupplierByPhone } from "@/services/suppliers/supplierService";
 import { ImSpinner2 } from "react-icons/im";
 import { FaArrowLeft } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBack }) {
+  const { data: session } = useSession();
   const [supplier, setSupplier] = useState({
     name: "",
     email: "",
@@ -20,12 +22,12 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
   useEffect(() => {
     const fetchSupplier = async () => {
       try {
-        const data = await getSupplier(supplierId);
-        if (!data) throw new Error("Supplier data not found");
+        const data = await getSupplier(supplierId, session.user.accessToken);
+        if (!data) throw new Error("Fournisseur introuvable");
         setSupplier(data.supplier);
         setLoading(false);
       } catch (error) {
-        Swal.fire("Error", "Failed to fetch supplier data", "error");
+        showErrorAlert(session.user.accessToken,"Échec du chargement des données du fournisseur");
       }
     };
 
@@ -39,20 +41,21 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdating(true);
-  
+
     try {
-       // Check if phone number already exists
-            const existingSupplier = await getSupplierByPhone(supplier.phone);
-            if (existingSupplier && existingSupplier.id !== supplierId) {
-              showErrorAlert("Phone number already exists!");
-              return;}
-      const updatedSupplier = await updateSupplier(supplierId, supplier);
-      if (!updatedSupplier) throw new Error("Failed to update supplier");
-  
-      showSuccessAlert("Supplier updated successfully!");
+      const existingSupplier = await getSupplierByPhone(supplier.phone, session.user.accessToken);
+      if (existingSupplier && existingSupplier.id !== supplierId) {
+        showErrorAlert(session.user.accessToken,"Ce numéro de téléphone est déjà utilisé !");
+        return;
+      }
+
+      const updatedSupplier = await updateSupplier(supplierId, supplier, session.user.accessToken);
+      if (!updatedSupplier) throw new Error("Échec de la mise à jour");
+
+      showSuccessAlert(session.user.accessToken,"Fournisseur mis à jour avec succès !");
       onUpdateSuccess({ ...supplier, id: supplierId });
     } catch (error) {
-      showErrorAlert("Failed to update supplier");
+      showErrorAlert(session.user.accessToken,"Échec de la mise à jour du fournisseur");
     } finally {
       setUpdating(false);
     }
@@ -67,17 +70,17 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
 
   return (
     <div>
-      {/* Back button */}
+      {/* Bouton retour */}
       <button
         onClick={onGoBack}
         className="btn btn-ghost text-primary mb-4"
         disabled={loading}
       >
-        <FaArrowLeft className="mr-2" /> Back
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
       <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold">Update Supplier</h2>
+        <h2 className="text-xl font-semibold">Modifier le fournisseur</h2>
         <input
           type="text"
           name="name"
@@ -85,7 +88,7 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Name"
+          placeholder="Nom du fournisseur"
         />
         <input
           type="email"
@@ -94,7 +97,7 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Email"
+          placeholder="Adresse e-mail"
         />
         <input
           type="text"
@@ -106,7 +109,7 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
           className="input input-bordered w-full"
           placeholder="+216 XX XXX XXX"
         />
-        <small className="text-gray-500">Format: +216 XX XXX XXX</small>
+        <small className="text-gray-500">Format : +216 XX XXX XXX</small>
         <input
           type="text"
           name="address"
@@ -114,17 +117,17 @@ export default function UpdateSupplierForm({ supplierId, onUpdateSuccess, onGoBa
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Address"
+          placeholder="Adresse"
         />
         <textarea
           name="note"
           value={supplier.note}
           onChange={handleChange}
           className="textarea textarea-bordered w-full"
-          placeholder="Additional Notes"
+          placeholder="Notes supplémentaires"
         ></textarea>
         <button type="submit" className="btn btn-primary w-full" disabled={updating}>
-          {updating ? <ImSpinner2 className="animate-spin" /> : "Update Supplier"}
+          {updating ? <ImSpinner2 className="animate-spin" /> : "Mettre à jour"}
         </button>
       </form>
     </div>

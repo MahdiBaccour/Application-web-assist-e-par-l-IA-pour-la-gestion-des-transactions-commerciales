@@ -18,7 +18,8 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
     transaction_id: "",
     amount_paid: "",
     payment_method_id: "",
-    remaining_balance: ""
+    remaining_balance: "",
+    payment_date: new Date().toISOString().split('T')[0] //  default date
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({
@@ -29,8 +30,8 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
 
   const validateStep1 = () => {
     if (!formData.transaction_id) {
-      setErrors(prev => ({ ...prev, transaction: 'Please select a transaction' }));
-      showErrorAlert(session.user.theme, 'Please select a transaction');
+      setErrors(prev => ({ ...prev, transaction: 'Veuillez sélectionner une transaction' }));
+      showErrorAlert(session.user.theme, 'Veuillez sélectionner une transaction');
       return false;
     }
     return true;
@@ -41,21 +42,21 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
     let isValid = true;
 
     if (!formData.amount_paid || formData.amount_paid <= 0) {
-      newErrors.amount = 'Please enter a valid amount';
+      newErrors.amount = 'Veuillez saisir un montant valide';
       isValid = false;
     } else if (parseFloat(formData.amount_paid) > parseFloat(formData.remaining_balance)) {
-      newErrors.amount = 'Amount cannot exceed remaining balance';
+      newErrors.amount = 'Le montant ne peut pas dépasser le solde restant';
       isValid = false;
     }
 
     if (!formData.payment_method_id) {
-      newErrors.paymentMethod = 'Please select a payment method';
+      newErrors.paymentMethod = 'Veuillez sélectionner un mode de paiement';
       isValid = false;
     }
 
     setErrors(newErrors);
     if (!isValid) {
-      showErrorAlert(session.user.theme, 'Please fix the form errors');
+      showErrorAlert(session.user.theme, 'Veuillez corriger les erreurs de formulaire');
     }
     return isValid;
   };
@@ -71,7 +72,7 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
       }
     } catch (error) {
       console.error("Error fetching transactions:", error);
-      showErrorAlert(session.user.theme, 'Failed to load transactions');
+      showErrorAlert(session.user.theme, 'Échec du chargement des transactions');
     } finally {
       setLoading(false);
     }
@@ -79,7 +80,7 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
 
   const handleTransactionSelect = (transaction) => {
     if (!transaction) {
-      setErrors(prev => ({ ...prev, transaction: 'Please select a transaction' }));
+      setErrors(prev => ({ ...prev, transaction: 'Veuillez sélectionner une transaction' }));
       return;
     }
     
@@ -101,7 +102,7 @@ export default function PaymentForm({ onActionSuccess, onGoBack }) {
       }
     } catch (error) {
       console.error("Error fetching payment methods:", error);
-      showErrorAlert(session.user.theme, 'Failed to load payment methods');
+      showErrorAlert(session.user.theme, 'Échec du chargement des méthodes de paiement');
     }
   };
 
@@ -110,15 +111,16 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   if (!validateStep2()) return;
 
-  const amountPaidFloat = parseFloat(formData.amount_paid);
+  const paymentData = {
+    ...formData,
+    amount_paid: parseFloat(formData.amount_paid),
+    payment_date: new Date(formData.payment_date).toISOString()
+  };
 
   const response = await createPayment(
-    formData.transaction_id,
-    amountPaidFloat,
-    formData.payment_method_id, 
+    paymentData, // Pass the entire payment data object
     session.user.accessToken
   );
-  console.log("reqponse  payments is ",response.payment);
 
   if (response.success) {
     showSuccessAlert(session.user.theme, response.message);
@@ -127,6 +129,7 @@ const handleSubmit = async (e) => {
     showErrorAlert(session.user.theme, response.message);
   }
 };
+
   return (
     <div className="p-4 border rounded-lg shadow-md">
       {/* Progress Indicator */}
@@ -163,7 +166,7 @@ const handleSubmit = async (e) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Remaining Balance</span>
+              <span className="label-text">Solde restant</span>
             </label>
             <input
               type="text"
@@ -175,7 +178,7 @@ const handleSubmit = async (e) => {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Amount to Pay</span>
+              <span className="label-text">Montant à payer</span>
             </label>
             <input
               type="number"
@@ -193,7 +196,7 @@ const handleSubmit = async (e) => {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Payment Method</span>
+              <span className="label-text">Mode de paiement</span>
             </label>
             <select
               name="payment_method_id"
@@ -206,18 +209,32 @@ const handleSubmit = async (e) => {
               required
               onFocus={handlePaymentMethodSelect}
             >
-              <option value="">Select Payment Method</option>
+              <option value="">Sélectionner le mode de paiement</option>
               {paymentMethods.map(method => (
                 <option key={method.id} value={method.id}>
                   {method.name}
                 </option>
               ))}
             </select>
+            
+            <div className="form-control">
+            <label className="label">
+              <span className="label-text">Date de paiement</span>
+            </label>
+            <input
+              type="date"
+              name="payment_date"
+              value={formData.payment_date}
+              onChange={(e) => setFormData({...formData, payment_date: e.target.value})}
+              className="input input-bordered"
+              required
+            />
+          </div>
             {errors.paymentMethod && <span className="text-error text-sm">{errors.paymentMethod}</span>}
           </div>
 
           <button type="submit" className="btn btn-primary w-full">
-            Complete Payment
+          Terminer le paiement
           </button>
         </form>
       )}

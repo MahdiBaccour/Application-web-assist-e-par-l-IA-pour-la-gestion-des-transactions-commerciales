@@ -1,38 +1,75 @@
-// components/PerformanceIndicators.jsx
 'use client'
+import { useEffect, useState } from 'react'
+import { getPerformanceData } from '@/services/dashboardStats/dashboardStatsService'
+import { FaShoppingCart, FaMoneyBillWave, FaBalanceScale, FaCubes } from 'react-icons/fa'
+import { BiLineChart } from 'react-icons/bi'
 
-const performanceData = [
-  { metric: 'Sales', value: '+12%', trend: 'up' },
-  { metric: 'Revenue', value: '+8%', trend: 'up' },
-  { metric: 'Units Sold', value: '-5%', trend: 'down' },
-];
+const PerformanceIndicators = ({ token }) => {
+  const [metrics, setMetrics] = useState({
+    sales: { value: '0%', absolute: 0, trend: 'neutral' },
+    expenses: { value: '0%', absolute: 0, trend: 'neutral' },
+    net: { value: '0%', absolute: 0, trend: 'neutral' },
+    units: { value: '0%', absolute: 0, trend: 'neutral' },
+    margin: { value: '0%', absolute: 0, trend: 'neutral' }
+  });
 
-export default function PerformanceIndicators() {
+  const [loading, setLoading] = useState(true);
+
+  const labelsFr = {
+    sales: 'Ventes',
+    expenses: 'Dépenses',
+    net: 'Revenu net',
+    units: 'Unités vendues',
+    margin: 'Marge bénéficiaire'
+  };
+
+  const icons = {
+    sales: <FaShoppingCart className="text-2xl" />,
+    expenses: <FaMoneyBillWave className="text-2xl" />,
+    net: <FaBalanceScale className="text-2xl" />,
+    units: <FaCubes className="text-2xl" />,
+    margin: <BiLineChart className="text-2xl" />
+  }
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const response = await getPerformanceData(token);
+        if (response.success) setMetrics(response.data);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [token]);
+
+  if (loading) return <div className="skeleton h-32 w-full"></div>;
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-      {performanceData.map((item, index) => (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+      {Object.entries(metrics).map(([key, metric]) => (
         <div
-          key={index}
-          className={`p-6 rounded-lg shadow ${
-            item.trend === 'up' ? 'bg-green-50' : 'bg-red-50'
-          }`}
+          key={key}
+          className={`card shadow-sm ${
+            metric.trend === 'up' ? 'bg-success/90' : 'bg-error/90'
+          } text-base-content`}
         >
-          <h3
-            className="text-lg font-semibold"
-            style={{ color:  '#2F4F4F' }}
-          >
-            {item.metric}
-          </h3>
-          <p
-            className={`text-2xl font-bold ${
-              item.trend === 'up' ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
-            {item.value}
-          </p>
-          <p className="text-sm text-gray-500">Compared to last month</p>
+          <div className="card-body p-4">
+            <div className="flex items-center gap-2">
+              {icons[key]}
+              <h3 className="card-title capitalize text-lg">{labelsFr[key]}</h3>
+            </div>
+            <p className="text-2xl font-bold">{metric.value}</p>
+            <p className="text-sm">
+              {['sales', 'expenses', 'net', 'margin'].includes(key) ? 'DT ' : ''}
+              {metric.absolute.toLocaleString()}
+              {key === 'units' ? ' unités' : ''}
+            </p>
+          </div>
         </div>
       ))}
     </div>
   );
-}
+};
+
+export default PerformanceIndicators;

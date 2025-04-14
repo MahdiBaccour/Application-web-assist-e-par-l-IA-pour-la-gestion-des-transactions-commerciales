@@ -56,13 +56,13 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
   // Validate Form Inputs
   const validateForm = () => {
     let newErrors = {};
-    if (!product.name.trim()) newErrors.name = "Product name is required.";
-    if (!product.category_id) newErrors.category_id = "Please select a category.";
-    if (!product.supplier_id) newErrors.supplier_id = "Please select a supplier.";
+    if (!product.name.trim()) newErrors.name = "Le nom du produit est obligatoire.";
+    if (!product.category_id) newErrors.category_id = "Veuillez sélectionner une catégorie.";
+    if (!product.supplier_id) newErrors.supplier_id = "Veuillez sélectionner un fournisseur.";
     if (!product.selling_price || product.selling_price <= 0)
-      newErrors.selling_price = "Selling price must be greater than 0.";
+      newErrors.selling_price = "Le prix de vente doit être supérieur à 0.";
     if (!product.stock_quantity || product.stock_quantity < 0)
-      newErrors.stock_quantity = "Stock quantity cannot be negative.";
+      newErrors.stock_quantity = "La quantité en stock ne peut pas être négative.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Returns true if no errors
@@ -77,10 +77,10 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
       const newProduct = await createProduct(product,session.user.accessToken);
       if (!newProduct) throw new Error("Failed to add product");
 
-      showSuccessAlert("Product added successfully!");
+      showSuccessAlert(session.user.theme,"Produit ajouté avec succès !");
       onActionSuccess(newProduct.product);
     } catch (error) {
-      showErrorAlert("Failed to add product");
+      showErrorAlert(session.user.theme,"Échec de l'ajout de produit");
     } finally {
       setAdding(false);
     }
@@ -89,10 +89,10 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
   return (
     <div className="p-6 border rounded-lg shadow-md">
       <button onClick={onGoBack} className="btn btn-ghost text-primary mb-4 flex items-center">
-        <FaArrowLeft className="mr-2" /> Back
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
-      <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
+      <h2 className="text-xl font-semibold mb-4">Ajouter un nouveau produit</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Product Name */}
         <div>
@@ -103,7 +103,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             value={product.name}
             onChange={handleChange}
             className={`input input-bordered w-full  ${errors.name ? "border-red-500" : ""}`}
-            placeholder="Product Name"
+            placeholder="Nom du produit"
           />
         </div>
 
@@ -116,7 +116,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             onChange={handleChange}
             className={`select select-bordered w-full ${errors.category_id ? "border-red-500" : ""}`}
           >
-            <option value="">Select Category</option>
+            <option value="">Sélectionner une catégorie</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>{category.name}</option>
             ))}
@@ -132,7 +132,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             onChange={handleChange}
             className={`select select-bordered w-full  ${errors.supplier_id ? "border-red-500" : ""}`}
           >
-            <option value="">Select Supplier</option>
+            <option value="">Sélectionner un fournisseur</option>
             {suppliers.map((supplier) => (
               <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
             ))}
@@ -148,7 +148,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             value={product.selling_price}
             onChange={handleChange}
             className={`input input-bordered w-full  ${errors.selling_price ? "border-red-500" : ""}`}
-            placeholder="Selling Price"
+            placeholder="Prix de vente"
           />
         </div>
 
@@ -161,7 +161,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             value={product.stock_quantity}
             onChange={handleChange}
             className={`input input-bordered w-full ${errors.stock_quantity ? "border-red-500" : ""}`}
-            placeholder="Stock Quantity"
+            placeholder="Quantité en stock"
           />
         </div>
 
@@ -172,13 +172,13 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             value={product.description}
             onChange={handleChange}
             className="textarea textarea-bordered w-full "
-            placeholder="Additional Notes (Optional)"
+            placeholder="Notes additionnelles (facultatif)"
           />
         </div>
 
         {/* Submit Button */}
         <button type="submit" className="btn btn-primary w-full" disabled={adding}>
-          {adding ? "Adding..." : "Add Product"}
+          {adding ? "Ajouter... " : "Ajouter un produit "}
         </button>
       </form>
     </div>

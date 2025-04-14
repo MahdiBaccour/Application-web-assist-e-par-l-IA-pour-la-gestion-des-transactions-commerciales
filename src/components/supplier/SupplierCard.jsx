@@ -28,11 +28,11 @@ export default function SupplierCard({ supplier, onEdit, onToggleStatus, isLoadi
             <ImSpinner2 className="animate-spin" />
           ) : supplier.status_supplier === "active" ? (
             <>
-              <FaToggleOff /> Set Inactive
+              <FaToggleOff /> Définir inactif
             </>
           ) : (
             <>
-              <FaToggleOn /> Set Active
+              <FaToggleOn /> Définir actif
             </>
           )}
         </button>

@@ -5,9 +5,10 @@ import { getProductById, updateProduct } from "@/services/products/productServic
 import { showSuccessAlert, showErrorAlert } from "@/utils/swalConfig";
 import { ImSpinner2 } from "react-icons/im";
 import { FaArrowLeft } from "react-icons/fa";
-
+import { useSession } from "next-auth/react";
 
 export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack }) {
+  const { data: session } = useSession();
   const [product, setProduct] = useState({
     name: "",
     selling_price: "",
@@ -21,11 +22,11 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await getProductById(productId);
-        if (!data) throw new Error("Product not found");
+        const data = await getProductById(productId,session.user.accessToken);
+        if (!data) throw new Error("Produit non trouvé");
         setProduct(data.product);
       } catch (error) {
-        showErrorAlert("Failed to fetch product data!");
+        showErrorAlert(session.user.theme,"Échec de l'extraction des données sur les produits !");
       } finally {
         setLoading(false);
       }
@@ -43,21 +44,21 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
     setUpdating(true);
     
     try {
-      // Check if product name already exists (excluding the current product)
-     // const existingProduct = await getProductByName(product.name);
-      // if (existingProduct && existingProduct.id !== productId) {
-      //   showErrorAlert("Product name already exists!");
-      //   setUpdating(false);
-      //   return;
-      // }
+     // Check if product name already exists (excluding the current product)
+    //  const existingProduct = await getProductByName(product.name);
+    //   if (existingProduct && existingProduct.id !== productId) {
+    //     showErrorAlert("Product name already exists!");
+    //     setUpdating(false);
+    //     return;
+    //   }
  
-      const updatedProduct = await updateProduct(productId, product);
-      if (!updatedProduct) throw new Error("Failed to update product");
+      const updatedProduct = await updateProduct(productId, product,session.user.accessToken);
+      if (!updatedProduct) throw new Error("Échec de la mise à jour du produit");
 
-      showSuccessAlert("Product updated successfully!");
+      showSuccessAlert(session.user.theme,"Produit mis à jour avec succès !");
       onUpdateSuccess({ ...product, id: productId });
     } catch (error) {
-      showErrorAlert("Failed to update product");
+      showErrorAlert(session.user.theme,"Échec de la mise à jour du produit");
     } finally {
       setUpdating(false);
     }
@@ -78,14 +79,14 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         className="btn btn-ghost text-primary mb-4 flex items-center"
         disabled={loading}
       >
-        <FaArrowLeft className="mr-2" /> Back
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
       <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold">Update Product</h2>
+        <h2 className="text-xl font-semibold">Mise à jour du produit</h2>
 
         {/* Name */}
-        <label className="block text-sm font-medium">Product Name</label>
+        <label className="block text-sm font-medium">Nom du produit</label>
         <input
           type="text"
           name="name"
@@ -97,7 +98,7 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         />
 
         {/* Selling Price */}
-        <label className="block text-sm font-medium">Selling Price ($)</label>
+        <label className="block text-sm font-medium">Prix de vente (DT)</label>
         <input
           type="number"
           name="selling_price"
@@ -109,7 +110,7 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         />
 
         {/* Stock Quantity */}
-        <label className="block text-sm font-medium">Stock Quantity</label>
+        <label className="block text-sm font-medium">Quantité en stock</label>
         <input
           type="number"
           name="stock_quantity"
@@ -121,7 +122,7 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         />
 
         {/* Category */}
-        <label className="block text-sm font-medium">Category</label>
+        <label className="block text-sm font-medium">Catégorie</label>
         <input
           type="text"
           name="category_id"
@@ -133,7 +134,7 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         />
 
         {/* Description */}
-        <label className="block text-sm font-medium">Description (Optional)</label>
+        <label className="block text-sm font-medium">Description (facultatif)</label>
         <textarea
           name="description"
           value={product.description}
@@ -143,7 +144,7 @@ export default function UpdateProductForm({ productId, onUpdateSuccess, onGoBack
         />
 
         <button type="submit" className="btn btn-primary w-full" disabled={updating}>
-          {updating ? "Updating..." : "Update Product"}
+          {updating ? "Mise à jour..." : "Mise à jour du produit"}
         </button>
       </form>
     </div>

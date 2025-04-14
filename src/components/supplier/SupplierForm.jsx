@@ -1,9 +1,19 @@
+"use client";
+
 import { useState } from "react";
-import { showSuccessAlert, showErrorAlert } from '@/utils/swalConfig'
-import { createSupplier,getSupplierByPhone } from "@/services/suppliers/supplierService";
+import {
+  showSuccessAlert,
+  showErrorAlert,
+} from "@/utils/swalConfig";
+import {
+  createSupplier,
+  getSupplierByPhone,
+} from "@/services/suppliers/supplierService";
 import { FaArrowLeft } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function SupplierForm({ onActionSuccess, onGoBack }) {
+  const { data: session } = useSession();
   const [supplier, setSupplier] = useState({
     name: "",
     email: "",
@@ -20,31 +30,31 @@ export default function SupplierForm({ onActionSuccess, onGoBack }) {
     const newErrors = {};
 
     if (!supplier.name.trim()) {
-      newErrors.name = "Name is required";
+      newErrors.name = "Le nom est requis.";
       isValid = false;
     }
 
     if (!supplier.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = "L'email est requis.";
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(supplier.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = "Format d'email invalide.";
       isValid = false;
     }
 
     if (!supplier.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = "Le numéro de téléphone est requis.";
       isValid = false;
     } else {
       const phoneRegex = /^\+216 [23459]\d{1} \d{3} \d{3}$/;
       if (!phoneRegex.test(supplier.phone)) {
-        newErrors.phone = "Phone must be in the format +216 xx xxx xxx";
+        newErrors.phone = "Format invalide. Exemple: +216 xx xxx xxx";
         isValid = false;
       }
     }
 
     if (!supplier.address.trim()) {
-      newErrors.address = "Address is required";
+      newErrors.address = "L'adresse est requise.";
       isValid = false;
     }
 
@@ -56,33 +66,32 @@ export default function SupplierForm({ onActionSuccess, onGoBack }) {
     setSupplier({ ...supplier, [e.target.name]: e.target.value });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
-  
+
     setAdding(true);
     try {
-      // Check if phone number already exists
-      const existingSupplier = await getSupplierByPhone(supplier.phone);
+      const existingSupplier = await getSupplierByPhone(
+        supplier.phone,
+        session.user.accessToken
+      );
       if (existingSupplier) {
-        showErrorAlert("Phone number already exists!");
+        showErrorAlert(session.user.theme, "Le numéro de téléphone existe déjà.");
         setAdding(false);
         return;
       }
-  
-      // Proceed to create supplier if phone is unique
-      const newSupplier = await createSupplier(supplier);
-  
+
+      const newSupplier = await createSupplier(supplier, session.user.accessToken);
       if (newSupplier.error) {
-        showErrorAlert(newSupplier.error);
+        showErrorAlert(session.user.theme, newSupplier.error);
         return;
       }
-  
-      showSuccessAlert("Supplier added successfully!");
+
+      showSuccessAlert(session.user.theme, "Fournisseur ajouté avec succès !");
       onActionSuccess(newSupplier.supplier);
     } catch (error) {
-      showErrorAlert("Failed to add supplier");
+      showErrorAlert(session.user.theme, "Échec de l'ajout du fournisseur.");
     } finally {
       setAdding(false);
     }
@@ -93,12 +102,15 @@ export default function SupplierForm({ onActionSuccess, onGoBack }) {
 
   return (
     <div className="p-4 border rounded-lg shadow-md">
-      {/* Back button */}
-      <button onClick={onGoBack} className="btn btn-ghost text-primary mb-4 flex items-center">
-        <FaArrowLeft className="mr-2" /> Back
+      {/* Back */}
+      <button
+        onClick={onGoBack}
+        className="btn btn-ghost text-primary mb-4 flex items-center"
+      >
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
-      <h2 className="text-xl font-semibold mb-4">Add New Supplier</h2>
+      <h2 className="text-xl font-semibold mb-4">Ajouter un fournisseur</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Name */}
@@ -109,7 +121,7 @@ export default function SupplierForm({ onActionSuccess, onGoBack }) {
             value={supplier.name}
             onChange={handleChange}
             className={getInputClass("name")}
-            placeholder="Name"
+            placeholder="Nom"
           />
           {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
@@ -148,25 +160,31 @@ export default function SupplierForm({ onActionSuccess, onGoBack }) {
             value={supplier.address}
             onChange={handleChange}
             className={getInputClass("address")}
-            placeholder="Address"
+            placeholder="Adresse"
           />
-          {errors.address && <p className="text-red-500 text-sm">{errors.address}</p>}
+          {errors.address && (
+            <p className="text-red-500 text-sm">{errors.address}</p>
+          )}
         </div>
 
-        {/* Note (Optional) */}
+        {/* Note */}
         <div>
           <textarea
             name="note"
             value={supplier.note}
             onChange={handleChange}
             className="textarea textarea-bordered w-full"
-            placeholder="Additional Notes (Optional)"
+            placeholder="Notes supplémentaires (facultatif)"
           />
         </div>
 
-        {/* Submit Button */}
-        <button type="submit" className="btn btn-primary w-full" disabled={adding}>
-          {adding ? "Adding..." : "Add Supplier"}
+        {/* Submit */}
+        <button
+          type="submit"
+          className="btn btn-primary w-full"
+          disabled={adding}
+        >
+          {adding ? "Ajout en cours..." : "Ajouter le fournisseur"}
         </button>
       </form>
     </div>

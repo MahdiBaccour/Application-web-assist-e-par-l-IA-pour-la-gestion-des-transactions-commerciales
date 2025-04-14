@@ -6,10 +6,10 @@ export default function SuppliersPage() {
   return (
 <>
 
-      <PageHeader title="Suppliers" subtitle="Manage your suppliers here." />
+      <PageHeader title="Fournisseurs" subtitle="Gérez vos fournisseurs ici." />
       <div className="card bg-base-100 shadow-xl mt-8">
         <div className="card-body">
-          <h2 className="card-title">Supplier List</h2>
+          <h2 className="card-title">Liste des fournisseurs</h2>
           <SupplierTable />
         </div>
       </div>

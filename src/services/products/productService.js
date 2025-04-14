@@ -23,39 +23,82 @@ export const createProduct = async (productData,token) => {
   }
 };
 
-export const getProducts = async (categoryId = null, status = "all",token) => {
+export const getProducts = async (categoryId = null, status = "all", token) => {
   try {
     const url = new URL(`${PRODUCTS_API_URL}/products`);
-
     if (categoryId) url.searchParams.append("category_id", categoryId);
     if (status !== "all") url.searchParams.append("status", status);
 
-    const response = await fetch(url.toString(), { method: "GET" ,headers:
-      {
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // Add authorization header if token is available
-      }
+        'Authorization': `Bearer ${token}`, // Add authorization header if token is available
+      },
     });
-    const res = await response.json(); 
-    return res.products || [];
+
+    const data = await response.json();
+
+    if (response.status === 400) {
+      return { success: false, message: "Bad request. Please check your input." };
+    }
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You do not have permission to view this resource." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "No products found." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later." };
+    }
+    if (response.ok) {
+      return { success: true, products: data.products }; // Return products if available
+    }
+
+    return { success: false, message: "Unexpected error occurred." };
   } catch (error) {
     console.error("Error fetching products:", error);
-    return [];
+    return { success: false, message: "Failed to fetch products. Please check your connection." };
   }
 };
 
-export const getProductById = async (id,token) => {
+export const getProductById = async (id, token) => {
   try {
     const response = await fetch(`${PRODUCTS_API_URL}/products/${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`
-      }
+        'Authorization': `Bearer ${token}`,
+      },
     });
-    return await response.json();
+
+    const data = await response.json();
+
+    if (response.status === 400) {
+      return { success: false, message: "Bad request. Please check your input." };
+    }
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You do not have permission to view this resource." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "Product not found." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later." };
+    }
+    if (response.ok) {
+      return { success: true, product: data.product }; // Return the product if available
+    }
+
+    return { success: false, message: "Unexpected error occurred." };
   } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
+    console.error("Error fetching product:", error);
+    return { success: false, message: "Failed to fetch product. Please check your connection." };
   }
 };
 

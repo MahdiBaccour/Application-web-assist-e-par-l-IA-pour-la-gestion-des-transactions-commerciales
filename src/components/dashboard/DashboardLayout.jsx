@@ -24,14 +24,17 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="drawer lg:drawer-open " data-theme={'cupcake'}>
+    <div className="drawer lg:drawer-open" data-theme={session?.user.theme || 'light'}>
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content flex flex-col min-h-screen z-0">
+      <div className="drawer-content flex flex-col min-h-screen">
         <Navbar />
-        <div className="p-4 flex-grow bg-base-100">{children}</div>
+        {/* Add pt-16 (64px) to account for navbar height */}
+        <main className="flex-grow p-4 bg-base-100 pt-16"> {/* Added pt-16 here */}
+          {children}
+        </main>
         <Footer />
       </div>
-
+      
       <div className="drawer-side">
         <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
         <Sidebar />
