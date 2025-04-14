@@ -64,7 +64,7 @@ router.get("/:product_id/historical-costs",middleware.auth,(req, res, next) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "No historical cost prices found for this product" });
+      return res.status(404).json({ success: true, message: "No historical cost prices found for this product" });
     }
 
     res.status(200).json({ success: true, historical_costs: result.rows });

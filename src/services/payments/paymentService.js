@@ -45,7 +45,7 @@ export const getPaymentById = async (paymentId,token) => {
 };
 
 // Create a new payment
-export const createPayment = async (transaction_id, amount_paid, payment_method_id, token) => {
+export const createPayment =  async (paymentData, token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments`, {
       method: "POST",
@@ -53,11 +53,7 @@ export const createPayment = async (transaction_id, amount_paid, payment_method_
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        transaction_id,
-        amount_paid,
-        payment_method_id
-      })
+      body: JSON.stringify(paymentData)
     });
 
     const data = await response.json(); // Parse JSON response
@@ -106,7 +102,7 @@ export const deletePayment = async (paymentId,token) => {
 };
 
 // Update an existing payment (if you want this functionality)
-export const updatePayment = async (paymentId, transaction_id, amount_paid, payment_method_id,token) => {
+export const updatePayment = async (paymentId, payment,token) => {
   try {
     const response = await fetch(`${TRANSACTIONS_API_URL}/payments/${paymentId}`, {
       method: "PUT",
@@ -115,9 +111,7 @@ export const updatePayment = async (paymentId, transaction_id, amount_paid, paym
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        transaction_id,
-        amount_paid,
-        payment_method_id
+      payment
       })
     });
 
@@ -135,7 +129,7 @@ export const updatePayment = async (paymentId, transaction_id, amount_paid, paym
 // Get payments by transaction ID
 export const getPaymentsByTransactionId = async (transaction_id, token) => {
   try {
-    const response = await fetch(`${TRANSACTIONS_API_URL}/transactions/${transaction_id}`, {
+    const response = await fetch(`${TRANSACTIONS_API_URL}/payments/transactions/${transaction_id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -144,8 +138,16 @@ export const getPaymentsByTransactionId = async (transaction_id, token) => {
     });
 
     const data = await response.json(); // Parse JSON response
-
     // Handle response codes
+    if (response.status === 400) {
+      return { success: false, message: "Bad request. Please check your input." };
+    }
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You do not have permission to view this resource." };
+    }
     if (response.status === 404) {
       return { success: false, message: "No payments found for this transaction" };
     }

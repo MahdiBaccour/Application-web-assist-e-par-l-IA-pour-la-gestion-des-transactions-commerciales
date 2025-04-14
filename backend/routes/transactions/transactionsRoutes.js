@@ -3,6 +3,7 @@ import pool from "../../db.js";
 const router = Router();
 import middleware from "../../middleware/auth.js"; // Import middleware
 
+import {appendTransactionToCSV} from "../../../src/utils/generateCSV.js"; // adjust path if needed
 // 📌 CREATE a new transaction with stock validation
 router.post("/",  middleware.auth, (req, res, next) => {
     // Check if the user is either an employee or an owner
@@ -153,7 +154,7 @@ router.post("/",  middleware.auth, (req, res, next) => {
             await pool.query(
                 `INSERT INTO payments (transaction_id, amount_paid, payment_date, payment_method_id)
                  VALUES ($1, $2, $3, $4)`,
-                [transaction.id, initial_payment, new Date(), payment_method_id]
+                [transaction.id, initial_payment, transaction.date, payment_method_id]
             );
 
         }
@@ -181,7 +182,7 @@ router.post("/",  middleware.auth, (req, res, next) => {
                 ]
             );
         }
-
+        appendTransactionToCSV(transaction, productUpdates, initial_payment, payment_method_id);
         await pool.query("COMMIT");
         res.status(201).json({ success: true, transaction: transactionResult });
     } catch (error) {

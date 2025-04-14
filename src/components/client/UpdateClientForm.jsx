@@ -15,11 +15,11 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
     const fetchClient = async () => {
       try {
         const data = await getClient(clientId,session.user.accessToken);
-        if (!data) throw new Error("Client data not found");
+        if (!data) throw new Error("Données du client non trouvées");
         setClient(data.client);
         setLoading(false);
       } catch (error) {
-        showErrorAlert(session.user.theme,"Failed to fetch client data!");
+        showErrorAlert(session.user.theme,"Échec de l'extraction des données du client !");
       }
     };
 
@@ -38,17 +38,17 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
       // Check if phone number already exists
             const existingClient = await getClientByPhone(client.phone,session.user.accessToken);
             if (existingClient && existingClient.id !== clientId) { 
-              showErrorAlert(session.user.theme,"Phone number already exists!");
+              showErrorAlert(session.user.theme,"Le numéro de téléphone existe déjà !");
               setUpdating(false);
               return;
             }
       const updatedClient = await updateClient(clientId, client,session.user.accessToken);
-      if (!updatedClient) throw new Error("Failed to update client");
+      if (!updatedClient) throw new Error("Echec de la mise à jour du client");
 
-      showSuccessAlert(session.user.theme,"Client updated successfully!");
+      showSuccessAlert(session.user.theme,"Le client a été mis à jour avec succès !");
       onUpdateSuccess({ ...client, id: clientId });
     } catch (error) {
-      showErrorAlert(session.user.theme,"Failed to update client");
+      showErrorAlert(session.user.theme,"Échec de la mise à jour du client");
     } finally {
       setUpdating(false);
     }
@@ -69,14 +69,14 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
         className="btn btn-ghost text-primary mb-4 flex items-center"
         disabled={loading}
       >
-        <FaArrowLeft className="mr-2" /> Back
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
       <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold">Update Client</h2>
+        <h2 className="text-xl font-semibold">Mise à jour du client</h2>
 
         {/* Name */}
-        <label className="block text-sm font-medium">Name</label>
+        <label className="block text-sm font-medium">Nom</label>
         <input
           type="text"
           name="name"
@@ -84,7 +84,7 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Name"
+          placeholder="Nom"
         />
 
         {/* Email */}
@@ -100,7 +100,7 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
         />
 
         {/* Phone */}
-        <label className="block text-sm font-medium">Phone</label>
+        <label className="block text-sm font-medium">Téléphone</label>
         <input
           type="text"
           name="phone"
@@ -108,12 +108,12 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Phone"
+          placeholder="Téléphone"
         />
         <small className="text-gray-500">Format: +216 XX XXX XXX</small>
 
         {/* Address */}
-        <label className="block text-sm font-medium">Address</label>
+        <label className="block text-sm font-medium">Adresse</label>
         <input
           type="text"
           name="address"
@@ -121,21 +121,21 @@ export default function UpdateClientForm({ clientId, onUpdateSuccess, onGoBack }
           onChange={handleChange}
           required
           className="input input-bordered w-full"
-          placeholder="Address"
+          placeholder="Addresse"
         />
 
         {/* Note */}
-        <label className="block text-sm font-medium">Note (Optional)</label>
+        <label className="block text-sm font-medium">Note (facultatif)</label>
         <textarea
           name="note"
           value={client.note}
           onChange={handleChange}
           className="textarea textarea-bordered w-full"
-          placeholder="Additional Notes"
+          placeholder="Remarques complémentaires"
         />
 
         <button type="submit" className="btn btn-primary w-full" disabled={updating}>
-          {updating ? "Updating..." : "Update Client"}
+          {updating ? "Mise à jour..." : "Mise à jour du client"}
         </button>
       </form>
     </div>

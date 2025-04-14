@@ -9,10 +9,10 @@ export default function ProductPage() {
 
   return (
     <>
-      <PageHeader title="Product Details" subtitle="Details of the selected product" />
+      <PageHeader title="Détails du produit" subtitle="Détails du produit sélectionné" />
       <div className="card bg-base-100 shadow-xl mt-8">
         <div className="card-body">
-          {id ? <ProductDetails /> : <p className="text-center text-red-500">Product ID not found</p>}
+          {id ? <ProductDetails /> : <p className="text-center text-red-500">ID de produit introuvable</p>}
         </div>
       </div>
     </>

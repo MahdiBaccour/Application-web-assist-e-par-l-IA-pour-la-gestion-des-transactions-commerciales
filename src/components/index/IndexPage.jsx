@@ -39,18 +39,18 @@ export default function IndexPage() {
 
   const features = [
     {
-      title: 'Supply Chain Management',
-      description: 'End-to-end visibility and control over your supply chain operations',
+      title: 'Gestion de la chaîne logistique',
+      description: "Visibilité et contrôle de bout en bout des opérations de votre chaîne d'approvisionnement",
       icon: <FiCheckCircle className="w-6 h-6" />,
     },
     {
-      title: 'Real-time Analytics',
-      description: 'Powerful insights and data-driven decision-making tools',
+      title: 'Analyse en temps réel',
+      description: 'Des connaissances approfondies et des outils de prise de décision fondés sur les données',
       icon: <FiCheckCircle className="w-6 h-6" />,
     },
     {
-      title: 'Collaboration Tools',
-      description: 'Seamless communication between suppliers, clients, and teams',
+      title: 'Outils de collaboration',
+      description: 'Communication transparente entre les fournisseurs, les clients et les équipes',
       icon: <FiCheckCircle className="w-6 h-6" />,
     },
   ];
@@ -58,15 +58,15 @@ export default function IndexPage() {
   const carouselItems = [
     {
       image: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1716376489/dashboard1_jy5hhn.webp',
-      title: 'Comprehensive Dashboard',
+      title: 'Tableau de bord complet',
     },
     {
       image: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1716376489/analytics1_ysxwqy.webp',
-      title: 'Advanced Analytics',
+      title: 'Analyse avancée',
     },
     {
       image: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1716376489/collaboration1_ibqk3k.webp',
-      title: 'Team Collaboration',
+      title: "Collaboration d'équipe",
     },
   ];
 
@@ -84,22 +84,22 @@ export default function IndexPage() {
         >
           <div className="space-y-8">
             <h1 className={`text-5xl font-bold ${textGradient}`}>
-              Transform Your Supply Chain with {' '}
+            Transformez votre chaîne logistique avec {' '}
               <span className={theme === 'dark' ? 'text-white' : 'text-indigo-600'}>
-                Intelligent Management
+              Gestion intelligente
               </span>
             </h1>
             <p className={`text-xl ${paragraphColor}`}>
-              Streamline operations, enhance collaboration, and boost efficiency with our all-in-one
-              supply chain management platform.
+            Rationalisez vos opérations, améliorez votre collaboration et augmentez votre efficacité grâce à notre plateforme de gestion de la chaîne d'approvisionnement tout-en-un.
+            plate-forme de gestion de la chaîne d'approvisionnement.
             </p>
             <div className="flex gap-4">
               <button className={`btn ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-indigo-600 text-white'} px-8 py-4 text-lg`}>
-                Get Started
+              Commencer
                 <FiArrowRight className="ml-2" />
               </button>
               <button className={`btn ${theme === 'dark' ? 'bg-gray-700 text-gray-300' : 'bg-gray-100 text-gray-900'} px-8 py-4 text-lg`}>
-                Learn More
+              En savoir plus
               </button>
             </div>
           </div>
@@ -212,14 +212,14 @@ export default function IndexPage() {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
-              <h4 className="text-white text-lg font-semibold mb-4">About Us</h4>
+              <h4 className="text-white text-lg font-semibold mb-4">À propos de nous</h4>
               <p className="mb-4">
-                Revolutionizing supply chain management through innovative technology and
-                data-driven solutions.
+              Révolutionner la gestion de la chaîne d'approvisionnement grâce à une technologie innovante
+              et des solutions basées sur les données.
               </p>
             </div>
             <div>
-              <h4 className="text-white text-lg font-semibold mb-4">Quick Links</h4>
+              <h4 className="text-white text-lg font-semibold mb-4">Liens rapides</h4>
               <ul className="space-y-2">
                 <li>
                   <a href="#" className="hover:text-indigo-400">
@@ -228,38 +228,38 @@ export default function IndexPage() {
                 </li>
                 <li>
                   <a href="#" className="hover:text-indigo-400">
-                    Case Studies
+                  Études de cas
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-indigo-400">
-                    API Reference
+                  Référence API
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white text-lg font-semibold mb-4">Legal</h4>
+              <h4 className="text-white text-lg font-semibold mb-4">Juridique</h4>
               <ul className="space-y-2">
                 <li>
                   <a href="#" className="hover:text-indigo-400">
-                    Privacy Policy
+                  Politique de confidentialité
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-indigo-400">
-                    Terms of Service
+                  Conditions d'utilisation
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-indigo-400">
-                    Security
+                  Sécurité
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white text-lg font-semibold mb-4">Connect</h4>
+              <h4 className="text-white text-lg font-semibold mb-4">Connecter</h4>
               <div className="flex space-x-4">
                 <a href="#" className="hover:text-indigo-400">
                   <FaXTwitter className="w-6 h-6" />
@@ -274,7 +274,7 @@ export default function IndexPage() {
             </div>
           </div>
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <p>© {new Date().getFullYear()} SupplyChain Pro. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} SupplyChain Pro. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

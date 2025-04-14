@@ -12,33 +12,49 @@ import {
   showErrorAlert,
 } from "@/utils/swalConfig"; // Import the success and error alerts
 import { useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 export default function ClientTable() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedClientId, setSelectedClientId] = useState(null);
   const [isAddingNewClient, setIsAddingNewClient] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
+  const [error, setError] = useState(null); // Added state for error message
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [clientsPerPage] = useState(5);
 
   useEffect(() => {
+    if ( session?.user.role !== "owner" ) {
+      router.push("/forbidden");
+    }
+  }, [ session, router]);
+
+  useEffect(() => {
     const loadClients = async () => {
       setLoading(true);
       try {
-        const data = await getClients("",session.user.accessToken);
-        setClients(data);
+        const data = await getClients("",session?.user.accessToken);
+        if (!data.success) {
+          setError(data.message); // Set error message
+        }
+        else{
+        setClients(data.clients);
+        setError(null); // Clear error if data is fetched successfully
+        }
       } catch (error) {
         console.error("Error fetching clients:", error);
+        setError(data.message); // Set error message
       }
       setLoading(false);
     };
 
     loadClients();
-  }, []);
+  }, [session?.user.accessToken]);
 
   const handleEdit = (id) => {
     setSelectedClientId(id);
@@ -47,16 +63,16 @@ export default function ClientTable() {
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
 
-    const result = await showConfirmationDialog(session.user.theme,{
-      title: `Set status to ${newStatus}?`,
-      text: "You can always change this later",
-      confirmText: `Yes, set to ${newStatus}`,
+    const result = await showConfirmationDialog(session.user.theme, {
+      title: `Définir l'état sur ${newStatus}?`,
+      text: "Vous pouvez toujours modifier cela plus tard",
+      confirmText: `Oui, réglé à ${newStatus}`,
     });
 
     if (result.isConfirmed) {
       setIsLoadingDelete(id);
       try {
-        const success = await updateClientStatus(id, newStatus,session.user.accessToken);
+        const success = await updateClientStatus(id, newStatus, session.user.accessToken);
         if (success) {
           setClients((prev) =>
             prev.map((client) =>
@@ -65,12 +81,15 @@ export default function ClientTable() {
                 : client
             )
           );
-          showSuccessAlert(session.user.theme,`Status set to ${newStatus}`);
+          showSuccessAlert(session.user.theme, `Le statut est défini sur ${newStatus}`);
+          setError(null); // Clear error if status is updated successfully
         } else {
-          showErrorAlert(session.user.theme,"Failed to update status");
+          setError("Échec de la mise à jour du statut du client. Veuillez réessayer."); // Set error message
+          showErrorAlert(session.user.theme, "Échec de la mise à jour de l'état");
         }
       } catch (error) {
-        showErrorAlert(session.user.theme,"Failed to update status");
+        setError("Échec de la mise à jour du statut du client. Veuillez réessayer."); // Set error message
+        showErrorAlert(session.user.theme, "Échec de la mise à jour de l'état");
       } finally {
         setIsLoadingDelete(null);
       }
@@ -119,9 +138,25 @@ export default function ClientTable() {
         <ImSpinner2 className="animate-spin text-4xl text-primary" />
       </div>
     );
+  if (error)
+    return (
+      <div className="alert alert-error shadow-lg mb-4">
+        <div>
+          <span>{error}</span>
+        </div>
+      </div>
+    );
 
   return (
     <div className="overflow-x-auto">
+      {error && (
+        <div className="alert alert-error shadow-lg mb-4">
+          <div>
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
+
       {isAddingNewClient ? (
         <ClientForm onActionSuccess={handleNewClient} onGoBack={handleGoBack} />
       ) : selectedClientId ? (
@@ -138,7 +173,7 @@ export default function ClientTable() {
               onClick={() => setIsAddingNewClient(true)}
               className="btn btn-primary flex items-center gap-2"
             >
-              <FaUserPlus /> Add New Client
+              <FaUserPlus /> Ajouter un nouveau client
             </button>
 
             {/* Status Filters */}
@@ -148,7 +183,7 @@ export default function ClientTable() {
                 filterStatus === "all" ? "btn-info" : "btn-outline"
               }`}
             >
-              <FaUsers /> All
+              <FaUsers /> Tous
             </button>
 
             <button
@@ -157,7 +192,7 @@ export default function ClientTable() {
                 filterStatus === "active" ? "btn-success" : "btn-outline"
               }`}
             >
-              <FaUserCheck /> Active
+              <FaUserCheck /> Actif
             </button>
 
             <button
@@ -166,17 +201,17 @@ export default function ClientTable() {
                 filterStatus === "inactive" ? "btn-error" : "btn-outline"
               }`}
             >
-              <FaUserTimes /> Inactive
+              <FaUserTimes /> Inactif
             </button>
           </div>
 
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
-                <th>Name</th>
+              <th>Nom</th>
                 <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -194,7 +229,7 @@ export default function ClientTable() {
               ) : (
                 <tr>
                   <td colSpan="5" className="text-center">
-                    No clients available
+                  Pas de clients disponibles
                   </td>
                 </tr>
               )}
@@ -207,31 +242,31 @@ export default function ClientTable() {
               disabled={currentPage === 1}
               className="btn btn-sm"
             >
-              First
+              Première
             </button>
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="btn btn-sm mx-2"
             >
-              Previous
+              Précédent
             </button>
             <span className="text-center mx-2">
-              Page {currentPage} of {totalPages}
+              Page {currentPage} de {totalPages}
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="btn btn-sm mx-2"
             >
-              Next
+              Suivant
             </button>
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
               className="btn btn-sm"
             >
-              Last
+              Dernière
             </button>
           </div>
         </>

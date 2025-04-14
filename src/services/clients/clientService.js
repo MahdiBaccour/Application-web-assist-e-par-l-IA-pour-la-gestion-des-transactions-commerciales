@@ -5,6 +5,7 @@ if (!API_URL) {
   console.error("API_URL is not defined. Make sure to set NEXT_PUBLIC_API_URL in your .env file.");
 }
 
+
 // Create a new client
 export const createClient = async (clientData, token) => {
   try {
@@ -37,13 +38,31 @@ export const getClients = async (status = '', token) => {
       },
     });
 
-    if (!response.ok) throw new Error(`Failed to fetch clients: ${response.statusText}`);
-    
     const data = await response.json();
-    return Array.isArray(data.clients) ? data.clients : [];
+
+    if (response.status === 400) {
+      return { success: false, message: "Bad request. Please check your input." };
+    }
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You do not have permission to view this resource." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "No clients found." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later." };
+    }
+    if (response.ok) {
+      return { success: true, clients: data.clients  }; // Return clients if available
+    }
+
+    return { success: false, message: "Unexpected error occurred." };
   } catch (error) {
     console.error("Error fetching clients:", error);
-    return [];
+    return { success: false, message: "Failed to fetch clients. Please check your connection." };
   }
 };
 

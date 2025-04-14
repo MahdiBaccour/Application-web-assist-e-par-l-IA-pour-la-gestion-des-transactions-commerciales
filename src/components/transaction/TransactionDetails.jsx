@@ -25,14 +25,20 @@ export default function TransactionDetails() {
   const [loading, setLoading] = useState(true);
 const { data: session } = useSession();
 
+useEffect(() => {
+  if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
+    router.push("/forbidden");
+  }
+}, []);
+
   useEffect(() => {
     const fetchTransaction = async () => {
       try {
-        const data = await getTransactionById(id,session.user.accessToken);
+        const data = await getTransactionById(id,session?.user.accessToken);
         if (!data) throw new Error("Transaction not found");
         setTransaction(data.transaction);
 
-        const productData = await getTransactionProducts(id,session.user.accessToken);
+        const productData = await getTransactionProducts(id,session?.user.accessToken);
         setProducts(productData.transactionProducts || []);
       } catch (error) {
         console.error("Error fetching transaction:", error);

@@ -11,55 +11,71 @@ import {
   showErrorAlert,
 } from "@/utils/swalConfig";
 import { ImSpinner2 } from "react-icons/im";
-import { FaUserTie,FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { FaUserTie, FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import UpdateSupplierForm from "./UpdateSupplierForm";
 import SupplierForm from "./SupplierForm";
 import SupplierCard from "./SupplierCard";
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation';
 
 export default function SupplierTable() {
+  const { data: session } = useSession();
+  const router = useRouter();
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [isAddingNewSupplier, setIsAddingNewSupplier] = useState(false);
   const [isLoadingStatus, setIsLoadingStatus] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [error, setError] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const suppliersPerPage = 5;
 
   useEffect(() => {
+    if ( session?.user.role !== "owner") {
+      router.push("/forbidden");
+    }
+  }, [ session, router]);
+
+  useEffect(() => {
     const loadSuppliers = async () => {
       setLoading(true);
+      setError(null);
       try {
-        const data = await getSuppliers(statusFilter);
-        setSuppliers(data);
-      } catch (error) {
-        console.error("Error fetching suppliers:", error);
+        const data = await getSuppliers(statusFilter, session.user.accessToken);
+        if (data.success) {
+          setSuppliers(data.suppliers);
+        } else {
+          setError(data.message || "Impossible de charger les fournisseurs.");
+        }
+      } catch (err) {
+        setError(err.message || "Erreur inattendue.");
       }
       setLoading(false);
     };
-    loadSuppliers();
-  }, [statusFilter]);
 
-  const handleEdit = (id) => {
-    setSelectedSupplierId(id);
-  };
+    loadSuppliers();
+  }, [statusFilter, session?.user.accessToken]);
+
+
+
+  const handleEdit = (id) => setSelectedSupplierId(id);
 
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
 
     const result = await showConfirmationDialog({
-      title: `Set status to ${newStatus}?`,
-      text: "You can always change this later",
-      confirmText: `Yes, set to ${newStatus}`,
+      title: `Changer le statut à ${newStatus}?`,
+      text: "Vous pouvez modifier cela à tout moment.",
+      confirmText: `Oui, changer à ${newStatus}`,
     });
 
     if (result.isConfirmed) {
       setIsLoadingStatus(id);
       try {
-        const success = await updateSupplierStatus(id, newStatus);
+        const success = await updateSupplierStatus(id, newStatus, session.user.accessToken);
         if (success) {
-          // Update suppliers list
           setSuppliers((prev) =>
             prev
               .map((supplier) =>
@@ -73,12 +89,12 @@ export default function SupplierTable() {
                   supplier.status_supplier === statusFilter
               )
           );
-          showSuccessAlert(`Status set to ${newStatus}`);
+          showSuccessAlert(session.user.theme, `Statut changé à ${newStatus}`);
         } else {
-          showErrorAlert("Failed to update status");
+          showErrorAlert(session.user.theme, "Échec de la mise à jour du statut");
         }
-      } catch (error) {
-        showErrorAlert("Failed to update status");
+      } catch (err) {
+        showErrorAlert(session?.user.theme, "Erreur lors de la mise à jour du statut");
       } finally {
         setIsLoadingStatus(null);
       }
@@ -91,14 +107,13 @@ export default function SupplierTable() {
   };
 
   const handleNewSupplier = (newSupplier) => {
-    setSuppliers((prevSuppliers) => [...prevSuppliers, newSupplier]);
+    setSuppliers((prev) => [...prev, newSupplier]);
     setIsAddingNewSupplier(false);
   };
 
   const handleSupplierUpdate = (updatedSupplier) => {
-    console.log(updatedSupplier);
-    setSuppliers((prevSuppliers) =>
-      prevSuppliers.map((supplier) =>
+    setSuppliers((prev) =>
+      prev.map((supplier) =>
         supplier.id === updatedSupplier.id ? updatedSupplier : supplier
       )
     );
@@ -107,26 +122,34 @@ export default function SupplierTable() {
 
   const indexOfLastSupplier = currentPage * suppliersPerPage;
   const indexOfFirstSupplier = indexOfLastSupplier - suppliersPerPage;
-  const currentSuppliers = suppliers.slice(
-    indexOfFirstSupplier,
-    indexOfLastSupplier
-  );
+  const currentSuppliers = suppliers.slice(indexOfFirstSupplier, indexOfLastSupplier);
   const totalPages = Math.ceil(suppliers.length / suppliersPerPage);
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center mt-10">
         <ImSpinner2 className="animate-spin text-4xl text-primary" />
       </div>
     );
+  }
+
+
+
+  if (error) {
+    return (
+      <div className="alert alert-error mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Erreur : {error}</span>
+      </div>
+    );
+  }
 
   return (
     <div className="overflow-x-auto">
       {isAddingNewSupplier ? (
-        <SupplierForm
-          onActionSuccess={handleNewSupplier}
-          onGoBack={handleGoBack}
-        />
+        <SupplierForm onActionSuccess={handleNewSupplier} onGoBack={handleGoBack} />
       ) : selectedSupplierId ? (
         <UpdateSupplierForm
           supplierId={selectedSupplierId}
@@ -136,22 +159,20 @@ export default function SupplierTable() {
       ) : (
         <>
           <div className="flex gap-2 mb-4">
-            {/* Add New Supplier */}
             <button
               onClick={() => setIsAddingNewSupplier(true)}
               className="btn btn-primary flex items-center gap-2"
             >
-              <FaUserTie /> Add New Supplier
+              <FaUserTie /> Nouveau fournisseur
             </button>
 
-            {/* Status Filters */}
             <button
               onClick={() => setStatusFilter("all")}
               className={`btn flex items-center gap-2 ${
                 statusFilter === "all" ? "btn-info" : "btn-outline"
               }`}
             >
-              <FaUsers /> All
+              <FaUsers /> Tous
             </button>
 
             <button
@@ -160,7 +181,7 @@ export default function SupplierTable() {
                 statusFilter === "active" ? "btn-success" : "btn-outline"
               }`}
             >
-               <FaUserCheck/> Active
+              <FaUserCheck /> Actifs
             </button>
 
             <button
@@ -169,17 +190,18 @@ export default function SupplierTable() {
                 statusFilter === "inactive" ? "btn-error" : "btn-outline"
               }`}
             >
-              <FaUserTimes/> Inactive
+              <FaUserTimes /> Inactifs
             </button>
           </div>
+
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
-                <th>Name</th>
+                <th>Nom</th>
                 <th>Email</th>
-                <th>Phone</th>
-                <th>Address</th>
-                <th>Status</th>
+                <th>Téléphone</th>
+                <th>Adresse</th>
+                <th>Statut</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -197,43 +219,44 @@ export default function SupplierTable() {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No suppliers available
+                    Aucun fournisseur disponible.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+
           <div className="flex justify-center mt-4">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
               className="btn btn-sm"
             >
-              First
+              Première
             </button>
             <button
               onClick={() => setCurrentPage(currentPage - 1)}
               disabled={currentPage === 1}
               className="btn btn-sm mx-2"
             >
-              Previous
+              Précédente
             </button>
             <span className="text-center mx-2">
-              Page {currentPage} of {totalPages}
+              Page {currentPage} sur {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="btn btn-sm mx-2"
             >
-              Next
+              Suivante
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages}
               className="btn btn-sm"
             >
-              Last
+              Dernière
             </button>
           </div>
         </>

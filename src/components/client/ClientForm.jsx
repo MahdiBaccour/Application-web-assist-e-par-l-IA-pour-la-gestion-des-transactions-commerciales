@@ -30,40 +30,40 @@ export default function ClientForm({ onActionSuccess, onGoBack }) {
 
     // Name validation: Check if name is empty
     if (!client.name) {
-      newErrors.name = "Name is required";
+      newErrors.name = "Le nom est obligatoire";
       isValid = false;
     }
 
     // Email validation: Check if email is empty or invalid
     if (!client.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = "L'e-mail est obligatoire";
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(client.email)) {
-      newErrors.email = "Please enter a valid email address";
+      newErrors.email = "Veuillez saisir une adresse électronique valide";
       isValid = false;
     }
 
     // Phone validation: Check if phone is empty or doesn't match the required format
     if (!client.phone) {
-      newErrors.phone = "Phone is required";
+      newErrors.phone = "Le téléphone est obligatoire";
       isValid = false;
     } else {
       const phoneRegex = /^\+216 [23459]\d{1} \d{3} \d{3}$/;
       if (!phoneRegex.test(client.phone)) {
-        newErrors.phone = "Phone must be in the format +216 55 555 555";
+        newErrors.phone = "Le téléphone doit être dans le format +216 55 555 555";
         isValid = false;
       }
     }
 
     // Address validation: Check if address is empty
     if (!client.address) {
-      newErrors.address = "Address is required";
+      newErrors.address = "L'adresse est obligatoire";
       isValid = false;
     }
 
     // Note validation: Optional, no strict validation
     if (client.note.length > 255) {
-      newErrors.note = "Note must be less than 255 characters";
+      newErrors.note = "La note doit être inférieure à 255 caractères";
       isValid = false;
     }
 
@@ -87,21 +87,21 @@ export default function ClientForm({ onActionSuccess, onGoBack }) {
       // Check if phone number already exists
       const existingClient = await getClientByPhone(client.phone,session.user.accessToken); 
       if (existingClient) {
-        showErrorAlert(session.user.theme,"Phone number already exists!");
+        showErrorAlert(session.user.theme,"Le numéro de téléphone existe déjà !");
         setAdding(false);
         return;
       }
   
       // If phone doesn't exist, proceed with client creation
       const newClient = await createClient(client,session.user.accessToken);
-      if (!newClient) throw new Error("Failed to add client");
+      if (!newClient) throw new Error("Échec de l'ajout d'un client");
   
-      showSuccessAlert("Client added successfully!");
+      showSuccessAlert("Client ajouté avec succès!");
   
       // Update the clients list in the parent component
       onActionSuccess(session.user.theme,newClient.client);
     } catch (error) {
-      showErrorAlert("Failed to add client");
+      showErrorAlert("Échec de l'ajout d'un client");
     } finally {
       setAdding(false);
     }
@@ -119,11 +119,11 @@ export default function ClientForm({ onActionSuccess, onGoBack }) {
         onClick={onGoBack} // Notify the parent component to go back
         className="btn btn-ghost text-primary mb-4"
       >
-        <FaArrowLeft className="mr-2" /> Back
+        <FaArrowLeft className="mr-2" /> Retour
       </button>
 
       <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold">Add New Client</h2>
+        <h2 className="text-xl font-semibold">Ajouter un nouveau client</h2>
 
         {/* Name field */}
         <div>
@@ -192,7 +192,7 @@ export default function ClientForm({ onActionSuccess, onGoBack }) {
 
         {/* Submit Button */}
         <button type="submit" className="btn btn-primary w-full" disabled={adding}>
-          {adding ? "Adding..." : "Add Client"}
+          {adding ? "Ajouter..." : "Ajouter un client"}
         </button>
       </form>
     </div>

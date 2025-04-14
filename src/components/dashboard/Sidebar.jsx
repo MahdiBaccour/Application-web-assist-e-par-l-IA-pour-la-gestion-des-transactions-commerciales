@@ -24,7 +24,7 @@ export const Sidebar = () => {
         <li className="text-error p-4">
           <div className="flex items-center">
             {iconComponents.FaUser({ className: "mr-2" })}
-            <span>Unauthorized - Please sign in</span>
+            <span>Non autorisé - Veuillez vous connecter</span>
           </div>
         </li>
       )}

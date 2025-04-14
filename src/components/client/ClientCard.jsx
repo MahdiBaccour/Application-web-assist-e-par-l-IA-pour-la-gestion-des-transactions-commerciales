@@ -32,11 +32,11 @@ export default function ClientCard({
             <ImSpinner2 className="animate-spin" />
           ) : client.status_client === "active" ? (
             <>
-              <FaToggleOff /> Set Inactive
+              <FaToggleOff /> Définir inactif
             </>
           ) : (
             <>
-              <FaToggleOn /> Set Active
+              <FaToggleOn /> Définir actif
             </>
           )}
         </button>

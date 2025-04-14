@@ -35,36 +35,54 @@ export default function ProductsTable() {
   const [isAddingNewProduct, setIsAddingNewProduct] = useState(false);
   const [isLoadingStatus, setIsLoadingStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [error,setError]=useState(null);
   const productsPerPage = 5;
 
+
+  useEffect(() => {
+    if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
+      router.push("/forbidden");
+    }
+  }, []);
 
   useEffect(() => {
     const loadProducts = async () => {
       setLoading(true);
       try {
-        const data = await getProducts(selectedCategory, selectedStatus,session.user.accessToken);
-        setProducts(data);
+        const response = await getProducts(selectedCategory, selectedStatus,session?.user.accessToken);
+        if (response.success) {
+          setProducts(response.products);
+        } else {
+          // Handle the error case if the response is not successful
+          setError( response.message);
+        }
       } catch (error) {
-        console.error("Error fetching products:", error);
+        setError(response.message);
       }
       setLoading(false);
     };
-
+  
     loadProducts();
-  }, [selectedCategory, selectedStatus]);
-
+  }, [selectedCategory, selectedStatus,session?.user.accessToken]);
+  
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const data = await getCategories(session.user.accessToken);
-        setCategories(data);
+        const response = await getCategories(session.user.accessToken);
+        if (response.success) {
+          setCategories(response.categories);
+        } else {
+          // Handle the error case if the response is not successful
+          setError(response.message);
+        
+        }
       } catch (error) {
-        console.error("Error fetching categories:", error);
+        setError(response.message);
       }
     };
-
+  
     loadCategories();
-  }, []);
+  }, [session?.user.accessToken]);
 
   const handleEdit = (id) => {
     setIsAddingNewProduct(false);  
@@ -79,15 +97,15 @@ export default function ProductsTable() {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
 
     const result = await showConfirmationDialog({
-      title: `Set status to ${newStatus}?`,
-      text: "You can always change this later.",
-      confirmText: `Yes, set to ${newStatus}`,
+      title: `Régler le statut sur ${newStatus}?`,
+      text: "Vous pouvez toujours modifier cela plus tard.",
+      confirmText: `Oui, réglé sur ${newStatus}`,
     });
 
     if (result.isConfirmed) {
       setIsLoadingStatus(id);
       try {
-        const success = await updateProductStatus(id, newStatus);
+        const success = await updateProductStatus(id, newStatus,session.user.accessToken);
         if (success) {
           setProducts((prevProducts) =>
             prevProducts
@@ -98,12 +116,12 @@ export default function ProductsTable() {
                 selectedStatus === "all" ? true : product.status === selectedStatus
               )
           );
-          showSuccessAlert(`Status set to ${newStatus}`);
+          showSuccessAlert(session.user.theme,`Statut réglé sur ${newStatus}`);
         } else {
-          showErrorAlert("Failed to update status.");
+          showErrorAlert(session.user.theme,"Échec de la mise à jour de l'état.");
         }
       } catch (error) {
-        showErrorAlert("Failed to update status.");
+        showErrorAlert(session.user.theme,"Échec de la mise à jour de l'état.");
       } finally {
         setIsLoadingStatus(null);
       }
@@ -151,6 +169,16 @@ export default function ProductsTable() {
       </div>
     );
 
+  if (error) {
+    return (
+      <div className="alert alert-error mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span> Erreur dans la recherche des produits : {error}</span>
+      </div>
+    );}
+
   return (
     <div className="overflow-x-auto">
       {isAddingNewProduct ? (
@@ -175,13 +203,13 @@ export default function ProductsTable() {
                   selectedStatus === "all" ? "btn-info" : "btn-outline"
                 }`}
               >
-                <FaList size={18} /> All
+                <FaList size={18} /> Tous
               </button>
               <button onClick={() => setSelectedStatus("active")} className={`btn ${selectedStatus === "active" ? "btn-success" : "btn-outline"}`}>
-               <FaCheckCircle/>  Active
+               <FaCheckCircle/>  Actif
               </button>
               <button onClick={() => setSelectedStatus("inactive")} className={`btn ${selectedStatus === "inactive" ? "btn-error" : "btn-outline"}`}>
-              <FaTimesCircle/>   Inactive
+              <FaTimesCircle/>   Inactif
               </button>
             </div>
           </div>
@@ -189,7 +217,7 @@ export default function ProductsTable() {
           {/* Second Row: Category Filter */}
           <div className="flex justify-end mb-4">
             <select className="select select-bordered select-sm" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
-              <option value="">All Categories</option>
+              <option value="">Toutes les catégories</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -202,11 +230,11 @@ export default function ProductsTable() {
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
-                <th>Name</th>
-                <th>Category</th>
-                <th>Selling Price</th>
+              <th>Nom</th>
+                <th>Catégorie</th>
+                <th>Prix de vente</th>
                 <th>Stock</th>
-                <th>Status</th>
+                <th>Statut</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -225,7 +253,7 @@ export default function ProductsTable() {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
-                    No products available
+                  Pas de produits disponibles
                   </td>
                 </tr>
               )}
@@ -235,19 +263,19 @@ export default function ProductsTable() {
           {/* Pagination */}
           <div className="flex justify-center mt-4">
             <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="btn btn-sm">
-              First
+            Première
             </button>
             <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="btn btn-sm mx-2">
-              Previous
+            Précédent
             </button>
             <span className="text-center mx-2">
-              Page {currentPage} of {totalPages}
+              Page {currentPage} de {totalPages}
             </span>
             <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-sm mx-2">
-              Next
+            Suivant
             </button>
             <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="btn btn-sm">
-              Last
+            Dernière
             </button>
           </div>
         </>

@@ -2,34 +2,60 @@
 import { useEffect, useState } from "react";
 import { getPayments, deletePayment, updatePaymentStatus } from "@/services/payments/paymentService";
 import { ImSpinner2 } from "react-icons/im";
-import { FaPlus, FaMoneyCheckAlt, FaCreditCard, FaRegMoneyBillAlt } from "react-icons/fa";
+import { 
+  FaPlus, 
+  FaMoneyCheckAlt, 
+  FaCreditCard, 
+  FaRegMoneyBillAlt,
+  FaUniversity,
+  FaMobileAlt,
+  FaFileInvoiceDollar
+} from "react-icons/fa";
 import PaymentForm from "./PaymentForm";
 import PaymentCard from "./PaymentCard";
+import UpdatePaymentForm from "./UpdatePaymentForm";
 import {
   showConfirmationDialog,
   showSuccessAlert,
   showErrorAlert,
 } from "@/utils/swalConfig";
 import { useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation";
+
+// Payment methods data
+const paymentMethods = [
+  { id: 1, name: "Credit Card", icon: <FaCreditCard /> },
+  { id: 2, name: "Cash", icon: <FaRegMoneyBillAlt /> },
+  { id: 3, name: "Bank Transfer", icon: <FaUniversity /> },
+  { id: 4, name: "Debit Card", icon: <FaCreditCard /> },
+  { id: 5, name: "Mobile Payments", icon: <FaMobileAlt /> },
+  { id: 6, name: "Checks", icon: <FaFileInvoiceDollar /> }
+];
 
 export default function PaymentTable({ refreshTrigger }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [isAddingNewPayment, setIsAddingNewPayment] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(null);
   const [filterMethod, setFilterMethod] = useState("all");
-
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [paymentsPerPage] = useState(5);
 
   useEffect(() => {
+    if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
+      router.push("/forbidden");
+    }
+  }, [ session, router]);
+
+  useEffect(() => {
     const fetchPayments = async () => {
       setLoading(true);
       try {
-        const response = await getPayments(session.user.accessToken);
+        const response = await getPayments(session?.user.accessToken);
         setPayments(response.payments || []);
       } catch (error) {
         showErrorAlert(session.user.theme, "Failed to load payments");
@@ -39,7 +65,7 @@ export default function PaymentTable({ refreshTrigger }) {
     };
 
     fetchPayments();
-  }, [refreshTrigger, session.user.accessToken, session.user.theme]);
+  }, [refreshTrigger, session?.user.accessToken, session?.user.theme]);
 
   const handleAddNewPayment = () => {
     setIsAddingNewPayment(true);
@@ -47,9 +73,9 @@ export default function PaymentTable({ refreshTrigger }) {
 
   const handleDelete = async (id) => {
     const result = await showConfirmationDialog(session.user.theme, {
-      title: "Delete Payment?",
-      text: "This action cannot be undone!",
-      confirmText: "Yes, delete it",
+      title: "Supprimer le paiement?",
+      text: "Cette action ne peut être annulée!",
+      confirmText: "Oui, supprimez-le",
     });
 
     if (result.isConfirmed) {
@@ -58,12 +84,12 @@ export default function PaymentTable({ refreshTrigger }) {
         const success = await deletePayment(id, session.user.accessToken);
         if (success) {
           setPayments(prev => prev.filter(payment => payment.id !== id));
-          showSuccessAlert(session.user.theme, "Payment deleted successfully");
+          showSuccessAlert(session.user.theme, "Paiement supprimé avec succès");
         } else {
-          showErrorAlert(session.user.theme, "Failed to delete payment");
+          showErrorAlert(session.user.theme, "Échec de la suppression du paiement");
         }
       } catch (error) {
-        showErrorAlert(session.user.theme, "Failed to delete payment");
+        showErrorAlert(session.user.theme, "Échec de la suppression du paiement");
       } finally {
         setIsLoadingDelete(null);
       }
@@ -124,30 +150,35 @@ const handleNewPayment = (newPayment) => {
     </div>
   );
 
-  return (
-    <div className="overflow-x-auto">
-      {isAddingNewPayment ? (
-        <PaymentForm 
-          onActionSuccess={handleNewPayment} 
-          onGoBack={handleGoBack}
-          accessToken={session.user.accessToken}
-        />
-      ) : selectedPaymentId ? (
-        <PaymentForm
-          paymentId={selectedPaymentId}
-          onActionSuccess={handlePaymentUpdate}
-          onGoBack={handleGoBack}
-          accessToken={session.user.accessToken}
-        />
-      ) : (
-        <>
-          <div className="flex gap-2 mb-4">
-            <button
-              onClick={handleAddNewPayment}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FaPlus /> Add New Payment
-            </button>
+
+
+ // In PaymentTable component
+return (
+  <div className="overflow-x-auto">
+    {isAddingNewPayment ? (
+      <PaymentForm 
+        onActionSuccess={handleNewPayment} 
+        onGoBack={handleGoBack}
+        accessToken={session.user.accessToken}
+      />
+    ) : selectedPaymentId ? (
+      <UpdatePaymentForm  // Use the update form component
+        paymentId={selectedPaymentId}
+        onUpdateSuccess={handlePaymentUpdate}
+        onGoBack={handleGoBack}
+        accessToken={session.user.accessToken}
+      />
+    ) : (
+      <>
+        {/* Table and filters */}
+        <div className="flex gap-2 mb-4 flex-wrap">
+          <button
+            onClick={handleAddNewPayment}
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <FaPlus /> Ajouter un nouveau paiement
+          </button>
+
 
             <button
               onClick={() => setFilterMethod("all")}
@@ -155,58 +186,53 @@ const handleNewPayment = (newPayment) => {
                 filterMethod === "all" ? "btn-info" : "btn-outline"
               }`}
             >
-              <FaMoneyCheckAlt /> All
+              <FaMoneyCheckAlt /> Tous
             </button>
 
-                      <button
-            onClick={() => setFilterMethod("Credit Card")}
-            className={`btn flex items-center gap-2 ${
-              filterMethod === "Credit Card" ? "btn-success" : "btn-outline"
-            }`}
-          >
-            <FaCreditCard /> Credit Card
-          </button>
-
-          <button
-            onClick={() => setFilterMethod("Cash")}
-            className={`btn flex items-center gap-2 ${
-              filterMethod === "Cash" ? "btn-warning" : "btn-outline"
-            }`}
-          >
-            <FaRegMoneyBillAlt /> Cash
-          </button>
+            {paymentMethods.map(method => (
+              <button
+                key={method.id}
+                onClick={() => setFilterMethod(method.name)}
+                className={`btn flex items-center gap-2 ${
+                  filterMethod === method.name ? "btn-success" : "btn-outline"
+                }`}
+              >
+                {method.icon} {method.name}
+              </button>
+            ))}
           </div>
 
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
                 <th>Transaction ID</th>
-                <th>Amount</th>
-                <th>Method</th>
+                <th>Montant</th>
+                <th>Méthode</th>
                 <th>Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {currentPayments.length > 0 ? (
-                currentPayments.map(payment => (
-                  <PaymentCard
-                    key={payment.id}
-                    payment={payment}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    isLoadingDelete={isLoadingDelete}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="5" className="text-center">
-                    No payments found
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            {currentPayments.length > 0 ? (
+              currentPayments.map(payment => (
+                <PaymentCard
+                  key={payment.id}
+                  payment={payment}
+                  onEdit={handleEdit}  // This now triggers the update form
+                  onDelete={handleDelete}
+                  isLoadingDelete={isLoadingDelete}
+                />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="text-center">
+                  Aucun paiement trouvé
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
 
           <div className="flex justify-center mt-4">
             <button
@@ -214,31 +240,31 @@ const handleNewPayment = (newPayment) => {
               disabled={currentPage === 1}
               className="btn btn-sm"
             >
-              First
+              Première
             </button>
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="btn btn-sm mx-2"
             >
-              Previous
+              Précédent
             </button>
             <span className="text-center mx-2">
-              Page {currentPage} of {totalPages}
+              Page {currentPage} de {totalPages}
             </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="btn btn-sm mx-2"
             >
-              Next
+              Suivant
             </button>
             <button
               onClick={() => handlePageChange(totalPages)}
               disabled={currentPage === totalPages}
               className="btn btn-sm"
             >
-              Last
+              Dernière
             </button>
           </div>
         </>

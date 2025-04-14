@@ -11,8 +11,9 @@ import stockRoutes from "./routes/stockRoutes.js";
 import paymentsRoutes from "./routes/payments/exportPayment.js"; // Import payments routes
 import transaction_productsRoutes from "./routes/transaction_productsRoutes.js"; // Import transaction products routes
 import settingsRoutes from "./routes/settingsRoutes.js";
+import dashboard from "./routes/dashboard/dashboard.js";
 import pool from "./db.js";
-
+//import { importData } from "./importDataViaAPI.js"; // Import the importData function
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -77,9 +78,11 @@ app.use("/api/stock", stockRoutes);
 app.use("/api/payments", paymentsRoutes); // Register payments routes
 app.use("/api/transaction_products", transaction_productsRoutes); // Register transaction products routes
 app.use("/api/user", settingsRoutes);
+app.use("/api/stats", dashboard);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
+ // importData();
 });
 
 pool.query("SELECT current_database()")

@@ -48,7 +48,7 @@ export default function TransactionTypeStep({
         </div>
       ) : selectedType && (
         <div className="text-center text-gray-500">
-          No active {selectedType} transactions found
+          Aucune transaction active de type {selectedType} n'a été trouvée.
         </div>
       )}
     </div>

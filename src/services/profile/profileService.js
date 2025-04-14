@@ -9,13 +9,21 @@ export const updateProfile = async (profileData, token) => {
         body: JSON.stringify(profileData),
       });
   
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
-      }
-  
-      return await response.json();
-    } catch (error) {
-      throw new Error(error.message);
+      
+    const data = await response.json();
+
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access" };
     }
-  };
+    if (response.status === 500) {
+      return { success: false, message: "Server error" };
+    }
+    if (response.ok) {
+      return { success: true, notifications: data.notifications };
+    }
+
+    return { success: false, message: "Unexpected error" };
+  } catch (error) {
+    return { success: false, message: "Connection error" };
+  }
+}

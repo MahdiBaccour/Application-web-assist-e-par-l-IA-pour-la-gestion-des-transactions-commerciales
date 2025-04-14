@@ -10,11 +10,11 @@ export default function TransactionsPage() {
 
   return (
     <>
-      <PageHeader title="Transaction Details" subtitle="Details of the selected transaction" />
+      <PageHeader title="Détails de la transaction" subtitle="Détails de la transaction sélectionnée" />
       <div className="card bg-base-100 shadow-xl mt-8">
         <div className="card-body">
      
-          {id ? <TransactionDetails /> : <p className="text-center text-red-500">Transaction ID not found</p>}
+          {id ? <TransactionDetails /> : <p className="text-center text-red-500">ID de transaction introuvable</p>}
         </div>
       </div>
     </>

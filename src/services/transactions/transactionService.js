@@ -5,22 +5,55 @@ if (!API_URL) {
   console.error("API_URL is not defined. Make sure to set NEXT_PUBLIC_API_URL in your .env file.");
 }
 const TRANSACTIONS_API_URL = `${API_URL}/transactions`;
-export const createTransaction = async (transactionData,token) => {
-    try {
-      const response = await fetch(`${TRANSACTIONS_API_URL}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-         'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(transactionData)
-      });
-      return await response.json();
-    } catch (error) {
-      console.error('Error creating transaction:', error);
-      return null;
+export const createTransaction = async (transactionData, token) => {
+  try {
+    const response = await fetch(`${TRANSACTIONS_API_URL}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(transactionData)
+    });
+
+    const data = await response.json();
+    console.log("Create Transaction Response:", data);
+
+    // Handle known response status codes
+    if (response.status === 400) {
+      return { success: false, message: data.message || "Bad request. Please check your input." };
     }
-  };
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You don't have permission to perform this action." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: data.message || "Resource not found." };
+    }
+    if (response.status === 409) {
+      return { success: false, message: data.message || "Duplicate or conflicting data." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error. Please try again later." };
+    }
+
+    if (response.ok) {
+      return {
+        success: true,
+        message: "Transaction created successfully.",
+        transaction: data.transaction
+      };
+    }
+
+    // Catch-all for unexpected responses
+    return { success: false, message: "Unexpected error occurred." };
+  } catch (error) {
+    console.error("Error creating transaction:", error);
+    return { success: false, message: "Failed to create transaction. Please check your connection." };
+  }
+};
   
   export const getTransactions = async (type = "all",token) => {
     try {
