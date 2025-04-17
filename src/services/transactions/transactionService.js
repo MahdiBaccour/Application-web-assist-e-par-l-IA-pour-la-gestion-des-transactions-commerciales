@@ -7,7 +7,7 @@ if (!API_URL) {
 const TRANSACTIONS_API_URL = `${API_URL}/transactions`;
 export const createTransaction = async (transactionData, token) => {
   try {
-    const response = await fetch(`${TRANSACTIONS_API_URL}/`, {
+    const response = await fetch(`${TRANSACTIONS_API_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

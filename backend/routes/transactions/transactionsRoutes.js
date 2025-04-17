@@ -10,6 +10,7 @@ router.post("/",  middleware.auth, (req, res, next) => {
     if (req.user.role === "owner" || req.user.role === "employee")  {
      return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
     }
+    console.log("test")
   }, async (req, res) => {
     const { type, amount, date, description, client_id, supplier_id, 
             payment_method_id, reference_number, products, due_date, due_status,

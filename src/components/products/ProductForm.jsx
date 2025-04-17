@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { createProduct } from "@/services/products/productService";
+import { FaEye } from "react-icons/fa"; // Import FaEye
 import { getCategories } from "@/services/categories/categoryService";
 import { getSuppliers } from "@/services/suppliers/supplierService";
 import { showSuccessAlert, showErrorAlert } from "@/utils/swalConfig";
@@ -8,7 +8,8 @@ import { FaArrowLeft } from "react-icons/fa";
 import { useSession } from "next-auth/react";
 
 export default function ProductForm({ onActionSuccess, onGoBack }) {
-  const {data:session}=useSession();
+  const [categories, setCategories] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
   const [product, setProduct] = useState({
     name: "",
     category_id: "",
@@ -17,14 +18,14 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
     stock_quantity: "",
     description: "",
   });
-
-  const [categories, setCategories] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
+  const [errors, setErrors] = useState({});
   const [adding, setAdding] = useState(false);
-  const [errors, setErrors] = useState({}); // Store form validation errors
+  const [loading, setLoading] = useState(true); // Set loading state
 
+  // Fetch categories and suppliers
   useEffect(() => {
-    const loadCategories = async () => {
+    const fetchCategoriesAndSuppliers = async () => {
+      setLoading(true); // Set loading state to true
       try {
         const response = await getCategories(session?.user.accessToken);
         
@@ -64,42 +65,49 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
     loadSuppliers();
   }, [session]);
 
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProduct((prev) => ({ ...prev, [name]: value }));
-
-    // Clear the error when the user starts typing again
-    setErrors((prev) => ({ ...prev, [name]: "" }));
+    setProduct((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  // Validate Form Inputs
+  // Validate the form inputs
   const validateForm = () => {
-    let newErrors = {};
-    if (!product.name.trim()) newErrors.name = "Le nom du produit est obligatoire.";
+    const newErrors = {};
+    if (!product.name) newErrors.name = "Nom du produit est requis.";
     if (!product.category_id) newErrors.category_id = "Veuillez sélectionner une catégorie.";
     if (!product.supplier_id) newErrors.supplier_id = "Veuillez sélectionner un fournisseur.";
-    if (!product.selling_price || product.selling_price <= 0)
-      newErrors.selling_price = "Le prix de vente doit être supérieur à 0.";
-    if (!product.stock_quantity || product.stock_quantity < 0)
-      newErrors.stock_quantity = "La quantité en stock ne peut pas être négative.";
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Returns true if no errors
+    if (!product.selling_price) newErrors.selling_price = "Prix de vente est requis.";
+    if (!product.stock_quantity) newErrors.stock_quantity = "Quantité en stock est requise.";
+    return newErrors;
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return; // Stop if validation fails
+
+    // Validate form
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
 
     setAdding(true);
     try {
-      const newProduct = await createProduct(product,session.user.accessToken);
-      if (!newProduct) throw new Error("Failed to add product");
-
-      showSuccessAlert(session.user.theme,"Produit ajouté avec succès !");
-      onActionSuccess(newProduct.product);
+      // Assume createProduct is a function that sends product data to the server
+      const response = await createProduct(product); // Replace with your actual API call
+      if (response.success) {
+        onActionSuccess(response.data); // Call onActionSuccess if product is created successfully
+      } else {
+        showErrorAlert(response.message || "Failed to create product.");
+      }
     } catch (error) {
-      showErrorAlert(session.user.theme,"Échec de l'ajout de produit");
+      console.error("Error creating product:", error);
+      showErrorAlert("An error occurred while creating the product.");
     } finally {
       setAdding(false);
     }
@@ -108,10 +116,11 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
   return (
     <div className="p-6 border rounded-lg shadow-md">
       <button onClick={onGoBack} className="btn btn-ghost text-primary mb-4 flex items-center">
-        <FaArrowLeft className="mr-2" /> Retour
+        <FaEye className="mr-2" /> Retour
       </button>
 
       <h2 className="text-xl font-semibold mb-4">Ajouter un nouveau produit</h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Product Name */}
         <div>
@@ -121,7 +130,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             name="name"
             value={product.name}
             onChange={handleChange}
-            className={`input input-bordered w-full  ${errors.name ? "border-red-500" : ""}`}
+            className={`input input-bordered w-full ${errors.name ? "border-red-500" : ""}`}
             placeholder="Nom du produit"
           />
         </div>
@@ -134,6 +143,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             value={product.category_id}
             onChange={handleChange}
             className={`select select-bordered w-full ${errors.category_id ? "border-red-500" : ""}`}
+            disabled={loading}
           >
             <option value="">Sélectionner une catégorie</option>
             {categories?.map((category) => (
@@ -149,7 +159,8 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             name="supplier_id"
             value={product.supplier_id}
             onChange={handleChange}
-            className={`select select-bordered w-full  ${errors.supplier_id ? "border-red-500" : ""}`}
+            className={`select select-bordered w-full ${errors.supplier_id ? "border-red-500" : ""}`}
+            disabled={loading}
           >
             <option value="">Sélectionner un fournisseur</option>
             {suppliers?.map((supplier) => (
@@ -166,7 +177,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             name="selling_price"
             value={product.selling_price}
             onChange={handleChange}
-            className={`input input-bordered w-full  ${errors.selling_price ? "border-red-500" : ""}`}
+            className={`input input-bordered w-full ${errors.selling_price ? "border-red-500" : ""}`}
             placeholder="Prix de vente"
           />
         </div>
@@ -190,7 +201,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             name="description"
             value={product.description}
             onChange={handleChange}
-            className="textarea textarea-bordered w-full "
+            className="textarea textarea-bordered w-full"
             placeholder="Notes additionnelles (facultatif)"
           />
         </div>

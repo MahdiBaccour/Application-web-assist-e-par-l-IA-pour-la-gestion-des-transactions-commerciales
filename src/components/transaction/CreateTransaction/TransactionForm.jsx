@@ -80,21 +80,30 @@ export default function TransactionForm() {
       showErrorAlert(session.user.theme, 'Le montant du paiement est supérieur au solde restant');
       return;
     }
-    
-    setTransactionData(prev => ({
-      ...prev,
-      payments: [...prev.payments, {
+  
+    const updatedPayments = [
+      ...transactionData.payments,
+      {
         ...newPayment,
         payment_date: new Date().toISOString()
-      }]
+      }
+    ];
+  
+    const totalPaid = updatedPayments.reduce((sum, payment) => sum + Number(payment.amount_paid), 0);
+    const newRemainingBalance = transactionData.amount - totalPaid;
+  
+    setTransactionData(prev => ({
+      ...prev,
+      payments: updatedPayments,
+      remaining_balance: newRemainingBalance
     }));
-    
-    // Reset new payment form
+  
     setNewPayment({
       amount_paid: 0,
       payment_method_id: ''
     });
   };
+  
 
   // Form validation
 const validateStep = (step) => {
@@ -133,14 +142,42 @@ const validateStep = (step) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
+      // Calculate total cost from products
+      const total_cost = transactionData.products.reduce(
+        (sum, product) => sum + (product.quantity * product.current_cost_price),
+        0
+      );
+  
+      // Get initial payment from payments
+      const initial_payment = transactionData.payments.reduce(
+        (sum, payment) => sum + Number(payment.amount_paid),
+        0
+      );
+  
+      // Create reference number
+      const reference_number = `REF${Math.floor(100000 + Math.random() * 900000)}`;
+  
       const finalData = {
-        ...transactionData,
-        payments: transactionData.payments.map(p => ({
-          amount_paid: p.amount_paid,
-          payment_method_id: p.payment_method_id
-        }))
+        type: transactionData.type,
+        amount: transactionData.amount,
+        total_cost,
+        date: new Date().toISOString().split('T')[0], // Current date
+        description: transactionData.description,
+        client_id: transactionData.client_id || null,
+        supplier_id: transactionData.supplier_id || null,
+        payment_method_id: transactionData.payments[0]?.payment_method_id || null,
+        reference_number,
+        products: transactionData.products.map(p => ({
+          product_id: p.id,
+          quantity: p.quantity,
+          unit_price: p.selling_price
+        })),
+        due_date: transactionData.due_date,
+        initial_payment,
+        due_status: transactionData.remaining_balance <= 0 ? 'paid' : 'pending'
       };
-console.log('Final Data:', finalData);
+  
+      console.log('Final Data:', finalData);
       const response = await createTransaction(finalData, session.user.accessToken);
       
       if (response.success) {
@@ -225,14 +262,19 @@ console.log('Final Data:', finalData);
       {currentStep === 3 && (
         <div className="space-y-8">
           <ProductSelectionStep
-            onAddProduct={(product) => {
-              setTransactionData(prev => ({
-                ...prev,
-                products: [...prev.products, product],
-                amount: prev.amount + product.totalPrice
-              }));
-            }}
-          />
+  onAddProduct={(product) => {
+    setTransactionData(prev => ({
+      ...prev,
+      products: [...prev.products, {
+        id: product.id,
+        quantity: product.quantity,
+        selling_price: product.selling_price,
+        current_cost_price: product.current_cost_price
+      }],
+      amount: prev.amount + (product.selling_price * product.quantity)
+    }));
+  }}
+/>
           
           {/* Selected Products Table */}
           <div className="overflow-x-auto">
@@ -246,15 +288,15 @@ console.log('Final Data:', finalData);
                 </tr>
               </thead>
               <tbody>
-                {transactionData.products.map(product => (
-                  <tr key={product.id}>
-                    <td>{product.name}</td>
-                    <td>{product.quantity}</td>
-                    <td>${product.selling_price}</td>
-                    <td>${product.totalPrice}</td>
-                  </tr>
-                ))}
-              </tbody>
+  {transactionData.products.map(product => (
+    <tr key={product.id}>
+      <td>{product.name}</td>
+      <td>{product.quantity}</td>
+      <td>${product.selling_price}</td>
+      <td>${(product.selling_price * product.quantity).toFixed(2)}</td>
+    </tr>
+  ))}
+</tbody>
             </table>
           </div>
 
