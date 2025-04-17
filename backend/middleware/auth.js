@@ -23,6 +23,7 @@ const isOwner = (req, res, next) => {
   if (req.user.role !== "owner") {
     return res.status(403).send({ success: false, message: "Requires owner role" });
   }
+
   next();
 };
 

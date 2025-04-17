@@ -2,7 +2,7 @@ const PRODUCTS_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export const createProduct = async (productData,token) => {
   try {
-    const response = await fetch(`${PRODUCTS_API_URL}/products/`, {
+    const response = await fetch(`${PRODUCTS_API_URL}/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' ,
         'Authorization': `Bearer ${token}` // Add authorization header if token is available

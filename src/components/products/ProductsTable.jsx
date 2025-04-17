@@ -15,6 +15,7 @@ import {
   FaList,
   FaCheckCircle,
   FaTimesCircle,
+  FaSpinner,
 } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im";
 import { FaPlus } from "react-icons/fa";
@@ -164,9 +165,10 @@ export default function ProductsTable() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center mt-10">
-        <ImSpinner2 className="animate-spin text-4xl text-primary" />
-      </div>
+      <div className="flex flex-col items-center justify-center h-64">
+      <FaSpinner className="animate-spin text-4xl text-primary mb-4" />
+      <p className="text-gray-500">Chargement des données...</p>
+    </div>
     );
 
   if (error) {
@@ -218,7 +220,7 @@ export default function ProductsTable() {
           <div className="flex justify-end mb-4">
             <select className="select select-bordered select-sm" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
               <option value="">Toutes les catégories</option>
-              {categories.map((category) => (
+              {categories?.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>

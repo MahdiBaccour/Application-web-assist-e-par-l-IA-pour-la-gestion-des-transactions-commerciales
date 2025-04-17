@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getClients, updateClientStatus } from "@/services/clients/clientService";
-import { ImSpinner2 } from "react-icons/im";
+import { FaSpinner } from "react-icons/fa";
 import { FaUserPlus, FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import UpdateClientForm from "./UpdateClientForm";
 import ClientForm from "./ClientForm";
@@ -134,9 +134,10 @@ export default function ClientTable() {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center mt-10">
-        <ImSpinner2 className="animate-spin text-4xl text-primary" />
-      </div>
+      <div className="flex flex-col items-center justify-center h-64">
+          <FaSpinner className="animate-spin text-4xl text-primary mb-4" />
+          <p className="text-gray-500">Chargement des données...</p>
+        </div>
     );
   if (error)
     return (

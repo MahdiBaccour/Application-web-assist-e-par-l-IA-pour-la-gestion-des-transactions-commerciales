@@ -6,6 +6,7 @@ import { getSuppliers } from "@/services/suppliers/supplierService";
 import { showSuccessAlert, showErrorAlert } from "@/utils/swalConfig";
 import { FaArrowLeft } from "react-icons/fa";
 import { useSession } from "next-auth/react";
+
 export default function ProductForm({ onActionSuccess, onGoBack }) {
   const {data:session}=useSession();
   const [product, setProduct] = useState({
@@ -25,25 +26,43 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const data = await getCategories(session.user.accessToken);
-        setCategories(data);
+        const response = await getCategories(session?.user.accessToken);
+        
+        if (response.success && Array.isArray(response.categories)) {
+          setCategories(response.categories);
+        } else {
+          console.error("Categories error:", response.message);
+          setCategories([]);
+          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des catégories");
+        }
       } catch (error) {
-        console.error("Error loading categories:", error);
+        console.error("Categories fetch failed:", error);
+        setCategories([]);
+        showErrorAlert(session?.user.theme, "Échec du chargement des catégories");
       }
     };
-
+  
     const loadSuppliers = async () => {
       try {
-        const data = await getSuppliers("",session.user.accessToken);
-        setSuppliers(data);
+        const response = await getSuppliers("", session?.user.accessToken);
+        
+        if (response.success && Array.isArray(response.suppliers)) {
+          setSuppliers(response.suppliers);
+        } else {
+          console.error("Suppliers error:", response.message);
+          setSuppliers([]);
+          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des fournisseurs");
+        }
       } catch (error) {
-        console.error("Error loading suppliers:", error);
+        console.error("Suppliers fetch failed:", error);
+        setSuppliers([]);
+        showErrorAlert(session?.user.theme, "Échec du chargement des fournisseurs");
       }
     };
-
+  
     loadCategories();
     loadSuppliers();
-  }, []);
+  }, [session]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -117,7 +136,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full ${errors.category_id ? "border-red-500" : ""}`}
           >
             <option value="">Sélectionner une catégorie</option>
-            {categories.map((category) => (
+            {categories?.map((category) => (
               <option key={category.id} value={category.id}>{category.name}</option>
             ))}
           </select>
@@ -133,7 +152,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full  ${errors.supplier_id ? "border-red-500" : ""}`}
           >
             <option value="">Sélectionner un fournisseur</option>
-            {suppliers.map((supplier) => (
+            {suppliers?.map((supplier) => (
               <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
             ))}
           </select>

@@ -10,11 +10,12 @@ import {
   FaBox, 
   FaWarehouse, 
   FaCalendarAlt, 
-  FaDollarSign 
+  FaDollarSign,
+  FaAngleLeft,
+  FaAngleRight
 } from "react-icons/fa";
 import { MdCategory, MdInventory2 } from "react-icons/md";
 import { useSession } from 'next-auth/react';
-import { JSDocParsingMode } from "typescript";
 
 export default function ProductDetails() {
   const { data: session } = useSession();
@@ -26,6 +27,8 @@ export default function ProductDetails() {
   const [loading, setLoading] = useState(true);
   const [loadingHistorical, setLoadingHistorical] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   useEffect(() => {
     if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
@@ -68,6 +71,21 @@ export default function ProductDetails() {
     if (id) loadHistoricalCosts();
   }, [id]);
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+
+  // Calculate pagination values
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = historicalCosts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(historicalCosts.length / itemsPerPage);
+
+  // Modified return button
+  const handleReturn = () => {
+    router.push('/home/products');
+  };
+
   if (error) {
     return (
       <div className="alert alert-error mt-4">
@@ -88,10 +106,13 @@ export default function ProductDetails() {
 
   if (!product) return <p className="text-center text-red-500">Produit non trouvé</p>;
 
-  return (
-    <div className="overflow-x-auto">
-      <button onClick={() => router.back()} className="btn btn-ghost mb-4 flex items-center text-white">
-        <FaArrowLeft className="mr-2" /> Back
+return (
+    <div className="overflow-x-auto p-4">
+      <button 
+        onClick={handleReturn} 
+        className="btn btn-ghost mb-4 flex items-center text-primary"
+      >
+        <FaArrowLeft className="mr-2" /> Retour à la liste des produits
       </button>
 
       <h2 className="text-3xl font-semibold mb-6">Détails du produit</h2>
@@ -117,29 +138,56 @@ export default function ProductDetails() {
       <div className="mt-6">
         <h3 className="text-xl font-semibold mb-3 text-blue-400">Coût historique des prix</h3>
         {loadingHistorical ? (
-  <div className="flex justify-center items-center mt-4">
-    <ImSpinner2 className="animate-spin text-2xl text-primary" />
-  </div>
-) : Array.isArray(historicalCosts) && historicalCosts.length > 0 ? (
-  <table className="table w-full rounded-lg overflow-hidden">
-    <thead>
-      <tr>
-        <th className="p-3">Date</th>
-        <th className="p-3">Coût historique des prix</th>
-      </tr>
-    </thead>
-    <tbody>
-      {historicalCosts.map((cost, index) => (
-        <tr key={index} className="border-t border-gray-600">
-          <td className="p-3">{new Date(cost.date).toLocaleDateString()}</td>
-          <td className="p-3 text-green-400 font-bold">${cost.historical_cost_price}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-) : (
-  <p className="text-gray-500">Aucun prix de revient historique n'est disponible.</p>
-)}
+          <div className="flex justify-center items-center mt-4">
+            <ImSpinner2 className="animate-spin text-2xl text-primary" />
+          </div>
+        ) : Array.isArray(historicalCosts) && historicalCosts.length > 0 ? (
+          <>
+            <table className="table w-full rounded-lg overflow-hidden shadow-md">
+              <thead className="bg-base-200">
+                <tr>
+                  <th className="p-3 text-left">Date</th>
+                  <th className="p-3 text-left">Coût historique</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((cost, index) => (
+                  <tr key={index} className="hover:bg-base-100 border-t border-base-200">
+                    <td className="p-3">{new Date(cost.date).toLocaleDateString()}</td>
+                    <td className="p-3 font-bold text-green-600">
+                      ${parseFloat(cost.historical_cost_price).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {/* Pagination controls */}
+            <div className="flex justify-center items-center mt-4 gap-2">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className="btn btn-sm btn-ghost"
+              >
+                <FaAngleLeft />
+              </button>
+              
+              <span className="mx-2">
+                Page {currentPage} sur {totalPages}
+              </span>
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className="btn btn-sm btn-ghost"
+              >
+                <FaAngleRight />
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="text-gray-500">Aucun prix de revient historique n'est disponible.</p>
+        )}
       </div>
     </div>
   );
