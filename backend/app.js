@@ -30,8 +30,8 @@ app.set('trust proxy', 1);
 const allowedOrigins = [
   "https://supplychainx.local",
   "http://localhost:3000",
-  "http://192.168.1.14:3000"
-];
+  "http://192.168.1.14:3000",
+  "http://127.0.0.1:5000/api/classify"];
 app.use(json());
 app.use(
   cors({

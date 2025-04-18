@@ -3,7 +3,9 @@ import { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa"; // Import FaEye
 import { getCategories } from "@/services/categories/categoryService";
 import { getSuppliers } from "@/services/suppliers/supplierService";
-import { showErrorAlert } from "@/utils/swalConfig";
+import { showSuccessAlert, showErrorAlert } from "@/utils/swalConfig";
+import { FaArrowLeft } from "react-icons/fa";
+import { useSession } from "next-auth/react";
 
 export default function ProductForm({ onActionSuccess, onGoBack }) {
   const [categories, setCategories] = useState([]);
@@ -25,26 +27,43 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
     const fetchCategoriesAndSuppliers = async () => {
       setLoading(true); // Set loading state to true
       try {
-        const categoriesResponse = await getCategories();
-        const suppliersResponse = await getSuppliers();
-
-        // Log the responses to check the data
-        console.log("Categories:", categoriesResponse);
-        console.log("Suppliers:", suppliersResponse);
-
-        // Ensure you are getting the correct data structure
-        setCategories(categoriesResponse?.data || []);
-        setSuppliers(suppliersResponse?.data || []);
+        const response = await getCategories(session?.user.accessToken);
+        
+        if (response.success && Array.isArray(response.categories)) {
+          setCategories(response.categories);
+        } else {
+          console.error("Categories error:", response.message);
+          setCategories([]);
+          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des catégories");
+        }
       } catch (error) {
-        console.error("Error loading categories or suppliers:", error);
-        showErrorAlert("Failed to load categories or suppliers.");
-      } finally {
-        setLoading(false); // Set loading state to false once data is loaded
+        console.error("Categories fetch failed:", error);
+        setCategories([]);
+        showErrorAlert(session?.user.theme, "Échec du chargement des catégories");
       }
     };
-
-    fetchCategoriesAndSuppliers();
-  }, []);
+  
+    const loadSuppliers = async () => {
+      try {
+        const response = await getSuppliers("", session?.user.accessToken);
+        
+        if (response.success && Array.isArray(response.suppliers)) {
+          setSuppliers(response.suppliers);
+        } else {
+          console.error("Suppliers error:", response.message);
+          setSuppliers([]);
+          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des fournisseurs");
+        }
+      } catch (error) {
+        console.error("Suppliers fetch failed:", error);
+        setSuppliers([]);
+        showErrorAlert(session?.user.theme, "Échec du chargement des fournisseurs");
+      }
+    };
+  
+    loadCategories();
+    loadSuppliers();
+  }, [session]);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -126,20 +145,10 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full ${errors.category_id ? "border-red-500" : ""}`}
             disabled={loading}
           >
-            <option value="">
-              {loading ? "Loading categories..." : "Select a category"}
-            </option>
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                No categories available
-              </option>
-            )}
+            <option value="">Sélectionner une catégorie</option>
+            {categories?.map((category) => (
+              <option key={category.id} value={category.id}>{category.name}</option>
+            ))}
           </select>
         </div>
 
@@ -153,20 +162,10 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full ${errors.supplier_id ? "border-red-500" : ""}`}
             disabled={loading}
           >
-            <option value="">
-              {loading ? "Loading suppliers..." : "Select a supplier"}
-            </option>
-            {suppliers.length > 0 ? (
-              suppliers.map((supplier) => (
-                <option key={supplier.id} value={supplier.id}>
-                  {supplier.name}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                No suppliers available
-              </option>
-            )}
+            <option value="">Sélectionner un fournisseur</option>
+            {suppliers?.map((supplier) => (
+              <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
+            ))}
           </select>
         </div>
 

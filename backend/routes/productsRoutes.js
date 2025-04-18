@@ -5,9 +5,10 @@ import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new product (initialize stock directly in products table)
 router.post("/",middleware.auth, async (req, res,next) => {
    // Check if the user is  an owner
-   if (req.user.role === "owner")  {
+   if (req.user.role !== "owner")  {
     return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
    }
+ 
   const { name, description, selling_price, category_id, supplier_id, status, created_at, created_by=7, stock_quantity } = req.body;
 
   try {
