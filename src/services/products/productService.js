@@ -1,25 +1,53 @@
 const PRODUCTS_API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const createProduct = async (productData,token) => {
+export const createProduct = async (productData, token) => {
   try {
     const response = await fetch(`${PRODUCTS_API_URL}/products`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' ,
-        'Authorization': `Bearer ${token}` // Add authorization header if token is available
-        
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify(productData)
+      body: JSON.stringify(productData),
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to create product');
+    const data = await response.json();
+
+    // Handle common status cases
+    if (response.status === 400) {
+      return { success: false, message: "Mauvaise requête. Veuillez vérifier les champs." };
+    }
+    if (response.status === 401) {
+      return { success: false, message: "Non autorisé. Veuillez vous reconnecter." };
+    }
+    if (response.status === 403) {
+      return { success: false, message: "Accès interdit. Vous n'avez pas la permission." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "Ressource non trouvée." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Erreur du serveur. Réessayez plus tard." };
     }
 
-    return await response.json(); // Should return the full product object with ID
+    // Success
+    if (response.ok) {
+      return {
+        success: true,
+        product: data.product, // expect: { id, name, ... }
+        message: data.message || "Produit créé avec succès.",
+      };
+    }
+
+    // Fallback
+    return { success: false, message: "Une erreur inattendue est survenue." };
+
   } catch (error) {
-    console.error('Create product error:', error);
-    throw error;
+    console.error("Erreur lors de la création du produit:", error);
+    return {
+      success: false,
+      message: "Erreur de connexion ou serveur. Veuillez vérifier votre réseau.",
+    };
   }
 };
 
