@@ -45,22 +45,29 @@ export default function UserForm({ onActionSuccess, onGoBack }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return; // Stop if validation fails
-
+    if (!validateForm()) return;
+  
     setAdding(true);
     try {
-      const newUser = await createUser(user, session.user.accessToken);
-      if (!newUser) throw new Error("Échec de l'ajout de l'utilisateur.");
-
+      const response = await createUser(user, session.user.accessToken);
+  
+      if (!response.success || !response.user) {
+        // ✅ Show SweetAlert with backend message
+        showErrorAlert(session.user.theme, response.message || "Échec de l'ajout de l'utilisateur.");
+        return; // Stop here
+      }
+  
+      // ✅ Success
       showSuccessAlert(session.user.theme, "Utilisateur ajouté avec succès !");
-      onActionSuccess(newUser);
+      onActionSuccess(response.user);
     } catch (error) {
-      showErrorAlert(session.user.theme, "Échec de l'ajout de l'utilisateur");
+      // ✅ Catch network/server exceptions
+      console.error("User creation error:", error);
+      showErrorAlert(session.user.theme, error.message || "Une erreur inattendue s'est produite.");
     } finally {
       setAdding(false);
     }
   };
-
   return (
     <div className="p-6 border rounded-lg shadow-md">
       <button onClick={onGoBack} className="btn btn-ghost text-primary mb-4 flex items-center">

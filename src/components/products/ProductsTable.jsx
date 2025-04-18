@@ -135,17 +135,17 @@ export default function ProductsTable() {
   };
 
   const handleNewProduct = (newProduct) => {
-    // Ensure the product has an ID before adding to state
+    console.log("New product received:", newProduct);
     if (!newProduct?.id) {
       console.error("New product missing ID:", newProduct);
       return;
     }
-    
-    setProducts((prevProducts) => {
-      // Check if the product already exists in the state
-      const exists = prevProducts.some(p => p.id === newProduct.id);
-      return exists ? prevProducts : [...prevProducts, newProduct];
+  
+    setProducts((prev) => {
+      const exists = prev.some(p => p.id === newProduct.id);
+      return exists ? prev : [...prev, newProduct];
     });
+  
     setIsAddingNewProduct(false);
   };
 

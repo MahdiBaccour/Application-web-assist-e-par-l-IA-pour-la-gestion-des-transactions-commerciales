@@ -14,6 +14,19 @@ router.post("/", middleware.auth, (req, res, next) => {
   const { username, email, password, role, image, verified_status } = req.body;
 
   try {
+    // 🔍 Check if email already exists
+    const emailCheck = await pool.query("SELECT id FROM users WHERE email = $1", [email]);
+    if (emailCheck.rowCount > 0) {
+      return res.status(409).json({ success: false, message: "Email déjà utilisé." });
+    }
+
+    // 🔍 Check if username already exists
+    const usernameCheck = await pool.query("SELECT id FROM users WHERE username = $1", [username]);
+    if (usernameCheck.rowCount > 0) {
+      return res.status(409).json({ success: false, message: "Nom d'utilisateur déjà utilisé." });
+    }
+
+    // ✅ Insert user
     const result = await pool.query(
       `INSERT INTO users (username, email, password, role, image, verified_status) 
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -21,8 +34,10 @@ router.post("/", middleware.auth, (req, res, next) => {
     );
 
     res.status(201).json({ success: true, user: result.rows[0] });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error creating user", error: error.message });
+    console.error("Error creating user:", error);
+    res.status(500).json({ success: false, message: "Erreur lors de la création de l'utilisateur", error: error.message });
   }
 });
 

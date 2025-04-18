@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { FaEye } from "react-icons/fa"; // Import FaEye
 import { getCategories } from "@/services/categories/categoryService";
 import { getSuppliers } from "@/services/suppliers/supplierService";
-import { showSuccessAlert, showErrorAlert } from "@/utils/swalConfig";
-import { FaArrowLeft } from "react-icons/fa";
+import { createProduct } from "@/services/products/productService";
+import { showSuccessAlert,showErrorAlert } from "@/utils/swalConfig";
 import { useSession } from "next-auth/react";
-
 export default function ProductForm({ onActionSuccess, onGoBack }) {
+  const { data: session } = useSession();
   const [categories, setCategories] = useState([]);
   const [suppliers, setSuppliers] = useState([]);
   const [product, setProduct] = useState({
@@ -27,43 +27,26 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
     const fetchCategoriesAndSuppliers = async () => {
       setLoading(true); // Set loading state to true
       try {
-        const response = await getCategories(session?.user.accessToken);
-        
-        if (response.success && Array.isArray(response.categories)) {
-          setCategories(response.categories);
-        } else {
-          console.error("Categories error:", response.message);
-          setCategories([]);
-          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des catégories");
-        }
+        const categoriesResponse = await getCategories(session?.user.accessToken);
+        const suppliersResponse = await getSuppliers("",session?.user.accessToken);
+
+        // Log the responses to check the data
+        console.log("Categories:", categoriesResponse);
+        console.log("Suppliers:", suppliersResponse);
+
+        // Ensure you are getting the correct data structure
+        setCategories(categoriesResponse?.categories || []);
+        setSuppliers(suppliersResponse?.suppliers || []);
       } catch (error) {
-        console.error("Categories fetch failed:", error);
-        setCategories([]);
-        showErrorAlert(session?.user.theme, "Échec du chargement des catégories");
+        console.error("Error loading categories or suppliers:", error);
+        showErrorAlert("Failed to load categories or suppliers.");
+      } finally {
+        setLoading(false); // Set loading state to false once data is loaded
       }
     };
-  
-    const loadSuppliers = async () => {
-      try {
-        const response = await getSuppliers("", session?.user.accessToken);
-        
-        if (response.success && Array.isArray(response.suppliers)) {
-          setSuppliers(response.suppliers);
-        } else {
-          console.error("Suppliers error:", response.message);
-          setSuppliers([]);
-          showErrorAlert(session?.user.theme, response.message || "Erreur de chargement des fournisseurs");
-        }
-      } catch (error) {
-        console.error("Suppliers fetch failed:", error);
-        setSuppliers([]);
-        showErrorAlert(session?.user.theme, "Échec du chargement des fournisseurs");
-      }
-    };
-  
-    loadCategories();
-    loadSuppliers();
-  }, [session]);
+
+    fetchCategoriesAndSuppliers();
+  }, []);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -98,16 +81,17 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
 
     setAdding(true);
     try {
-      // Assume createProduct is a function that sends product data to the server
-      const response = await createProduct(product); // Replace with your actual API call
+      const response = await createProduct(product, session?.user.accessToken);
+    
       if (response.success) {
-        onActionSuccess(response.data); // Call onActionSuccess if product is created successfully
+        showSuccessAlert(session?.user.theme,"Produit créé avec succès.");
+        onActionSuccess(response.product); // ✅ Use `response.product`
       } else {
-        showErrorAlert(response.message || "Failed to create product.");
+        showErrorAlert(session?.user.theme,response.message || "Échec de la création du produit.");
       }
     } catch (error) {
-      console.error("Error creating product:", error);
-      showErrorAlert("An error occurred while creating the product.");
+      console.error("Erreur lors de la création du produit:", error);
+      showErrorAlert(session?.user.theme,"Une erreur s'est produite lors de la création du produit.");
     } finally {
       setAdding(false);
     }
@@ -145,10 +129,20 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full ${errors.category_id ? "border-red-500" : ""}`}
             disabled={loading}
           >
-            <option value="">Sélectionner une catégorie</option>
-            {categories?.map((category) => (
-              <option key={category.id} value={category.id}>{category.name}</option>
-            ))}
+            <option value="">
+              {loading ? "Loading categories..." : "Select a category"}
+            </option>
+            {categories.length > 0 ? (
+              categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                No categories available
+              </option>
+            )}
           </select>
         </div>
 
@@ -162,10 +156,20 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
             className={`select select-bordered w-full ${errors.supplier_id ? "border-red-500" : ""}`}
             disabled={loading}
           >
-            <option value="">Sélectionner un fournisseur</option>
-            {suppliers?.map((supplier) => (
-              <option key={supplier.id} value={supplier.id}>{supplier.name}</option>
-            ))}
+            <option value="">
+              {loading ? "Loading suppliers..." : "Select a supplier"}
+            </option>
+            {suppliers.length > 0 ? (
+              suppliers.map((supplier) => (
+                <option key={supplier.id} value={supplier.id}>
+                  {supplier.name}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                No suppliers available
+              </option>
+            )}
           </select>
         </div>
 
@@ -212,5 +216,5 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
         </button>
       </form>
     </div>
-  );
+  );0
 }
