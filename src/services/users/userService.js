@@ -17,11 +17,20 @@ export const createUser = async (userData, token) => {
       body: JSON.stringify(userData),
     });
 
-    if (!response.ok) throw new Error(`Failed to create user: ${response.statusText}`);
-    return await response.json();
+    const data = await response.json();
+
+    if (response.status === 409) {
+      return { success: false, message: data.message || "Conflit : utilisateur déjà existant." };
+    }
+
+    if (!response.ok) {
+      return { success: false, message: data.message || "Échec de la création de l'utilisateur." };
+    }
+
+    return { success: true, user: data.user };
   } catch (error) {
     console.error("Error creating user:", error);
-    return null;
+    return { success: false, message: "Erreur de connexion au serveur." };
   }
 };
 
