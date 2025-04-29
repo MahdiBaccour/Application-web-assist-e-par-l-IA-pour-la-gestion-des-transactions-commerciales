@@ -12,9 +12,9 @@ import { useRouter } from 'next/navigation';
 import { ImSpinner2 } from 'react-icons/im';
 import PaymentStep from './PaymentStep';
 import PaymentToggleStep from './PaymentToggleStep';
+import { FaTrash } from 'react-icons/fa';
 
-
-export default function TransactionForm() {
+export default function TransactionForm()  {
   const { data: session } = useSession();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
@@ -38,14 +38,12 @@ export default function TransactionForm() {
   });
   const [showPaymentForm, setShowPaymentForm] = useState(null);
 
+  useEffect(() => {
+    if (session?.user.role !== "owner" && session?.user.role !== "employee") {
+      router.push("/forbidden");
+    }
+  }, []);
 
-      useEffect(() => {
-        if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
-          router.push("/forbidden");
-        }
-      }, []);
-
-  // Calculate remaining balance
   useEffect(() => {
     const totalPaid = transactionData.payments.reduce((sum, payment) => sum + payment.amount_paid, 0);
     setTransactionData(prev => ({
@@ -54,7 +52,6 @@ export default function TransactionForm() {
     }));
   }, [transactionData.payments, transactionData.amount]);
 
-  // Load payment methods
   useEffect(() => {
     const loadPaymentMethods = async () => {
       try {
@@ -68,19 +65,32 @@ export default function TransactionForm() {
         showErrorAlert(session.user.theme, 'Échec du chargement des méthodes de paiement');
       }
     };
-    
+
     if (session?.user?.accessToken) {
       loadPaymentMethods();
     }
   }, [session]);
 
-  // Add payment handler
   const handleAddPayment = () => {
+    const newErrors = {};
+
+    if (!newPayment.amount_paid || newPayment.amount_paid <= 0) {
+      newErrors.amount_paid = 'Veuillez entrer le montant du paiement';
+    }
+
+    if (!newPayment.payment_method_id) {
+      newErrors.payment_method_id = 'Veuillez sélectionner une méthode de paiement';
+    }
+
     if (newPayment.amount_paid > transactionData.remaining_balance) {
-      showErrorAlert(session.user.theme, 'Le montant du paiement est supérieur au solde restant');
+      newErrors.overpaid = 'Le montant du paiement est supérieur au solde restant';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
-  
+
     const updatedPayments = [
       ...transactionData.payments,
       {
@@ -88,80 +98,86 @@ export default function TransactionForm() {
         payment_date: new Date().toISOString()
       }
     ];
-  
+
     const totalPaid = updatedPayments.reduce((sum, payment) => sum + Number(payment.amount_paid), 0);
     const newRemainingBalance = transactionData.amount - totalPaid;
-  
+
     setTransactionData(prev => ({
       ...prev,
       payments: updatedPayments,
       remaining_balance: newRemainingBalance
     }));
-  
+
     setNewPayment({
       amount_paid: 0,
       payment_method_id: ''
     });
+    setErrors({});
   };
-  
 
-  // Form validation
-const validateStep = (step) => {
-  const newErrors = {};
-  switch(step) {
-    case 1:
-      if (!transactionData.type) {
-        newErrors.type = 'Veuillez sélectionner un type de transaction';
-        showErrorAlert(session.user.theme, newErrors.type);
-      }
-      break;
-    case 2:
-      if (!transactionData.client_id && !transactionData.supplier_id) {
-        newErrors.party = 'Veuillez sélectionner un client ou un fournisseur';
-        showErrorAlert(session.user.theme, newErrors.party);
-      }
-      break;
-    case 3:
-      if (transactionData.products.length === 0) {
-        newErrors.products = 'Veuillez ajouter au moins un produit';
-        showErrorAlert(session.user.theme, newErrors.products);
-      }
-      break;
-    case 4:
-      if (showPaymentForm === null) {
-        newErrors.paymentDecision = 'Veuillez décider si vous souhaitez ajouter un paiement';
-        showErrorAlert(session.user.theme, newErrors.paymentDecision);
-      }
-       break;
-  }
-  
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-  // Submit handler
+  const validateStep = (step) => {
+    const newErrors = {};
+    switch (step) {
+      case 1:
+        if (!transactionData.type) {
+          newErrors.type = 'Veuillez sélectionner un type de transaction';
+        }
+        break;
+      case 2:
+        if (!transactionData.client_id && !transactionData.supplier_id) {
+          newErrors.party = 'Veuillez sélectionner un client ou un fournisseur';
+        }
+        break;
+      case 3:
+        if (transactionData.products.length === 0) {
+          newErrors.products = 'Veuillez ajouter au moins un produit';
+        }
+        break;
+      case 4:
+        if (showPaymentForm === null) {
+          newErrors.paymentDecision = 'Veuillez décider si vous souhaitez ajouter un paiement';
+        } else if (showPaymentForm && transactionData.payments.length === 0) {
+          newErrors.payments = 'Veuillez ajouter au moins un paiement';
+        }
+        break;
+      case 5:
+        if (!transactionData.due_date) {
+          newErrors.due_date = 'Veuillez entrer la date d\'échéance';
+        }
+        if (!transactionData.description.trim()) {
+          newErrors.description = 'Veuillez entrer une description';
+        }
+        break;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      Object.values(newErrors).forEach(error => showErrorAlert(session.user.theme, error));
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      // Calculate total cost from products
       const total_cost = transactionData.products.reduce(
         (sum, product) => sum + (product.quantity * product.current_cost_price),
         0
       );
-  
-      // Get initial payment from payments
+
       const initial_payment = transactionData.payments.reduce(
         (sum, payment) => sum + Number(payment.amount_paid),
         0
       );
-  
-      // Create reference number
+
       const reference_number = `REF${Math.floor(100000 + Math.random() * 900000)}`;
-  
+
       const finalData = {
         type: transactionData.type,
         amount: transactionData.amount,
         total_cost,
-        date: new Date().toISOString().split('T')[0], // Current date
+        date: new Date().toISOString().split('T')[0],
         description: transactionData.description,
         client_id: transactionData.client_id || null,
         supplier_id: transactionData.supplier_id || null,
@@ -176,10 +192,9 @@ const validateStep = (step) => {
         initial_payment,
         due_status: transactionData.remaining_balance <= 0 ? 'paid' : 'pending'
       };
-  
-      console.log('Final Data:', finalData);
+
       const response = await createTransaction(finalData, session.user.accessToken);
-      
+
       if (response.success) {
         showSuccessAlert(session.user.theme, 'Transaction créée avec succès !');
         router.push('/home/transactions');
@@ -193,14 +208,12 @@ const validateStep = (step) => {
     }
   };
 
-    useEffect(() => {
-      if (currentStep === 4) {
-        setShowPaymentForm(null);
-      }
-    }, [currentStep]);
+  useEffect(() => {
+    if (currentStep === 4) {
+      setShowPaymentForm(null);
+    }
+  }, [currentStep]);
 
-
-  // Add useEffect for step validation
   useEffect(() => {
     if (currentStep === 1 && transactionData.type) {
       setErrors(prev => ({ ...prev, type: '' }));
@@ -210,17 +223,15 @@ const validateStep = (step) => {
     }
   }, [transactionData, currentStep]);
 
-  // Modified navigation handler
   const handleNextStep = () => {
     const isValid = validateStep(currentStep);
     if (isValid) {
       setCurrentStep(prev => prev + 1);
     }
-  }
+  };
 
   return (
     <div className="p-4 space-y-8">
-      {/* Progress Indicator */}
       <div className="steps steps-horizontal w-full">
         {[1, 2, 3, 4, 5].map(step => (
           <div className={`step ${currentStep >= step ? 'step-primary' : ''}`} key={step}>
@@ -229,8 +240,6 @@ const validateStep = (step) => {
         ))}
       </div>
 
-      
-      {/* Step 1: Transaction Type */}
       {currentStep === 1 && (
         <TransactionTypeStep
           selectedType={transactionData.type}
@@ -242,13 +251,12 @@ const validateStep = (step) => {
         />
       )}
 
-      {/* Step 2: Client/Supplier Selection */}
       {currentStep === 2 && (
         <ClientSupplierStep
           type={transactionData.type}
           error={errors.party}
           onSelect={(id) => {
-            const update = transactionData.type === 'credit' 
+            const update = transactionData.type === 'credit'
               ? { client_id: id }
               : { supplier_id: id };
             setTransactionData(prev => ({ ...prev, ...update }));
@@ -258,25 +266,24 @@ const validateStep = (step) => {
         />
       )}
 
-      {/* Step 3: Product Selection */}
       {currentStep === 3 && (
         <div className="space-y-8">
           <ProductSelectionStep
-  onAddProduct={(product) => {
-    setTransactionData(prev => ({
-      ...prev,
-      products: [...prev.products, {
-        id: product.id,
-        quantity: product.quantity,
-        selling_price: product.selling_price,
-        current_cost_price: product.current_cost_price
-      }],
-      amount: prev.amount + (product.selling_price * product.quantity)
-    }));
-  }}
-/>
-          
-          {/* Selected Products Table */}
+            onAddProduct={(product) => {
+              setTransactionData(prev => ({
+                ...prev,
+                products: [...prev.products, {
+                  id: product.id,
+                  name: product.name,
+                  quantity: product.quantity,
+                  selling_price: product.selling_price,
+                  current_cost_price: product.current_cost_price
+                }],
+                amount: prev.amount + (product.selling_price * product.quantity)
+              }));
+            }}
+          />
+
           <div className="overflow-x-auto">
             <table className="table table-zebra">
               <thead>
@@ -285,23 +292,36 @@ const validateStep = (step) => {
                   <th>Quantity</th>
                   <th>Unit Price</th>
                   <th>Total</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-  {transactionData.products.map(product => (
-    <tr key={product.id}>
-      <td>{product.name}</td>
-      <td>{product.quantity}</td>
-      <td>${product.selling_price}</td>
-      <td>${(product.selling_price * product.quantity).toFixed(2)}</td>
-    </tr>
-  ))}
-</tbody>
+                {transactionData.products.map((product, index) => (
+                  <tr key={product.id}>
+                    <td>{product.name}</td>
+                    <td>{product.quantity}</td>
+                    <td>${product.selling_price}</td>
+                    <td>${(product.selling_price * product.quantity).toFixed(2)}</td>
+                    <td>
+                      <button
+                        className="btn btn-xs btn-error"
+                        onClick={() => {
+                          const updated = [...transactionData.products];
+                          const removed = updated.splice(index, 1)[0];
+                          setTransactionData(prev => ({
+                            ...prev,
+                            products: updated,
+                            amount: prev.amount - (removed.selling_price * removed.quantity)
+                          }));
+                        }}
+                      >
+                        <FaTrash />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
-          </div>
-
-          <div className="text-xl font-bold">
-            Total Amount: ${transactionData.amount.toFixed(2)}
           </div>
         </div>
       )}
@@ -312,12 +332,11 @@ const validateStep = (step) => {
             onDecision={(decision) => {
               setShowPaymentForm(decision);
               if (!decision) {
-                // If skipping payment, move to next step immediately
                 setCurrentStep(5);
               }
             }}
           />
-          
+
           {showPaymentForm && (
             <PaymentStep
               paymentMethods={paymentMethods}
@@ -326,13 +345,15 @@ const validateStep = (step) => {
               transactionData={transactionData}
               handleAddPayment={handleAddPayment}
               loading={loading}
+              errors={errors}
             />
+          )}
+          {errors.payments && (
+            <div className="text-error text-sm mt-2">{errors.payments}</div>
           )}
         </div>
       )}
 
-
-      {/* Step 5: Final Review */}
       {currentStep === 5 && (
         <div className="space-y-4">
           <div className="alert alert-info">
@@ -357,6 +378,7 @@ const validateStep = (step) => {
                 due_date: e.target.value
               }))}
             />
+            {errors.due_date && <div className="text-error text-sm">{errors.due_date}</div>}
           </div>
 
           <div className="form-control">
@@ -372,11 +394,11 @@ const validateStep = (step) => {
                 description: e.target.value
               }))}
             />
+            {errors.description && <div className="text-error text-sm">{errors.description}</div>}
           </div>
         </div>
       )}
 
-      {/* Navigation Controls */}
       <div className="flex justify-between">
         <button
           className="btn"
@@ -385,7 +407,7 @@ const validateStep = (step) => {
         >
           Précédent
         </button>
-        
+
         {currentStep < 5 ? (
           <button
             className="btn btn-primary"
@@ -395,8 +417,8 @@ const validateStep = (step) => {
             Suivant
           </button>
         ) : (
-          <button 
-            className="btn btn-success" 
+          <button
+            className="btn btn-success"
             onClick={handleSubmit}
             disabled={loading || transactionData.remaining_balance < 0}
           >
