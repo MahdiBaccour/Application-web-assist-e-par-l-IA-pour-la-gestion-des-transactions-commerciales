@@ -4,7 +4,9 @@ import { genSalt, hash, compare } from "bcrypt";
 import pkg from 'jsonwebtoken';
 const { sign, verify } = pkg
 import pool from "../db.js"; // Import the shared pool
+import middleware from "../middleware/auth.js"; // Import middleware
 import dotenv from "dotenv";
+import { uploadImage } from '../utils/cloudinary.js';
 dotenv.config();
 
 // Generate Access Token
@@ -28,79 +30,189 @@ const generateRefreshToken = (user) => {
   );
 };
 
+// Middleware to authenticate token
+router.get("/validate-token", middleware.auth, (req, res) => {
+  return res.status(200).json({ success: true });
+});
+
 // REGISTER
 router.post("/register", async (req, res) => {
-  const { username, email, password, role } = req.body;
+  const { username, email, password, role, image } = req.body;
+  
   try {
+    // Validate required fields
+    if (!username || !email || !password || !role) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Tous les champs obligatoires doivent être remplis" 
+      });
+    }
+
+    // Role-based email validation
+    if (role === "client") {
+      const clientCheck = await pool.query(
+        "SELECT id FROM clients WHERE email = $1",
+        [email]
+      );
+      if (clientCheck.rows.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Email non enregistré comme client"
+        });
+      }
+    } 
+    else if (role === "supplier") {
+      const supplierCheck = await pool.query(
+        "SELECT id FROM suppliers WHERE email = $1",
+        [email]
+      );
+      if (supplierCheck.rows.length === 0) {
+        return res.status(400).json({
+          success: false,
+          message: "Email non enregistré comme fournisseur"
+        });
+      }
+    }
+
+    // Check existing user
     const existingUser = await pool.query(
       "SELECT * FROM users WHERE email = $1 OR username = $2",
       [email, username]
     );
     if (existingUser.rows.length > 0) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+      return res.status(400).json({
+        success: false,
+        message: "L'utilisateur existe déjà"
+      });
     }
 
+    // Hash password
     const salt = await genSalt(10);
     const hashedPassword = await hash(password, salt);
+
+    // Create user
     const newUser = await pool.query(
-      "INSERT INTO users (username, email, password, role) VALUES ($1, $2, $3, $4) RETURNING *",
+      `INSERT INTO users (username, email, password, role)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, username, email, role, image`,
       [username, email, hashedPassword, role]
     );
-   
 
-   
+    // Handle image upload
+    let imageUrl = null;
+    if (image && image.startsWith("data:image")) {
+      try {
+        imageUrl = await uploadImage(image, newUser.rows[0].id);
+        await pool.query(
+          "UPDATE users SET image = $1 WHERE id = $2",
+          [imageUrl, newUser.rows[0].id]
+        );
+        newUser.rows[0].image = imageUrl;
+      } catch (uploadError) {
+        console.error("Erreur de téléchargement d'image:", uploadError);
+      }
+    }
+
     res.status(201).json({
       success: true,
-      message: "User registered",
-      user: newUser.rows[0], // This will return the entire user object, including the 'id' field
+      message: "Utilisateur enregistré avec succès",
+      user: newUser.rows[0]
     });
+
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error registering user", error: error.message });
+    res.status(500).json({
+      success: false,
+      message: "Erreur d'enregistrement",
+      error: error.message
+    });
   }
 });
 
 // LOGIN
 router.post("/login", async (req, res) => {
-  const { identifier, password } = req.body; // Use identifier instead of email
+  const { identifier, password} = req.body;
 
   try {
-    // Check if identifier is an email or a username
+    // Vérification de l'utilisateur
     const user = await pool.query(
       "SELECT * FROM users WHERE email = $1 OR username = $1", 
       [identifier]
     );
 
     if (user.rows.length === 0) {
-      return res.status(404).json({ success: false, message: "User not found" });
+      return res.status(404).json({ 
+        success: false, 
+        message: "Identifiants invalides - Utilisateur non trouvé" 
+      });
     }
 
-    // Check if password matches
+    // Vérification du mot de passe
     const isMatch = await compare(password, user.rows[0].password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid password" });
+      return res.status(401).json({ 
+        success: false, 
+        message: "Identifiants invalides - Mot de passe incorrect" 
+      });
     }
 
-    const accessToken = generateAccessToken(user.rows[0]);
-    const refreshToken = generateRefreshToken(user.rows[0]);
+     if (theme) {
+      try {
+        // Vérifier l'existence des paramètres
+        const existingSettings = await pool.query(
+          "SELECT user_id FROM settings WHERE user_id = $1",
+          [user.rows[0].id]
+        );
 
-    // Update last login timestamp
-    await pool.query("UPDATE users SET last_login = NOW() WHERE id = $1", [user.rows[0].id]);
+        if (existingSettings.rows.length > 0) {
+          await pool.query(
+            "UPDATE settings SET theme = $1 WHERE user_id = $2",
+            [theme, user.rows[0].id]
+          );
+        } else {
+          await pool.query(
+            "INSERT INTO settings (user_id, theme) VALUES ($1, $2)",
+            [user.rows[0].id, theme]
+          );
+        }
+      } catch (updateError) {
+        console.error("Erreur de mise à jour du thème:", updateError);
+        return res.status(500).json({
+          success: false,
+          message: "Erreur de configuration du thème"
+        });
+      }
+    }// Mise à jour du thème si fourni
+   
 
-    // Fetch user settings (language, timezone, notification_enabled, theme)
-    const settings = await pool.query(
-      "SELECT language, timezone, notification_enabled, theme FROM settings WHERE user_id = $1",
+    // Récupération des paramètres
+    const settingsResult = await pool.query(
+      `SELECT language, timezone, notification_enabled, theme 
+       FROM settings WHERE user_id = $1`,
       [user.rows[0].id]
     );
 
-    const userSettings = settings.rows[0] || {
-      language: "en", // Default values if no settings found
-      timezone: "UTC",
+    // Paramètres par défaut
+    const defaultSettings = {
+      language: "fr",
+      timezone: "Europe/Paris",
       notification_enabled: true,
-      theme: "dark",
+      theme: "dark"
     };
 
-    // Return user details directly at the root level
-    res.status(200).json({ 
+    const userSettings = settingsResult.rows[0] || defaultSettings;
+
+    // Génération des tokens
+    const accessToken = generateAccessToken(user.rows[0]);
+    const refreshToken = generateRefreshToken(user.rows[0]);
+
+    // Mise à jour de la dernière connexion
+    await pool.query(
+      "UPDATE users SET last_login = NOW() WHERE id = $1", 
+      [user.rows[0].id]
+    );
+
+    // Réponse
+    res.status(200).json({
       success: true, 
       accessToken, 
       refreshToken, 
@@ -112,11 +224,17 @@ router.post("/login", async (req, res) => {
       language: userSettings.language,
       timezone: userSettings.timezone,
       notification_enabled: userSettings.notification_enabled,
-      theme: userSettings.theme
-    });
+      theme: userSettings.theme    
+      }
+    );
 
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error logging in", error: error.message });
+    console.error("Erreur de connexion:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Erreur interne du serveur",
+      error: error.message 
+    });
   }
 });
 

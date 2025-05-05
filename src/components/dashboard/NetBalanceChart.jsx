@@ -1,12 +1,13 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useRef } from 'react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer
 } from 'recharts'
 
-const NetBalanceChart = ({ chartData }) => {
+const NetBalanceChart = ({ chartData,onCapture }) => {
   const [offset, setOffset] = useState(50); // Default offset
+  const chartRef = useRef();
 
   useEffect(() => {
     if (chartData?.budgetTrend?.length) {
@@ -22,8 +23,17 @@ const NetBalanceChart = ({ chartData }) => {
     }
   }, [chartData])
 
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
+
   return (
-    <div className="p-6  rounded-lg shadow">
+    <div ref={chartRef} className="p-6  rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-4">Solde net Évolution</h3>
       <div className="h-96">
         <ResponsiveContainer width="100%" height="100%">

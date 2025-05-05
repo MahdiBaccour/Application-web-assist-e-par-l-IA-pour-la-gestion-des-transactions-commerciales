@@ -7,10 +7,10 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        identifier: { label: "Email or Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        identifier: { label: "Email/Nom d'utilisateur", type: "text" },
+        password: { label: "Mot de passe", type: "password" },
+        theme: { label: "Thème", type: "text" }
       },
-
       async authorize(credentials) {
         try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -35,9 +35,7 @@ export const authOptions = {
           const text = await res.text();
           try {
             const data = JSON.parse(text);
-            console.log("data is",data);
-           // if (!data.success) throw new Error(data.message || "Invalid credentials");
-          
+
             return {
               id: data.id,
               username: data.username,
@@ -62,6 +60,7 @@ export const authOptions = {
       }
     }),
   ],
+
   // session: {
   //   strategy: "jwt",
   // },
@@ -92,7 +91,7 @@ export const authOptions = {
         token.accessToken = user.token;
         token.refreshToken = user.refreshToken;
       }
-      //console.log("JWT Token:", token);
+
       return token;
     },
     async session({ session, token }) {
@@ -109,7 +108,8 @@ export const authOptions = {
       session.user.refreshToken = token.refreshToken;
       //console.log("session:", session);
       return session;
-    },
+
+    }
   },
 };
 

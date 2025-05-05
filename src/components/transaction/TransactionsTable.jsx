@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { getTransactions } from "@/services/transactions/transactionService";
+import { getTransactions,getTransactionsClientOrSupplier } from "@/services/transactions/transactionService";
 import useTransactionFilters from "@/utils/useTransactionFilters";
 import { ImSpinner2 } from "react-icons/im";
 import { FaPlus, FaSearch, FaFilter, FaCalendarAlt, FaArrowRight, FaArrowLeft } from "react-icons/fa";
 import TransactionCard from "./TransactionCard";
 import { useSession } from 'next-auth/react';
-export default function TransactionsTable() {
+export default function TransactionsTable({startDate, endDate,onTotalChange = () => {}, onDataCapture = () => {} }) {
   const router = useRouter();
   const pathname = usePathname();
   const [transactions, setTransactions] = useState([]);
@@ -17,9 +17,10 @@ export default function TransactionsTable() {
   const transactionsPerPage = 5;
   const { data: session } = useSession();
 
+
   useEffect(() => {
     if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
-      router.push("/forbidden");
+      router.push("/home/forbidden");
     }
   }, []);
 
@@ -27,8 +28,39 @@ export default function TransactionsTable() {
     const loadTransactions = async () => {
       setLoading(true);
       try {
-        const data = await getTransactions(typeFilter,session.user.accessToken);
-        setTransactions(data);
+        let response;
+        
+        if (session?.user.role === "client") {
+          response = await getTransactionsClientOrSupplier(
+            typeFilter,
+            startDate || undefined,
+            endDate || undefined,
+            session.user.id, // Client ID
+            undefined, // No supplier ID
+            session?.user.accessToken
+          );
+        } else if (session?.user.role === "supplier") {
+          response = await getTransactionsClientOrSupplier(
+            typeFilter,
+            startDate || undefined,
+            endDate || undefined,
+            undefined, // No client ID
+            session.user.id, // Supplier ID
+            session?.user.accessToken
+          );
+        } else {
+          response = await getTransactions(
+            typeFilter,
+            startDate || undefined,
+            endDate || undefined,
+            session?.user.accessToken
+          );
+        }
+    
+        setTransactions(response.transactions || []);
+        const total = response.transactions.reduce((acc, t) => acc + Number(t.amount), 0);
+        onTotalChange(total);
+        onDataCapture(response.transactions);
       } catch (error) {
         console.error("Error fetching transactions:", error);
       }
@@ -36,6 +68,8 @@ export default function TransactionsTable() {
     };
     loadTransactions();
   }, [typeFilter]);
+
+
 
   // Use the filtering hook
   const { filteredTransactions, searchReference, setSearchReference, statusFilter, setStatusFilter, filterDate, setFilterDate } =
@@ -47,6 +81,7 @@ export default function TransactionsTable() {
   const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
   const totalPages = Math.ceil(filteredTransactions.length / transactionsPerPage);
 
+
   if (loading)
     return (
       <div className="flex justify-center items-center mt-10">
@@ -55,7 +90,7 @@ export default function TransactionsTable() {
     );
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" >
       {/* Header - Create Transaction Button */}
       <div className="mb-6 flex justify-between items-center">
         <button onClick={() => router.push(`${pathname}/create`)} className="btn btn-primary flex items-center gap-2">

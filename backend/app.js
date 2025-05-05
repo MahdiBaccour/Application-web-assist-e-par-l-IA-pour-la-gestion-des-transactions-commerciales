@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express, { json,urlencoded } from "express";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import clientsRoutes from "./routes/clientsRoutes.js";
@@ -13,6 +13,7 @@ import transaction_productsRoutes from "./routes/transaction_productsRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import dashboard from "./routes/dashboard/dashboard.js";
 import usersRoutes from "./routes/usersRoutes.js";
+import totalBudgetRoutes from "./routes/total_budgetRoutes.js";
 import pool from "./db.js";
 //import { importData } from "./importDataViaAPI.js"; // Import the importData function
 
@@ -32,7 +33,10 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://192.168.1.14:3000",
   "http://127.0.0.1:5000/api/classify"];
-app.use(json());
+
+app.use(json({ limit: "10mb" }));
+app.use(urlencoded({ extended: true, limit: "10mb" }));
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -81,6 +85,7 @@ app.use("/api/transaction_products", transaction_productsRoutes); // Register tr
 app.use("/api/user", settingsRoutes);
 app.use("/api/stats", dashboard);
 app.use("/api/users", usersRoutes);
+app.use("/api/total_budget", totalBudgetRoutes); // Register total budget routes
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

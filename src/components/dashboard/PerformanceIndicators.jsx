@@ -1,10 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useRef } from 'react'
 import { getPerformanceData } from '@/services/dashboardStats/dashboardStatsService'
 import { FaShoppingCart, FaMoneyBillWave, FaBalanceScale, FaCubes } from 'react-icons/fa'
 import { BiLineChart } from 'react-icons/bi'
 
-const PerformanceIndicators = ({ token }) => {
+const PerformanceIndicators = ({ token,onCapture }) => {
   const [metrics, setMetrics] = useState({
     sales: { value: '0%', absolute: 0, trend: 'neutral' },
     expenses: { value: '0%', absolute: 0, trend: 'neutral' },
@@ -14,6 +14,7 @@ const PerformanceIndicators = ({ token }) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const chartRef = useRef();
 
   const labelsFr = {
     sales: 'Ventes',
@@ -43,10 +44,19 @@ const PerformanceIndicators = ({ token }) => {
     loadData();
   }, [token]);
 
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
+
   if (loading) return <div className="skeleton h-32 w-full"></div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
+    <div  ref={chartRef} className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
       {Object.entries(metrics).map(([key, metric]) => (
         <div
           key={key}

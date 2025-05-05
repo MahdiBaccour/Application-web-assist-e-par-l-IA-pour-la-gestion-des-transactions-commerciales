@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useRef } from 'react';
 import { classifyClients } from '@/services/ml/classifyClients';
 import { getClient } from '@/services/clients/clientService'; // 📍 Make sure this path is correct
 import {
@@ -10,7 +10,7 @@ import {
   FaUsers, FaMoneyCheckAlt, FaBalanceScale, FaExclamationTriangle, FaChartBar
 } from 'react-icons/fa';
 import { useSession } from 'next-auth/react';
-const ClientClassification = () => {
+const ClientClassification = (onCapture) => {
   const { data: session } = useSession();
   const [clients, setClients] = useState([]);
   const [filteredClients, setFilteredClients] = useState([]);
@@ -18,6 +18,7 @@ const ClientClassification = () => {
   const [filter, setFilter] = useState("all");
   const [error, setError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
+  const chartRef = useRef();
 
   // 🧠 Cache client names
   const clientCache = new Map();
@@ -65,7 +66,7 @@ const ClientClassification = () => {
 
   useEffect(() => {
     const load = async () => {
-      const result = await classifyClients();
+      const result = await classifyClients(session?.user.accessToken);
       if (result.success) {
         setClients(result.data);
         setFilteredClients(result.data);
@@ -86,6 +87,15 @@ const ClientClassification = () => {
       setFilteredClients(clients);
     }
   }, [filter, clients]);
+
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
 
   const enrichedClients = filteredClients.map(client => ({
     ...client,
@@ -111,7 +121,7 @@ const ClientClassification = () => {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl p-6">
+    <div ref={chartRef} className="card bg-base-100 shadow-xl p-6">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="card-title flex items-center gap-2">
           <FaUsers className="text-primary" />

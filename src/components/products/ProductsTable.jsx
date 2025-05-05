@@ -42,7 +42,7 @@ export default function ProductsTable() {
 
   useEffect(() => {
     if ( session?.user.role !== "owner"  && session?.user.role !== "employee") {
-      router.push("/forbidden");
+      router.push("/home/forbidden");
     }
   }, []);
 

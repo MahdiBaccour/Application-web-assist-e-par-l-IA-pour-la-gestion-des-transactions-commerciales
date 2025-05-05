@@ -7,9 +7,8 @@ import { useRouter } from 'next/navigation';
 import { FaBell, FaSearch, FaUser, FaSignOutAlt, FaCog } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im";
 import { NotificationsDropdown } from "@/components/profile/NotificationsDropdown";
-
-
-
+import { getCacheBustedUrl } from "@/utils/image"; // 👈 import the helper
+import { useUserContext } from '@/contexts/UserContext'; // ✅
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -19,17 +18,20 @@ export const Navbar = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const { avatar } = useUserContext(); // ✅ context image
 
   const DEFAULT_AVATARS = {
     male: "https://res.cloudinary.com/dmnuz4h65/image/upload/v1744530755/projet-pfe/user-avatar/default-avatar-male_qhkopo.jpg",
     female: "https://res.cloudinary.com/dmnuz4h65/image/upload/v1744530919/projet-pfe/user-avatar/dafault-avatar-female_nbkebo.jpg"
   };
 
-  const getAvatarUrl = () => {
-    if (session?.user?.image) return session?.user.image;
-    const genderChoice = session?.user?.name?.length % 2 === 0 ? 'female' : 'male';
-    return DEFAULT_AVATARS[genderChoice];
-  };
+    
+    const getAvatarUrl = () => {
+      if (avatar) return avatar;
+      if (session?.user?.image) return getCacheBustedUrl(session.user.image);
+      const genderChoice = session?.user?.name?.length % 2 === 0 ? 'female' : 'male';
+      return DEFAULT_AVATARS[genderChoice];
+    };
 
   const handleLogout = async () => {
     await signOut({ redirect: false });

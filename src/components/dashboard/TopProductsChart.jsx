@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useRef } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer
@@ -8,10 +8,11 @@ import { getTopProducts } from '@/services/dashboardStats/dashboardStatsService'
 
 const COLORS = ['#8884d8', '#82ca9d']
 
-const TopProductsChart = ({ token }) => {
+const TopProductsChart = ({ token,onCapture }) => {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const chartRef = useRef()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +33,15 @@ const TopProductsChart = ({ token }) => {
     fetchData()
   }, [token])
 
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
+
   if (loading) return <div className="skeleton h-96 w-full"></div>
 
   if (error) {
@@ -46,7 +56,7 @@ const TopProductsChart = ({ token }) => {
   }
 
   return (
-    <div className="card bg-base-100 shadow-xl mt-8">
+    <div ref={chartRef} className="card bg-base-100 shadow-xl mt-8">
       <div className="card-body">
         <h2 className="card-title">Top produits vendus</h2>
         <div className="h-96">
