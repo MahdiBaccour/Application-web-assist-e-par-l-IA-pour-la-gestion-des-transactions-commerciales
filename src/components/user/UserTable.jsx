@@ -28,7 +28,7 @@ export default function UserTable() {
 
   useEffect(() => {
     if (session?.user.role !== "owner") {
-      router.push("/forbidden");
+      router.push("/home/forbidden");
     }
   }, [session, router]);
 

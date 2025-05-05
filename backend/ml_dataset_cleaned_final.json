@@ -1,0 +1,3069 @@
+{
+  "transactions": [
+    {
+      "type": "credit",
+      "amount": 180.0,
+      "total_cost": 153.79,
+      "date": "2025-01-19",
+      "description": "Generated transaction",
+      "client_id": 7,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF986032",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-01-27",
+      "initial_payment": 136.46,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1550.0,
+      "total_cost": 1218.92,
+      "date": "2025-01-03",
+      "description": "Generated transaction",
+      "client_id": 5,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF670071",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 4,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 8,
+          "quantity": 5,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 5,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-01-08",
+      "initial_payment": 493.81,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 220.74,
+      "total_cost": 220.74,
+      "date": "2025-01-08",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 9,
+      "payment_method_id": 2,
+      "reference_number": "REF163815",
+      "products": [
+        {
+          "product_id": 4,
+          "quantity": 1,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-01-23",
+      "initial_payment": 195.28,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 248.22,
+      "total_cost": 248.22,
+      "date": "2025-01-26",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 4,
+      "reference_number": "REF657803",
+      "products": [
+        {
+          "product_id": 4,
+          "quantity": 1,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-02-02",
+      "initial_payment": 140.49,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 573.96,
+      "total_cost": 573.96,
+      "date": "2025-01-25",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 3,
+      "payment_method_id": 4,
+      "reference_number": "REF590387",
+      "products": [
+        {
+          "product_id": 5,
+          "quantity": 2,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 4,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-02-09",
+      "initial_payment": 548.64,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 730.0,
+      "total_cost": 482.21,
+      "date": "2025-01-25",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF547336",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 1,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 4,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-02-05",
+      "initial_payment": 301.52,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1185.73,
+      "total_cost": 1185.73,
+      "date": "2025-01-11",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 11,
+      "payment_method_id": 5,
+      "reference_number": "REF935741",
+      "products": [
+        {
+          "product_id": 9,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 2,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 4,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-01-18",
+      "initial_payment": 574.15,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1181.54,
+      "total_cost": 1181.54,
+      "date": "2025-01-08",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 6,
+      "reference_number": "REF353040",
+      "products": [
+        {
+          "product_id": 9,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 3,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-01-27",
+      "initial_payment": 1152.67,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1050.01,
+      "total_cost": 1050.01,
+      "date": "2025-01-02",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 7,
+      "payment_method_id": 6,
+      "reference_number": "REF461804",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 3,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 4,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 3,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-01-11",
+      "initial_payment": 551.81,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 74.21,
+      "total_cost": 74.21,
+      "date": "2025-01-26",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 3,
+      "reference_number": "REF514730",
+      "products": [
+        {
+          "product_id": 9,
+          "quantity": 1,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-02-14",
+      "initial_payment": 72.91,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 929.99,
+      "total_cost": 650.32,
+      "date": "2025-01-31",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF871011",
+      "products": [
+        {
+          "product_id": 11,
+          "quantity": 1,
+          "unit_price": 80.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 1,
+          "unit_price": 799.99
+        },
+        {
+          "product_id": 5,
+          "quantity": 2,
+          "unit_price": 25.0
+        }
+      ],
+      "due_date": "2025-02-07",
+      "initial_payment": 903.69,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 625.61,
+      "total_cost": 625.61,
+      "date": "2025-01-29",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 6,
+      "payment_method_id": 4,
+      "reference_number": "REF330557",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 2,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 5,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 8,
+          "quantity": 2,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-02-14",
+      "initial_payment": 542.05,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 404.13,
+      "total_cost": 404.13,
+      "date": "2025-01-05",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 11,
+      "payment_method_id": 6,
+      "reference_number": "REF188185",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 3,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 2,
+          "unit_price": 100.0
+        }
+      ],
+      "due_date": "2025-01-16",
+      "initial_payment": 253.31,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 2424.76,
+      "total_cost": 2424.76,
+      "date": "2025-01-03",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 3,
+      "payment_method_id": 5,
+      "reference_number": "REF895905",
+      "products": [
+        {
+          "product_id": 2,
+          "quantity": 5,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-01-08",
+      "initial_payment": 1213.56,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1249.98,
+      "total_cost": 835.84,
+      "date": "2025-01-11",
+      "description": "Generated transaction",
+      "client_id": 8,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF347847",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 5,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 2,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 2,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-01-19",
+      "initial_payment": 910.18,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 295.17,
+      "total_cost": 295.17,
+      "date": "2025-01-12",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 7,
+      "payment_method_id": 5,
+      "reference_number": "REF207432",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 3,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 1,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 2,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-01-26",
+      "initial_payment": 243.08,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 7007.5,
+      "total_cost": 7007.5,
+      "date": "2025-01-30",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 12,
+      "payment_method_id": 3,
+      "reference_number": "REF276619",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 5,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 4,
+          "quantity": 2,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-02-19",
+      "initial_payment": 6844.08,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 2903.73,
+      "total_cost": 2903.73,
+      "date": "2025-01-24",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 4,
+      "payment_method_id": 4,
+      "reference_number": "REF934860",
+      "products": [
+        {
+          "product_id": 5,
+          "quantity": 2,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 7,
+          "quantity": 1,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 5,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-02-05",
+      "initial_payment": 2403.89,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 839.97,
+      "total_cost": 650.21,
+      "date": "2025-01-30",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF958150",
+      "products": [
+        {
+          "product_id": 11,
+          "quantity": 3,
+          "unit_price": 80.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 3,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 3,
+          "quantity": 1,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-02-18",
+      "initial_payment": 308.29,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 8424.92,
+      "total_cost": 7291.15,
+      "date": "2025-01-31",
+      "description": "Generated transaction",
+      "client_id": 8,
+      "supplier_id": null,
+      "payment_method_id": 3,
+      "reference_number": "REF409473",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 4,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 10,
+          "quantity": 4,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-02-07",
+      "initial_payment": 3357.81,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 2909.96,
+      "total_cost": 2457.49,
+      "date": "2025-02-11",
+      "description": "Generated transaction",
+      "client_id": 6,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF270677",
+      "products": [
+        {
+          "product_id": 2,
+          "quantity": 3,
+          "unit_price": 799.99
+        },
+        {
+          "product_id": 10,
+          "quantity": 1,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 9,
+          "quantity": 3,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-02-19",
+      "initial_payment": 2216.98,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 281.24,
+      "total_cost": 281.24,
+      "date": "2025-02-17",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 6,
+      "reference_number": "REF736972",
+      "products": [
+        {
+          "product_id": 9,
+          "quantity": 2,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-03-08",
+      "initial_payment": 140.5,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 2749.99,
+      "total_cost": 2217.18,
+      "date": "2025-02-08",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF919348",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 1,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 3,
+          "quantity": 3,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 5,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-02-25",
+      "initial_payment": 2400.16,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 640.91,
+      "total_cost": 640.91,
+      "date": "2025-02-16",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 7,
+      "payment_method_id": 4,
+      "reference_number": "REF651215",
+      "products": [
+        {
+          "product_id": 5,
+          "quantity": 4,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 1,
+          "unit_price": 799.99
+        },
+        {
+          "product_id": 8,
+          "quantity": 1,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-03-08",
+      "initial_payment": 639.51,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 540.0,
+      "total_cost": 465.06,
+      "date": "2025-02-27",
+      "description": "Generated transaction",
+      "client_id": 6,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF355146",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 2,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 1,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-03-14",
+      "initial_payment": 200.91,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 135.0,
+      "total_cost": 116.67,
+      "date": "2025-02-09",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF934851",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 3,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-02-25",
+      "initial_payment": 107.21,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1899.99,
+      "total_cost": 1406.0,
+      "date": "2025-02-25",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF648453",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 1,
+          "unit_price": 1899.99
+        }
+      ],
+      "due_date": "2025-03-15",
+      "initial_payment": 1518.47,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 201.31,
+      "total_cost": 201.31,
+      "date": "2025-02-07",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 5,
+      "payment_method_id": 5,
+      "reference_number": "REF770012",
+      "products": [
+        {
+          "product_id": 11,
+          "quantity": 4,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-02-20",
+      "initial_payment": 130.48,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 505.46,
+      "total_cost": 505.46,
+      "date": "2025-02-16",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 6,
+      "payment_method_id": 3,
+      "reference_number": "REF965192",
+      "products": [
+        {
+          "product_id": 2,
+          "quantity": 1,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-02-28",
+      "initial_payment": 196.93,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 744.96,
+      "total_cost": 614.94,
+      "date": "2025-02-14",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF436225",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 4,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 5,
+          "quantity": 4,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 1,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-02-25",
+      "initial_payment": 408.19,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 490.0,
+      "total_cost": 424.72,
+      "date": "2025-02-24",
+      "description": "Generated transaction",
+      "client_id": 8,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF914731",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 2,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 4,
+          "unit_price": 100.0
+        }
+      ],
+      "due_date": "2025-03-04",
+      "initial_payment": 297.66,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 174.39,
+      "total_cost": 174.39,
+      "date": "2025-02-24",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 6,
+      "payment_method_id": 5,
+      "reference_number": "REF997915",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-03-14",
+      "initial_payment": 74.74,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 581.88,
+      "total_cost": 581.88,
+      "date": "2025-02-16",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 11,
+      "payment_method_id": 1,
+      "reference_number": "REF197647",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 1,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-03-01",
+      "initial_payment": 295.88,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 257.17,
+      "total_cost": 257.17,
+      "date": "2025-02-20",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 7,
+      "payment_method_id": 1,
+      "reference_number": "REF592702",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 5,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-03-06",
+      "initial_payment": 246.44,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1274.36,
+      "total_cost": 1274.36,
+      "date": "2025-02-10",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 9,
+      "payment_method_id": 6,
+      "reference_number": "REF132945",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 5,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 5,
+          "quantity": 3,
+          "unit_price": 25.0
+        }
+      ],
+      "due_date": "2025-02-18",
+      "initial_payment": 509.77,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 750.0,
+      "total_cost": 622.59,
+      "date": "2025-02-21",
+      "description": "Generated transaction",
+      "client_id": 9,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF872087",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 3,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 1,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 3,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-03-05",
+      "initial_payment": 617.47,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 6299.94,
+      "total_cost": 5552.03,
+      "date": "2025-02-20",
+      "description": "Generated transaction",
+      "client_id": 9,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF413969",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 1,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 12,
+          "quantity": 4,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 5,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-03-06",
+      "initial_payment": 1966.58,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 707.55,
+      "total_cost": 707.55,
+      "date": "2025-02-16",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 5,
+      "payment_method_id": 3,
+      "reference_number": "REF352722",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 1,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 3,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-02-25",
+      "initial_payment": 269.76,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 3105.31,
+      "total_cost": 3105.31,
+      "date": "2025-02-18",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 12,
+      "payment_method_id": 4,
+      "reference_number": "REF675652",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 2,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 7,
+          "quantity": 4,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 1,
+          "quantity": 2,
+          "unit_price": 1899.99
+        }
+      ],
+      "due_date": "2025-03-09",
+      "initial_payment": 2969.68,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 6459.97,
+      "total_cost": 4768.2,
+      "date": "2025-02-04",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF674102",
+      "products": [
+        {
+          "product_id": 11,
+          "quantity": 5,
+          "unit_price": 80.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 3,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 1,
+          "quantity": 3,
+          "unit_price": 1899.99
+        }
+      ],
+      "due_date": "2025-02-24",
+      "initial_payment": 6016.55,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1380.0,
+      "total_cost": 1163.06,
+      "date": "2025-03-07",
+      "description": "Generated transaction",
+      "client_id": 6,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF286694",
+      "products": [
+        {
+          "product_id": 11,
+          "quantity": 3,
+          "unit_price": 80.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 3,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 7,
+          "quantity": 2,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-03-22",
+      "initial_payment": 989.08,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 6707.71,
+      "total_cost": 6707.71,
+      "date": "2025-03-30",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 2,
+      "reference_number": "REF661237",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 4,
+          "unit_price": 1899.99
+        }
+      ],
+      "due_date": "2025-04-16",
+      "initial_payment": 4745.23,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 373.54,
+      "total_cost": 373.54,
+      "date": "2025-03-30",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 4,
+      "payment_method_id": 6,
+      "reference_number": "REF532955",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 3,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-04-10",
+      "initial_payment": 184.52,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 540.0,
+      "total_cost": 357.79,
+      "date": "2025-03-28",
+      "description": "Generated transaction",
+      "client_id": 1,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF132475",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 2,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 5,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-04-09",
+      "initial_payment": 390.28,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1148.42,
+      "total_cost": 1148.42,
+      "date": "2025-03-14",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 1,
+      "payment_method_id": 5,
+      "reference_number": "REF472367",
+      "products": [
+        {
+          "product_id": 5,
+          "quantity": 2,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 4,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 3,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-03-30",
+      "initial_payment": 480.82,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 625.5,
+      "total_cost": 625.5,
+      "date": "2025-03-03",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 6,
+      "payment_method_id": 5,
+      "reference_number": "REF539965",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 5,
+          "quantity": 5,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 4,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-03-11",
+      "initial_payment": 458.45,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 425.71,
+      "total_cost": 425.71,
+      "date": "2025-03-09",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 11,
+      "payment_method_id": 5,
+      "reference_number": "REF784214",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 3,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 5,
+          "quantity": 1,
+          "unit_price": 25.0
+        }
+      ],
+      "due_date": "2025-03-24",
+      "initial_payment": 232.65,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 4684.93,
+      "total_cost": 4122.48,
+      "date": "2025-03-09",
+      "description": "Generated transaction",
+      "client_id": 5,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF539310",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 1,
+          "quantity": 2,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 6,
+          "quantity": 3,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-03-24",
+      "initial_payment": 3299.82,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 400.0,
+      "total_cost": 298.51,
+      "date": "2025-03-05",
+      "description": "Generated transaction",
+      "client_id": 8,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF725774",
+      "products": [
+        {
+          "product_id": 12,
+          "quantity": 4,
+          "unit_price": 100.0
+        }
+      ],
+      "due_date": "2025-03-19",
+      "initial_payment": 189.97,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 134.54,
+      "total_cost": 134.54,
+      "date": "2025-03-30",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 12,
+      "payment_method_id": 5,
+      "reference_number": "REF184426",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-04-04",
+      "initial_payment": 42.42,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 929.98,
+      "total_cost": 650.51,
+      "date": "2025-03-20",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF445847",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 3,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 2,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-03-28",
+      "initial_payment": 472.54,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 6436.5,
+      "total_cost": 6436.5,
+      "date": "2025-03-31",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 2,
+      "reference_number": "REF365168",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 5,
+          "unit_price": 1899.99
+        }
+      ],
+      "due_date": "2025-04-13",
+      "initial_payment": 4513.35,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1340.0,
+      "total_cost": 1054.68,
+      "date": "2025-03-03",
+      "description": "Generated transaction",
+      "client_id": 1,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF556449",
+      "products": [
+        {
+          "product_id": 12,
+          "quantity": 5,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 7,
+          "quantity": 2,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-03-15",
+      "initial_payment": 1195.59,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 593.52,
+      "total_cost": 593.52,
+      "date": "2025-03-31",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 2,
+      "payment_method_id": 2,
+      "reference_number": "REF436753",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 3,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 4,
+          "quantity": 1,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-04-20",
+      "initial_payment": 389.24,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1129.99,
+      "total_cost": 750.52,
+      "date": "2025-03-18",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF484252",
+      "products": [
+        {
+          "product_id": 9,
+          "quantity": 2,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 2,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 1,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-03-25",
+      "initial_payment": 1088.79,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 225.0,
+      "total_cost": 135.23,
+      "date": "2025-03-06",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF509206",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-03-20",
+      "initial_payment": 141.88,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1945.15,
+      "total_cost": 1945.15,
+      "date": "2025-03-29",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 10,
+      "payment_method_id": 4,
+      "reference_number": "REF261866",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 4,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 7,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 5,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-04-06",
+      "initial_payment": 1087.48,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 160.0,
+      "total_cost": 112.2,
+      "date": "2025-03-04",
+      "description": "Generated transaction",
+      "client_id": 1,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF432108",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 3,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 5,
+          "quantity": 1,
+          "unit_price": 25.0
+        }
+      ],
+      "due_date": "2025-03-09",
+      "initial_payment": 115.91,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1074.95,
+      "total_cost": 764.71,
+      "date": "2025-03-02",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF487313",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 5,
+          "quantity": 4,
+          "unit_price": 25.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-03-08",
+      "initial_payment": 697.77,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 224.99,
+      "total_cost": 152.35,
+      "date": "2025-03-21",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF895030",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 1,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 5,
+          "quantity": 3,
+          "unit_price": 25.0
+        }
+      ],
+      "due_date": "2025-04-10",
+      "initial_payment": 124.4,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1030.0,
+      "total_cost": 722.18,
+      "date": "2025-04-06",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF407385",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 4,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 1,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 3,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-04-15",
+      "initial_payment": 457.88,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 833.28,
+      "total_cost": 833.28,
+      "date": "2025-04-07",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 2,
+      "payment_method_id": 1,
+      "reference_number": "REF975231",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 5,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 2,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-04-23",
+      "initial_payment": 388.97,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1589.95,
+      "total_cost": 1060.15,
+      "date": "2025-04-18",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF620114",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 2,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 2,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        }
+      ],
+      "due_date": "2025-04-30",
+      "initial_payment": 1337.06,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1860.0,
+      "total_cost": 1274.87,
+      "date": "2025-04-27",
+      "description": "Generated transaction",
+      "client_id": 5,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF660111",
+      "products": [
+        {
+          "product_id": 4,
+          "quantity": 5,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 9,
+          "quantity": 3,
+          "unit_price": 120.0
+        }
+      ],
+      "due_date": "2025-05-14",
+      "initial_payment": 1227.84,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 825.0,
+      "total_cost": 725.33,
+      "date": "2025-04-09",
+      "description": "Generated transaction",
+      "client_id": 2,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF155032",
+      "products": [
+        {
+          "product_id": 4,
+          "quantity": 2,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-04-27",
+      "initial_payment": 354.83,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 67.37,
+      "total_cost": 67.37,
+      "date": "2025-04-02",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 12,
+      "payment_method_id": 4,
+      "reference_number": "REF594006",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 2,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-04-15",
+      "initial_payment": 67.36,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 468.44,
+      "total_cost": 468.44,
+      "date": "2025-04-28",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 9,
+      "payment_method_id": 5,
+      "reference_number": "REF487169",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 5,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-05-18",
+      "initial_payment": 326.41,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1876.91,
+      "total_cost": 1876.91,
+      "date": "2025-04-13",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 8,
+      "payment_method_id": 5,
+      "reference_number": "REF959458",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 3,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 3,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-05-03",
+      "initial_payment": 803.62,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 500.0,
+      "total_cost": 428.19,
+      "date": "2025-04-01",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF558827",
+      "products": [
+        {
+          "product_id": 12,
+          "quantity": 5,
+          "unit_price": 100.0
+        }
+      ],
+      "due_date": "2025-04-09",
+      "initial_payment": 494.38,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 6209.97,
+      "total_cost": 4449.68,
+      "date": "2025-04-24",
+      "description": "Generated transaction",
+      "client_id": 5,
+      "supplier_id": null,
+      "payment_method_id": 2,
+      "reference_number": "REF927203",
+      "products": [
+        {
+          "product_id": 1,
+          "quantity": 3,
+          "unit_price": 1899.99
+        },
+        {
+          "product_id": 8,
+          "quantity": 3,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 2,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-05-14",
+      "initial_payment": 2454.78,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1105.0,
+      "total_cost": 854.38,
+      "date": "2025-04-23",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 5,
+      "reference_number": "REF893218",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 4,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 8,
+          "quantity": 4,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-05-03",
+      "initial_payment": 500.93,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1008.87,
+      "total_cost": 1008.87,
+      "date": "2025-04-26",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 2,
+      "payment_method_id": 1,
+      "reference_number": "REF462570",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 7,
+          "quantity": 4,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 3,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-05-15",
+      "initial_payment": 696.25,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 824.66,
+      "total_cost": 824.66,
+      "date": "2025-04-24",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 3,
+      "payment_method_id": 3,
+      "reference_number": "REF172569",
+      "products": [
+        {
+          "product_id": 6,
+          "quantity": 5,
+          "unit_price": 45.0
+        },
+        {
+          "product_id": 3,
+          "quantity": 5,
+          "unit_price": 150.0
+        },
+        {
+          "product_id": 8,
+          "quantity": 1,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-05-04",
+      "initial_payment": 565.61,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 2079.96,
+      "total_cost": 1428.39,
+      "date": "2025-04-25",
+      "description": "Generated transaction",
+      "client_id": 7,
+      "supplier_id": null,
+      "payment_method_id": 3,
+      "reference_number": "REF514389",
+      "products": [
+        {
+          "product_id": 2,
+          "quantity": 2,
+          "unit_price": 799.99
+        },
+        {
+          "product_id": 10,
+          "quantity": 2,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 6,
+          "quantity": 4,
+          "unit_price": 45.0
+        }
+      ],
+      "due_date": "2025-05-02",
+      "initial_payment": 839.64,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 452.47,
+      "total_cost": 452.47,
+      "date": "2025-04-18",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 9,
+      "payment_method_id": 3,
+      "reference_number": "REF704143",
+      "products": [
+        {
+          "product_id": 7,
+          "quantity": 3,
+          "unit_price": 120.0
+        },
+        {
+          "product_id": 8,
+          "quantity": 3,
+          "unit_price": 70.0
+        }
+      ],
+      "due_date": "2025-05-05",
+      "initial_payment": 403.05,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 2749.97,
+      "total_cost": 2023.32,
+      "date": "2025-04-19",
+      "description": "Generated transaction",
+      "client_id": 4,
+      "supplier_id": null,
+      "payment_method_id": 1,
+      "reference_number": "REF301886",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 5,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 3,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-05-09",
+      "initial_payment": 1184.81,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1597.66,
+      "total_cost": 1597.66,
+      "date": "2025-04-09",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 2,
+      "payment_method_id": 6,
+      "reference_number": "REF692056",
+      "products": [
+        {
+          "product_id": 10,
+          "quantity": 5,
+          "unit_price": 149.99
+        },
+        {
+          "product_id": 8,
+          "quantity": 2,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 4,
+          "quantity": 4,
+          "unit_price": 300.0
+        }
+      ],
+      "due_date": "2025-04-17",
+      "initial_payment": 791.67,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 1300.0,
+      "total_cost": 984.34,
+      "date": "2025-04-21",
+      "description": "Generated transaction",
+      "client_id": 1,
+      "supplier_id": null,
+      "payment_method_id": 6,
+      "reference_number": "REF748664",
+      "products": [
+        {
+          "product_id": 4,
+          "quantity": 2,
+          "unit_price": 300.0
+        },
+        {
+          "product_id": 12,
+          "quantity": 3,
+          "unit_price": 100.0
+        },
+        {
+          "product_id": 11,
+          "quantity": 5,
+          "unit_price": 80.0
+        }
+      ],
+      "due_date": "2025-05-07",
+      "initial_payment": 442.77,
+      "due_status": "pending"
+    },
+    {
+      "type": "debit",
+      "amount": 1993.41,
+      "total_cost": 1993.41,
+      "date": "2025-04-10",
+      "description": "Generated transaction",
+      "client_id": null,
+      "supplier_id": 5,
+      "payment_method_id": 4,
+      "reference_number": "REF299932",
+      "products": [
+        {
+          "product_id": 8,
+          "quantity": 1,
+          "unit_price": 70.0
+        },
+        {
+          "product_id": 2,
+          "quantity": 3,
+          "unit_price": 799.99
+        }
+      ],
+      "due_date": "2025-04-23",
+      "initial_payment": 1348.56,
+      "due_status": "pending"
+    },
+    {
+      "type": "credit",
+      "amount": 150.0,
+      "total_cost": 100.66,
+      "date": "2025-04-01",
+      "description": "Generated transaction",
+      "client_id": 3,
+      "supplier_id": null,
+      "payment_method_id": 4,
+      "reference_number": "REF311485",
+      "products": [
+        {
+          "product_id": 3,
+          "quantity": 1,
+          "unit_price": 150.0
+        }
+      ],
+      "due_date": "2025-04-17",
+      "initial_payment": 96.23,
+      "due_status": "pending"
+    }
+  ],
+  "payments": [
+    {
+      "transaction_id": 1,
+      "amount_paid": 136.46,
+      "payment_date": "2025-02-09",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 1,
+      "amount_paid": 43.53999999999999,
+      "payment_date": "2025-01-23",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 493.81,
+      "payment_date": "2025-01-17",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 757.09,
+      "payment_date": "2025-01-09",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 3,
+      "amount_paid": 195.28,
+      "payment_date": "2025-01-17",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 3,
+      "amount_paid": 25.460000000000008,
+      "payment_date": "2025-02-17",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 140.49,
+      "payment_date": "2025-03-04",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 107.72999999999999,
+      "payment_date": "2025-02-13",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 548.64,
+      "payment_date": "2025-02-17",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 25.32000000000005,
+      "payment_date": "2025-02-03",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 301.52,
+      "payment_date": "2025-03-01",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 574.15,
+      "payment_date": "2025-01-15",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 611.58,
+      "payment_date": "2025-02-19",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 1152.67,
+      "payment_date": "2025-02-04",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 28.86999999999989,
+      "payment_date": "2025-02-11",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 551.81,
+      "payment_date": "2025-01-22",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 498.20000000000005,
+      "payment_date": "2025-01-14",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 10,
+      "amount_paid": 72.91,
+      "payment_date": "2025-02-06",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 10,
+      "amount_paid": 1.2999999999999972,
+      "payment_date": "2025-01-29",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 903.69,
+      "payment_date": "2025-03-03",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 26.299999999999955,
+      "payment_date": "2025-03-12",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 542.05,
+      "payment_date": "2025-02-10",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 83.56000000000006,
+      "payment_date": "2025-02-05",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 253.31,
+      "payment_date": "2025-02-17",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 150.82,
+      "payment_date": "2025-01-08",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 1213.56,
+      "payment_date": "2025-01-21",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 910.18,
+      "payment_date": "2025-01-12",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 339.80000000000007,
+      "payment_date": "2025-02-11",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 243.08,
+      "payment_date": "2025-01-22",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 6844.08,
+      "payment_date": "2025-02-07",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 163.42000000000007,
+      "payment_date": "2025-02-25",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 2403.89,
+      "payment_date": "2025-02-20",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 499.84000000000015,
+      "payment_date": "2025-02-13",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 308.29,
+      "payment_date": "2025-03-10",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 399.92,
+      "payment_date": "2025-03-01",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 3357.81,
+      "payment_date": "2025-02-03",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 3180.99,
+      "payment_date": "2025-03-08",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 1886.1200000000008,
+      "payment_date": "2025-02-09",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 1,
+      "amount_paid": 2216.98,
+      "payment_date": "2025-03-21",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 1,
+      "amount_paid": 692.98,
+      "payment_date": "2025-02-24",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 140.5,
+      "payment_date": "2025-03-18",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 93.71,
+      "payment_date": "2025-03-24",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 47.03000000000003,
+      "payment_date": "2025-03-09",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 3,
+      "amount_paid": 2400.16,
+      "payment_date": "2025-02-11",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 639.51,
+      "payment_date": "2025-02-26",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 200.91,
+      "payment_date": "2025-04-09",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 339.09000000000003,
+      "payment_date": "2025-04-08",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 107.21,
+      "payment_date": "2025-02-23",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 27.790000000000006,
+      "payment_date": "2025-03-26",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 1518.47,
+      "payment_date": "2025-03-24",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 381.52,
+      "payment_date": "2025-04-09",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 130.48,
+      "payment_date": "2025-02-19",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 196.93,
+      "payment_date": "2025-02-22",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 10,
+      "amount_paid": 408.19,
+      "payment_date": "2025-03-06",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 297.66,
+      "payment_date": "2025-02-24",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 192.33999999999997,
+      "payment_date": "2025-02-24",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 74.74,
+      "payment_date": "2025-03-14",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 295.88,
+      "payment_date": "2025-03-02",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 285.26,
+      "payment_date": "2025-03-15",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 0.7400000000000091,
+      "payment_date": "2025-03-29",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 246.44,
+      "payment_date": "2025-03-22",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 10.730000000000018,
+      "payment_date": "2025-04-01",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 509.77,
+      "payment_date": "2025-03-25",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 756.22,
+      "payment_date": "2025-02-17",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 617.47,
+      "payment_date": "2025-03-06",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 132.52999999999997,
+      "payment_date": "2025-02-22",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 1966.58,
+      "payment_date": "2025-02-22",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 1985.21,
+      "payment_date": "2025-02-24",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 2234.29,
+      "payment_date": "2025-03-05",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 269.76,
+      "payment_date": "2025-03-31",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 437.78999999999996,
+      "payment_date": "2025-02-17",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 2969.68,
+      "payment_date": "2025-03-20",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 6016.55,
+      "payment_date": "2025-02-14",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 443.4200000000001,
+      "payment_date": "2025-02-21",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 1,
+      "amount_paid": 989.08,
+      "payment_date": "2025-03-24",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 4745.23,
+      "payment_date": "2025-04-14",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 1962.4800000000005,
+      "payment_date": "2025-05-05",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 3,
+      "amount_paid": 184.52,
+      "payment_date": "2025-04-28",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 390.28,
+      "payment_date": "2025-05-03",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 149.72000000000003,
+      "payment_date": "2025-04-08",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 480.82,
+      "payment_date": "2025-04-02",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 458.45,
+      "payment_date": "2025-03-21",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 167.05,
+      "payment_date": "2025-03-10",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 232.65,
+      "payment_date": "2025-03-13",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 3299.82,
+      "payment_date": "2025-04-13",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 1385.1100000000001,
+      "payment_date": "2025-03-18",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 189.97,
+      "payment_date": "2025-03-19",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 210.03,
+      "payment_date": "2025-04-08",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 10,
+      "amount_paid": 42.42,
+      "payment_date": "2025-05-05",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 472.54,
+      "payment_date": "2025-03-20",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 457.44,
+      "payment_date": "2025-04-10",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 4513.35,
+      "payment_date": "2025-04-04",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 1923.1499999999996,
+      "payment_date": "2025-04-25",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 1195.59,
+      "payment_date": "2025-04-13",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 144.41000000000008,
+      "payment_date": "2025-04-02",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 389.24,
+      "payment_date": "2025-05-11",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 204.27999999999997,
+      "payment_date": "2025-04-07",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 1088.79,
+      "payment_date": "2025-03-23",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 41.200000000000045,
+      "payment_date": "2025-04-04",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 141.88,
+      "payment_date": "2025-03-13",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 83.12,
+      "payment_date": "2025-04-17",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 1087.48,
+      "payment_date": "2025-04-11",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 857.6700000000001,
+      "payment_date": "2025-04-10",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 115.91,
+      "payment_date": "2025-04-15",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 44.09,
+      "payment_date": "2025-03-17",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 697.77,
+      "payment_date": "2025-04-11",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 377.18000000000006,
+      "payment_date": "2025-03-11",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 124.4,
+      "payment_date": "2025-04-14",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 1,
+      "amount_paid": 457.88,
+      "payment_date": "2025-04-17",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 388.97,
+      "payment_date": "2025-05-18",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 258.42,
+      "payment_date": "2025-04-29",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 2,
+      "amount_paid": 185.88999999999987,
+      "payment_date": "2025-05-03",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 3,
+      "amount_paid": 1337.06,
+      "payment_date": "2025-05-07",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 4,
+      "amount_paid": 1227.84,
+      "payment_date": "2025-06-08",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 5,
+      "amount_paid": 354.83,
+      "payment_date": "2025-04-26",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 6,
+      "amount_paid": 67.36,
+      "payment_date": "2025-04-28",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 326.41,
+      "payment_date": "2025-05-27",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 7,
+      "amount_paid": 142.02999999999997,
+      "payment_date": "2025-05-18",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 803.62,
+      "payment_date": "2025-04-24",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 8,
+      "amount_paid": 1073.29,
+      "payment_date": "2025-04-15",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 494.38,
+      "payment_date": "2025-05-10",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 9,
+      "amount_paid": 5.6200000000000045,
+      "payment_date": "2025-04-29",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 10,
+      "amount_paid": 2454.78,
+      "payment_date": "2025-05-27",
+      "payment_method_id": 2
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 500.93,
+      "payment_date": "2025-05-16",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 11,
+      "amount_paid": 604.0699999999999,
+      "payment_date": "2025-05-11",
+      "payment_method_id": 5
+    },
+    {
+      "transaction_id": 12,
+      "amount_paid": 696.25,
+      "payment_date": "2025-05-25",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 565.61,
+      "payment_date": "2025-05-03",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 13,
+      "amount_paid": 259.04999999999995,
+      "payment_date": "2025-05-10",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 839.64,
+      "payment_date": "2025-05-24",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 14,
+      "amount_paid": 1240.3200000000002,
+      "payment_date": "2025-05-03",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 403.05,
+      "payment_date": "2025-05-04",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 15,
+      "amount_paid": 49.420000000000016,
+      "payment_date": "2025-05-07",
+      "payment_method_id": 3
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 1184.81,
+      "payment_date": "2025-05-24",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 881.56,
+      "payment_date": "2025-04-20",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 16,
+      "amount_paid": 683.5999999999999,
+      "payment_date": "2025-05-19",
+      "payment_method_id": 1
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 791.67,
+      "payment_date": "2025-04-26",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 17,
+      "amount_paid": 805.9900000000001,
+      "payment_date": "2025-05-19",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 442.77,
+      "payment_date": "2025-06-05",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 582.45,
+      "payment_date": "2025-05-25",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 18,
+      "amount_paid": 274.78,
+      "payment_date": "2025-05-10",
+      "payment_method_id": 6
+    },
+    {
+      "transaction_id": 19,
+      "amount_paid": 1348.56,
+      "payment_date": "2025-04-26",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 96.23,
+      "payment_date": "2025-04-09",
+      "payment_method_id": 4
+    },
+    {
+      "transaction_id": 20,
+      "amount_paid": 53.769999999999996,
+      "payment_date": "2025-05-03",
+      "payment_method_id": 4
+    }
+  ],
+  "total_budget": [
+    {
+      "month_date": "2025-01-01",
+      "total_income_brut": 13045.52,
+      "total_income_net": 2383.32,
+      "total_expenses": 16932.02,
+      "net_balance": 14748.7
+    },
+    {
+      "month_date": "2025-02-01",
+      "total_income_brut": 22179.35,
+      "total_income_net": 4194.86,
+      "total_expenses": 7105.17,
+      "net_balance": 3110.31
+    },
+    {
+      "month_date": "2025-03-01",
+      "total_income_brut": 11598.33,
+      "total_income_net": 2433.87,
+      "total_expenses": 17248.79,
+      "net_balance": 15014.92
+    },
+    {
+      "month_date": "2025-04-01",
+      "total_income_brut": 13717.32,
+      "total_income_net": 3772.99,
+      "total_expenses": 8165.59,
+      "net_balance": 4592.6
+    }
+  ]
+}

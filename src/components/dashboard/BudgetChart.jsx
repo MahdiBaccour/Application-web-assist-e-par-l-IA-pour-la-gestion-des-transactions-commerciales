@@ -1,13 +1,15 @@
 'use clietnt'
-import { useState, useEffect } from 'react'
+import { useState, useEffect,useRef } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 import { getBudgetData } from '@/services/dashboardStats/dashboardStatsService'
+import html2canvas from 'html2canvas';
 
-const BudgetChart = ({ token }) => {
+const BudgetChart = ({ token ,onCapture}) => {
   const [data, setData] = useState([])
   const [years, setYears] = useState([])
   const [selectedYear, setSelectedYear] = useState('')
   const [error, setError] = useState(null)
+  const chartRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +30,17 @@ const BudgetChart = ({ token }) => {
     fetchData()
   }, [token, selectedYear])
 
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
+
   return (
-    <div className="card bg-base-100 shadow-xl mt-8">
+    <div ref={chartRef} className="card bg-base-100 shadow-xl mt-8">
       <div className="card-body">
         <div className="flex justify-between items-center mb-4">
           <h2 className="card-title">Aperçu du budget</h2>

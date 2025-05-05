@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState,useRef } from 'react'
 import { 
   LineChart, ComposedChart, PieChart, AreaChart, 
   Line, Bar, Pie, Area, XAxis, YAxis, 
@@ -9,9 +9,10 @@ import { getChartData } from '@/services/dashboardStats/dashboardStatsService'
 import NetBalanceChart from './NetBalanceChart'
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF']
 
-const DashboardCharts = ({ token }) => {
+const DashboardCharts = ({ token,onCapture }) => {
   const [chartData, setChartData] = useState(null)
   const [loading, setLoading] = useState(true)
+  const chartRef = useRef();
 
   useEffect(() => {
     const loadData = async () => {
@@ -33,12 +34,21 @@ const DashboardCharts = ({ token }) => {
     }
     loadData()
   }, [token])
+  
+  useEffect(() => {
+    if (onCapture && chartRef.current) {
+      html2canvas(chartRef.current).then((canvas) => {
+        const base64 = canvas.toDataURL("image/png");
+        onCapture(base64); // Pass it up to parent
+      });
+    }
+  }, [onCapture]);
 
   if (loading) return <div className="skeleton h-96 w-full"></div>
   if (!chartData) return <div>Pas de données disponibles</div>
  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <div ref={chartRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       {/* Sales vs Purchases Trend */}
       <div className="p-6  rounded-lg shadow">
         <h3 className="text-lg font-semibold mb-4">Ventes et achats</h3>

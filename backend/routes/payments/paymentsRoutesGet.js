@@ -10,12 +10,82 @@ router.get("/", middleware.auth, async (req, res) => {
       return res.status(403).json({ success: false, message: "Unauthorized" });
     }
 
-    const result = await pool.query(`
+    const { startDate, endDate } = req.query;
+    let query = `
       SELECT p.*, pm.name AS payment_method 
       FROM payments p
       LEFT JOIN payment_methods pm ON p.payment_method_id = pm.id
-    `);
+    `;
 
+    const params = [];
+    if (startDate && endDate) {
+      query += " WHERE p.payment_date >= $1 AND p.payment_date <= $2";
+      params.push(startDate, endDate);
+    }
+
+    const result = await pool.query(query, params);
+    res.status(200).json({ success: true, payments: result.rows });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving payments",
+      error: error.message,
+    });
+  }
+});
+
+// GET /payments/clientOrSupplier (List payments by client or supplier with payment method name)
+router.get("/client-or-supplier", middleware.auth, async (req, res) => {
+  try {
+    if (req.user.role !== "owner" && req.user.role !== "employee") {
+      return res.status(403).json({ success: false, message: "Unauthorized" });
+    }
+
+    const { startDate, endDate, client_id, supplier_id } = req.query;
+
+    // Validate client/supplier exclusivity
+    if (client_id && supplier_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot filter by both client and supplier simultaneously"
+      });
+    }
+
+    let query = `
+      SELECT p.*, pm.name AS payment_method,
+             t.client_id, t.supplier_id
+      FROM payments p
+      LEFT JOIN payment_methods pm ON p.payment_method_id = pm.id
+      LEFT JOIN transactions t ON p.transaction_id = t.id
+    `;
+
+    const params = [];
+    let conditions = [];
+    let paramIndex = 1;
+
+    // Client/Supplier filter
+    if (client_id) {
+      conditions.push(`t.client_id = $${paramIndex}`);
+      params.push(client_id);
+      paramIndex++;
+    } else if (supplier_id) {
+      conditions.push(`t.supplier_id = $${paramIndex}`);
+      params.push(supplier_id);
+      paramIndex++;
+    }
+
+    // Date filter
+    if (startDate && endDate) {
+      conditions.push(`p.payment_date >= $${paramIndex} AND p.payment_date <= $${paramIndex + 1}`);
+      params.push(startDate, endDate);
+      paramIndex += 2;
+    }
+
+    if (conditions.length > 0) {
+      query += " WHERE " + conditions.join(" AND ");
+    }
+
+    const result = await pool.query(query, params);
     res.status(200).json({ success: true, payments: result.rows });
   } catch (error) {
     res.status(500).json({

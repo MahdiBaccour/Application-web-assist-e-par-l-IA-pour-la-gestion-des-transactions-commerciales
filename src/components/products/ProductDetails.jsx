@@ -32,7 +32,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
-      router.push("/forbidden");
+      router.push("/home/forbidden");
     }
   }, [ session, router]);
 

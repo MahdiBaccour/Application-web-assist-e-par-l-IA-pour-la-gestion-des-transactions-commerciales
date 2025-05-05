@@ -55,28 +55,187 @@ export const createTransaction = async (transactionData, token) => {
   }
 };
   
-  export const getTransactions = async (type = "all",token) => {
-    try {
-      const url = new URL(TRANSACTIONS_API_URL);
-      if (type !== "all") url.searchParams.append("type", type);
-  
-      const response = await fetch(url
-      ,{
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+export const getTransactions = async (type = "all", startDate, endDate, token) => {
+  try {
+    const url = new URL(TRANSACTIONS_API_URL);
+    if (type !== "all") url.searchParams.append("type", type);
+    if (startDate) url.searchParams.append("startDate", startDate);
+    if (endDate) url.searchParams.append("endDate", endDate);
+
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-      );
-       if (!response.ok) throw new Error(`Failed to fetch transactions: ${response.statusText}`);
-  
-      const data = await response.json();
-      return data.transactions || [];
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      return [];
+    });
+
+    const data = await response.json();
+    console.log("Transactions response:", data);
+
+    // Handle response status codes
+    if (response.status === 401) {
+      return { success: false, message: "Unauthorized access. Please log in again." };
     }
-  };
-  
+    if (response.status === 403) {
+      return { success: false, message: "Forbidden access. You do not have permission to view transactions." };
+    }
+    if (response.status === 400) {
+      return { success: false, message: "Bad request. Please check your filter parameters." };
+    }
+    if (response.status === 404) {
+      return { success: false, message: "No transactions found for the specified criteria." };
+    }
+    if (response.status === 500) {
+      return { success: false, message: "Server error, please try again later." };
+    }
+    if (response.ok) {
+      return { success: true, transactions: data.transactions || [] };
+    }
+
+    return { success: false, message: "Unexpected error occurred while fetching transactions." };
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return { success: false, message: "Failed to fetch transactions. Please check your connection." };
+  }
+};
+
+export const getTransactionsClientOrSupplier = async (
+  type = "all", 
+  startDate, 
+  endDate, 
+  clientId, 
+  supplierId, 
+  token
+) => {
+  try {
+    const url = new URL(TRANSACTIONS_API_URL+"/client-or-supplier");
+    
+    // Add filters
+    if (type !== "all") url.searchParams.append("type", type);
+    if (startDate) url.searchParams.append("startDate", startDate);
+    if (endDate) url.searchParams.append("endDate", endDate);
+    
+    // Mutually exclusive client/supplier filters
+    if (clientId && supplierId) {
+      return { 
+        success: false, 
+        message: "Cannot filter by both client and supplier" 
+      };
+    }
+    if (clientId) url.searchParams.append("client_id", clientId);
+    if (supplierId) url.searchParams.append("supplier_id", supplierId);
+
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await response.json();
+
+    // Handle HTTP errors
+    if (response.status === 400) {
+      return { 
+        success: false, 
+        message: data.message || "Invalid filter parameters" 
+      };
+    }
+    if (response.status === 401) {
+      return { 
+        success: false, 
+        message: "Unauthorized access. Please log in again." 
+      };
+    }
+    if (response.status === 403) {
+      return { 
+        success: false, 
+        message: "Forbidden access. You do not have permission to view transactions." 
+      };
+    }
+    if (response.status === 404) {
+      return { 
+        success: false, 
+        message: "No transactions found for the specified criteria." 
+      };
+    }
+    if (response.status === 500) {
+      return { 
+        success: false, 
+        message: "Server error, please try again later." 
+      };
+    }
+
+    if (response.ok) {
+      return { 
+        success: true, 
+        transactions: data.transactions || [] 
+      };
+    }
+
+    return { 
+      success: false, 
+      message: "Unexpected error occurred while fetching transactions." 
+    };
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return { 
+      success: false, 
+      message: "Failed to fetch transactions. Please check your connection." 
+    };
+  }
+};
+
+export const getPartyId = async ({ emailClient, emailSupplier }, token) => {
+  try {
+    const url = new URL(`${TRANSACTIONS_API_URL}/party-id`);
+    
+    if (emailClient) {
+      url.searchParams.append('email_client', emailClient);
+    } else if (emailSupplier) {
+      url.searchParams.append('email_supplier', emailSupplier);
+    }
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    });
+
+    const data = await response.json();
+
+    // Gestion des erreurs HTTP
+    if (!response.ok) {
+      switch(response.status) {
+        case 400:
+          return { success: false, message: "Requête invalide" };
+        case 401:
+          return { success: false, message: "Authentification requise" };
+        case 404:
+          return { 
+            success: false, 
+            message: emailClient ? "Client introuvable" : "Fournisseur introuvable" 
+          };
+        default:
+          return { 
+            success: false, 
+            message: "Erreur serveur (code " + response.status + ")" 
+          };
+      }
+    }
+
+    return {
+      success: true,
+      id: data.partyId // Retourne l'id directement
+    };
+
+  } catch (error) {
+    console.error("Erreur API:", error);
+    return { 
+      success: false, 
+      message: "Erreur de connexion au serveur" 
+    };
+  }
+};
+
   export const getTransactionById = async (transactionId,token) => {
     try {
       const response = await fetch(`${TRANSACTIONS_API_URL}/${transactionId}`, {

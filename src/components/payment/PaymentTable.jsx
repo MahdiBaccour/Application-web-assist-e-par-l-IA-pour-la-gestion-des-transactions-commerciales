@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getPayments, deletePayment, updatePaymentStatus } from "@/services/payments/paymentService";
+import { getPayments, deletePayment, getPaymentsClientOrSupplier } from "@/services/payments/paymentService";
 import { ImSpinner2 } from "react-icons/im";
 import { 
   FaPlus, 
@@ -32,7 +32,7 @@ const paymentMethods = [
   { id: 6, name: "Checks", icon: <FaFileInvoiceDollar /> }
 ];
 
-export default function PaymentTable({ refreshTrigger }) {
+export default function PaymentTable({ refreshTrigger,startDate, endDate,onDataCapture }) {
   const { data: session } = useSession();
   const router = useRouter();
   const [payments, setPayments] = useState([]);
@@ -47,7 +47,7 @@ export default function PaymentTable({ refreshTrigger }) {
 
   useEffect(() => {
     if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
-      router.push("/forbidden");
+      router.push("/home/forbidden");
     }
   }, [ session, router]);
 
@@ -55,10 +55,36 @@ export default function PaymentTable({ refreshTrigger }) {
     const fetchPayments = async () => {
       setLoading(true);
       try {
-        const response = await getPayments(session?.user.accessToken);
+        let response;
+        
+        if (session?.user.role === "client") {
+          response = await getPaymentsClientOrSupplier(
+            startDate || undefined,
+            endDate || undefined,
+            session.user.id, // Client ID
+            undefined, // No supplier ID
+            session?.user.accessToken
+          );
+        } else if (session?.user.role === "supplier") {
+          response = await getPaymentsClientOrSupplier(
+            startDate || undefined,
+            endDate || undefined,
+            undefined, // No client ID
+            session.user.id, // Supplier ID
+            session?.user.accessToken
+          );
+        } else {
+          response = await getPayments(
+            startDate || undefined,
+            endDate || undefined,
+            session?.user.accessToken
+          );
+        }
+    
         setPayments(response.payments || []);
+        onDataCapture(response.payments || []);
       } catch (error) {
-        showErrorAlert(session.user.theme, "Failed to load payments");
+       showErrorAlert(session?.user?.theme || "light", "Failed to load payments");
       } finally {
         setLoading(false);
       }
@@ -66,6 +92,8 @@ export default function PaymentTable({ refreshTrigger }) {
 
     fetchPayments();
   }, [refreshTrigger, session?.user.accessToken, session?.user.theme]);
+
+
 
   const handleAddNewPayment = () => {
     setIsAddingNewPayment(true);
@@ -171,7 +199,7 @@ return (
     ) : (
       <>
         {/* Table and filters */}
-        <div className="flex gap-2 mb-4 flex-wrap">
+        <div className="flex gap-2 mb-4 flex-wrap" >
           <button
             onClick={handleAddNewPayment}
             className="btn btn-primary flex items-center gap-2"

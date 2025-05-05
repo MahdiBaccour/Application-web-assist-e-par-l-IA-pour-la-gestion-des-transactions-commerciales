@@ -1,4 +1,3 @@
-// utils/generateCSV.js
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -97,7 +96,7 @@ export const appendPaymentToCSV = (payment) => {
   }
 };
   
-  export const updatePaymentInCSV = (payment) => {
+export const updatePaymentInCSV = (payment) => {
     try {
       const paymentCSVPath = path.join(outputDir, "payments.csv");
   
@@ -122,9 +121,9 @@ export const appendPaymentToCSV = (payment) => {
     } catch (err) {
       console.error("Error updating payment:", err.message);
     }
-  };
+};
   
-  export const deletePaymentFromCSV = (payment) => {
+export const deletePaymentFromCSV = (payment) => {
     try {
       const paymentCSVPath = path.join(outputDir, "payments.csv");
   
@@ -144,4 +143,5 @@ export const appendPaymentToCSV = (payment) => {
     } catch (err) {
       console.error("Error deleting payment from CSV:", err.message);
     }
-  };
+};
+
