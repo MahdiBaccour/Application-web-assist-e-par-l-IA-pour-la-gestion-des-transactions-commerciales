@@ -130,7 +130,7 @@ router.post("/register", async (req, res) => {
 
 // LOGIN
 router.post("/login", async (req, res) => {
-  const { identifier, password} = req.body;
+  const { identifier, password,theme} = req.body;
 
   try {
     // Vérification de l'utilisateur
