@@ -1,6 +1,7 @@
 export const customTitles = {
   'home': 'Tableau de Bord',
   'products': 'Gestion des Produits',
+  'categories': 'Gestion des Catégories', // Added
   'suppliers': 'Annuaire des Fournisseurs',
   'clients': 'Espace Clients',
   'transactions': 'Historique des Transactions',
@@ -11,7 +12,7 @@ export const customTitles = {
   'messages': 'Chatbot & Messages',
   'settings': 'Paramètres Système'
 };
-  
+
 export const getAuthorizedLinks = (role) => {
   const baseLinks = [
     { path: "/home", icon: 'FaHome', label: "Accueil" }
@@ -24,16 +25,14 @@ export const getAuthorizedLinks = (role) => {
         { path: "/home/clients", icon: 'FaUserTie', label: "Clients" },
         { path: "/home/suppliers", icon: 'FaIndustry', label: "Fournisseurs" },
         { path: "/home/products", icon: 'FaBoxOpen', label: "Produits" },
+        { path: "/home/categories", icon: 'FaTags', label: "Catégories" }, // Added
         { path: "/home/transactions", icon: 'FaExchangeAlt', label: "Transactions" },
         { path: "/home/payments", icon: 'FaCreditCard', label: "Paiements" },
-      
         { path: "/home/reports", icon: 'FaChartBar', label: "Rapports" },
         { path: "/home/ai-predictions", icon: 'FaBrain', label: "IA & Prédictions" },
-      
         { path: "/home/logs", icon: 'FaHistory', label: "Journaux & Audits" },
         { path: "/home/messages", icon: 'FaComments', label: "Messages & Chatbot" },
         { path: "/home/q-and-a", icon: 'FaQuestionCircle', label: "Questions & Réponses" },
-      
         { path: "/home/settings", icon: 'FaCog', label: "Paramètres" },
         { path: "/home/users", icon: 'FaUsers', label: "Utilisateurs" }
       ];
@@ -41,6 +40,7 @@ export const getAuthorizedLinks = (role) => {
       return [
         ...baseLinks,
         { path: "/home/products", icon: 'FaBoxOpen', label: "Produits" },
+        { path: "/home/categories", icon: 'FaTags', label: "Catégories" }, // Added
         { path: "/home/transactions", icon: 'FaExchangeAlt', label: "Transactions" },
         { path: "/home/payments", icon: 'FaExchangeAlt', label: "Paiements" },
         { path: "/home/q-and-a", icon: 'FaQuestionCircle', label: "Questions & Réponses" },
