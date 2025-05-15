@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import AuthProvider from '@/providers/authProvider';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { UserProvider } from '@/contexts/UserContext'; // ✅ Import the context
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {

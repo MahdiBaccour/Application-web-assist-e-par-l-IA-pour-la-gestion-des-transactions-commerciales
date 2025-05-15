@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 export const authOptions = {
   providers: [
@@ -15,69 +16,53 @@ export const authOptions = {
         try {
           const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
             method: "POST",
-            headers: { 
+            headers: {
               "Content-Type": "application/json",
-              "Accept": "application/json"
+              Accept: "application/json"
             },
-            credentials: 'include',
-            mode: 'cors',
-            body: JSON.stringify(credentials),
+            credentials: "include",
+            mode: "cors",
+            body: JSON.stringify(credentials)
           });
-      
-          // Handle HTTP errors
+
           if (!res.ok) {
             const error = await res.text();
-            console.error('Login failed:', error);
-            throw new Error(error || 'Authentication failed');
+            throw new Error(error || "Authentication failed");
           }
-      
-          // ✅ If response is not JSON, log error
-          const text = await res.text();
-          try {
-            const data = JSON.parse(text);
 
-            return {
-              id: data.id,
-              username: data.username,
-              email: data.email,
-              role: data.role,
-              image: data.image,
-              language: data.language,
-              timezone: data.timezone,
-              notification_enabled: data.notification_enabled,
-              theme: data.theme,
-              token: data.accessToken,
-              refreshToken: data.refreshToken,
-            };
-          } catch (err) {
-            console.error("Unexpected API response:", text);
-            throw new Error("Invalid server response");
-          }
+          const text = await res.text();
+          const data = JSON.parse(text);
+
+          return {
+            id: data.id,
+            username: data.username,
+            email: data.email,
+            role: data.role,
+            image: data.image,
+            language: data.language,
+            timezone: data.timezone,
+            notification_enabled: data.notification_enabled,
+            theme: data.theme,
+            token: data.accessToken,
+            refreshToken: data.refreshToken
+          };
         } catch (error) {
-          console.error("Login error:", error);
           throw new Error(error.message || "An unexpected error occurred");
         }
       }
-    }),
+    })
   ],
 
   // session: {
   //   strategy: "jwt",
+  //   maxAge: 14 * 60 // 15 minutes
   // },
-  // cookies: {
-  //   sessionToken: {
-  //     name: "next-auth.session-token",
-  //     options: {
-  //       httpOnly: true,
-  //       secure: true,
-  //       sameSite: "lax",
-  //       path: "/",
-  //     },
-  //   },
-  // },
+
   secret: process.env.NEXTAUTH_SECRET,
+
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      // On login
       if (user) {
         token.id = user.id;
         token.username = user.username;
@@ -92,25 +77,32 @@ export const authOptions = {
         token.refreshToken = user.refreshToken;
       }
 
+      // On update() call (i.e., token refresh)
+      if (trigger === "update" && session) {
+        if (session.accessToken) token.accessToken = session.accessToken;
+        if (session.refreshToken) token.refreshToken = session.refreshToken;
+      }
+
       return token;
     },
-    async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.username = token.username;
-      session.user.email = token.email;
-      session.user.role = token.role;
-      session.user.image = token.image;
-      session.user.language = token.language;
-      session.user.timezone = token.timezone;
-      session.user.notification_enabled = token.notification_enabled;
-      session.user.theme = token.theme;
-      session.user.accessToken = token.accessToken;
-      session.user.refreshToken = token.refreshToken;
-      //console.log("session:", session);
-      return session;
 
+    async session({ session, token }) {
+      session.user = {
+        id: token.id,
+        username: token.username,
+        email: token.email,
+        role: token.role,
+        image: token.image,
+        language: token.language,
+        timezone: token.timezone,
+        notification_enabled: token.notification_enabled,
+        theme: token.theme,
+        accessToken: token.accessToken,
+        refreshToken: token.refreshToken
+      };
+      return session;
     }
-  },
+  }
 };
 
 export default NextAuth(authOptions);

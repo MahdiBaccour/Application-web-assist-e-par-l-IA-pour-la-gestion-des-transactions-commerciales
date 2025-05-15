@@ -13,7 +13,7 @@ export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [errors, setErrors] = useState({ identifier: "", password: "" });
+  const [errors, setErrors] = useState({ identifier: "", password: "" ,general: ""});
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -21,6 +21,15 @@ export default function LoginPage() {
     const savedTheme = localStorage.getItem("theme") || "light";
     setTheme(savedTheme);
   }, []);
+
+  useEffect(() => {
+    const loginError = sessionStorage.getItem("loginError");
+    if (loginError) {
+      setErrors((prev) => ({ ...prev, general: loginError }));
+      sessionStorage.removeItem("loginError");
+    }
+  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,8 +96,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center" data-theme={theme}>
       <div className="container mx-auto p-4">
-    
-
+         
         <div className={`grid grid-cols-1 lg:grid-cols-2 gap-16 items-center rounded-2xl shadow-xl overflow-hidden`}>
           {/* Left Image Section */}
           <div className="hidden lg:block relative h-[600px] bg-gradient-to-br from-indigo-600 to-blue-400">
@@ -102,6 +110,12 @@ export default function LoginPage() {
           {/* Form Section */}
           <div className="p-12">
             <div className="text-center mb-12">
+                {errors.general && (
+          <div className="text-sm text-red-600 text-center font-medium">
+            {errors.general}
+          </div>
+        )}
+
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-transparent bg-clip-text">
                 Bienvenue à nouveau
               </h1>
