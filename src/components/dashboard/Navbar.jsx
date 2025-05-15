@@ -1,14 +1,14 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from "next/link";
 import { useSession } from 'next-auth/react';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { FaBell, FaSearch, FaUser, FaSignOutAlt, FaCog } from "react-icons/fa";
-import { ImSpinner2 } from "react-icons/im";
 import { NotificationsDropdown } from "@/components/profile/NotificationsDropdown";
-import { getCacheBustedUrl } from "@/utils/image"; // 👈 import the helper
-import { useUserContext } from '@/contexts/UserContext'; // ✅
+import { getCacheBustedUrl } from "@/utils/image";
+import { useUserContext } from '@/contexts/UserContext';
+import { getAuthorizedLinks, customTitles } from "@/config/dashboard-links";
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -18,25 +18,66 @@ export const Navbar = () => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
-  const { avatar } = useUserContext(); // ✅ context image
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
+  const { avatar } = useUserContext();
+  const searchRef = useRef(null);
 
   const DEFAULT_AVATARS = {
     male: "https://res.cloudinary.com/dmnuz4h65/image/upload/v1744530755/projet-pfe/user-avatar/default-avatar-male_qhkopo.jpg",
     female: "https://res.cloudinary.com/dmnuz4h65/image/upload/v1744530919/projet-pfe/user-avatar/dafault-avatar-female_nbkebo.jpg"
   };
 
-    
-    const getAvatarUrl = () => {
-      if (avatar) return avatar;
-      if (session?.user?.image) return getCacheBustedUrl(session.user.image);
-      const genderChoice = session?.user?.name?.length % 2 === 0 ? 'female' : 'male';
-      return DEFAULT_AVATARS[genderChoice];
+  // Gestion des liens et suggestions
+  const authorizedLinks = getAuthorizedLinks(session?.user?.role);
+  const allLinks = authorizedLinks.map(link => ({
+    ...link,
+    title: customTitles[link.path.split('/').pop()] || link.label
+  }));
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setSearchQuery('');
+      }
     };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (!query) {
+      setFilteredSuggestions([]);
+      return;
+    }
+    
+    const results = allLinks.filter(link =>
+      link.title.toLowerCase().includes(query.toLowerCase()) ||
+      link.path.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredSuggestions(results.slice(0, 5));
+  };
+
+  const handleSearchSubmit = () => {
+    if (filteredSuggestions.length > 0) {
+      router.push(filteredSuggestions[0].path);
+      setSearchQuery('');
+    }
+  };
+
+  const getAvatarUrl = () => {
+    if (avatar) return avatar;
+    if (session?.user?.image) return getCacheBustedUrl(session.user.image);
+    const genderChoice = session?.user?.name?.length % 2 === 0 ? 'female' : 'male';
+    return DEFAULT_AVATARS[genderChoice];
+  };
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push('/');
   };
+
 
   const fetchNotifications = async () => {
     setLoadingNotifications(true);
@@ -68,27 +109,45 @@ export const Navbar = () => {
     <div className="navbar bg-base-100 shadow-lg sticky top-0 z-40 px-4 sm:px-6 lg:px-8">
       <div className="flex-1 gap-4">
         <label htmlFor="my-drawer-2" className="btn btn-ghost drawer-button lg:hidden text-primary">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
-          </svg>
+          {/* Icône du menu hamburger */}
         </label>
 
-        <div className="form-control relative">
+        <div className="form-control relative" ref={searchRef}>
           <div className="input-group">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="input input-bordered pl-10 pr-4 w-48 sm:w-64 focus:w-64 transition-all duration-300"
+                  <input
+          type="text"
+          placeholder="Rechercher..."
+          className="input input-bordered pl-10 pr-4 w-60 sm:w-64 focus:w-64 transition-all duration-300"
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchSubmit();
+            }
+          }}
             />
             <button className="btn btn-ghost absolute left-0 top-0 h-full">
               <FaSearch className="text-gray-400" />
             </button>
+            
+            {/* Suggestions de recherche */}
+            {searchQuery && filteredSuggestions.length > 0 && (
+              <div className="absolute top-12 w-full bg-white shadow-lg rounded-lg z-50">
+                {filteredSuggestions.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-3 hover:bg-gray-50 cursor-pointer border-b last:border-b-0"
+                    onClick={() => {
+                      router.push(item.path);
+                      setSearchQuery('');
+                    }}
+                  >
+                    <div className="font-medium text-gray-700">{item.title}</div>
+                    <div className="text-sm text-gray-500">{item.path}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

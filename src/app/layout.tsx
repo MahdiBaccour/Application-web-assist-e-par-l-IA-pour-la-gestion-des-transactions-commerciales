@@ -2,9 +2,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { getSession } from "next-auth/react";
 import AuthProvider from '@/providers/authProvider';
 import { Providers } from '@/components/Providers';
+import NavbarWrapper from "@/components/NavbarWrapper";
+import TokenRefresher from '@/components/TokenRefresher';
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -25,14 +26,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
-  const serverTheme = session?.user?.theme || "light";
+  
 
   return (
-    <html lang="en" data-theme={serverTheme}>
+    <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-        <Providers serverTheme={serverTheme}>
+        <Providers >
+        <TokenRefresher />
+        <NavbarWrapper />
           {children}
         </Providers>
         </AuthProvider>

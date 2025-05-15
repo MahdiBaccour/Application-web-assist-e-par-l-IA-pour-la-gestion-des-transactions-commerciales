@@ -9,13 +9,14 @@ import dotenv from "dotenv";
 import { uploadImage } from '../utils/cloudinary.js';
 dotenv.config();
 
+
 // Generate Access Token
 const generateAccessToken = (user) => {
     let payload = { id: user.id, username: user.username, role: user.role };
   return sign(
     payload,
     process.env.TOKEN_SECRET,
-    { expiresIn: "2h" }
+    { expiresIn: "15m" }
   );
 };
 

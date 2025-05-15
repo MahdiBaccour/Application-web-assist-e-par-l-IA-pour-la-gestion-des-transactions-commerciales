@@ -25,7 +25,7 @@ export default function TransactionsTable({
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.user.role !== "owner" && session?.user.role !== "employee") {
+    if ( !session) {
       router.push("/home/forbidden");
     }
   }, []);
@@ -112,13 +112,13 @@ export default function TransactionsTable({
 
   return (
     <div className="overflow-x-auto">
-      {!disableAdd && (
-        <div className="mb-6 flex justify-between items-center">
-          <button onClick={() => router.push(`${pathname}/create`)} className="btn btn-primary flex items-center gap-2">
-            <FaPlus /> Create Transaction
-          </button>
-        </div>
-      )}
+    {!disableAdd && (session?.user.role === "owner" || session?.user.role === "employee") && (
+  <div className="mb-6 flex justify-between items-center">
+    <button onClick={() => router.push(`${pathname}/create`)} className="btn btn-primary flex items-center gap-2">
+      <FaPlus /> Create Transaction
+    </button>
+  </div>
+)}
 
       <div className="flex flex-col md:flex-row justify-between gap-4 mb-6">
         <div className="flex gap-2 flex-wrap">

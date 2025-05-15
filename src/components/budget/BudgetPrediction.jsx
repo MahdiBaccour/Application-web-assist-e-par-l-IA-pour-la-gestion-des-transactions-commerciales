@@ -8,7 +8,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
 
-export default function BudgetPrediction(onCapture) {
+export default function BudgetPrediction() {
   const { data: session } = useSession();
   const [predictions, setPredictions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,14 +34,7 @@ export default function BudgetPrediction(onCapture) {
     loadPrediction();
   }, [retryCount, monthsToPredict]);
 
-  useEffect(() => {
-    if (onCapture && chartRef.current) {
-      html2canvas(chartRef.current).then((canvas) => {
-        const base64 = canvas.toDataURL("image/png");
-        onCapture(base64); // Pass it up to parent
-      });
-    }
-  }, [onCapture]);
+
   
   const handleSelectChange = (e) => {
     setMonthsToPredict(parseInt(e.target.value));
