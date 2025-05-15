@@ -1,47 +1,77 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import  TransactionsTable  from '@/components/transaction/TransactionsTable';
-import  PaymentTable  from '@/components/payment/PaymentTable';
-import  PerformanceIndicators  from '@/components/dashboard/PerformanceIndicators';
-import DashboardCharts from '@/components/dashboard/DashboardCharts';
-import BudgetChart from '@/components/dashboard/BudgetChart';
-import TopProductsChart from '@/components/dashboard/TopProductsChart';
-import  BudgetPrediction  from '@/components/budget/BudgetPrediction';
-import ClientClassification from '@/components/client/ClientClassification';
-import SupplierClassification from '@/components/supplier/SupplierClassification';
+import { pdf } from '@react-pdf/renderer';
+import TransactionsTableSimple from '@/components/transaction/TransactionsTable';
+import PaymentTable from '@/components/payment/PaymentTable';
 import ReportDocument from './ReportDocument';
 
 export default function ReportPage() {
   const { data: session } = useSession();
   const [reportType, setReportType] = useState('stats');
-  const [view, setView] = useState('graphs');
+  const [view, setView] = useState('tables');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
-  const [dashboardImg, setDashboardImg] = useState(null);
-const [budgetImg, setBudgetImg] = useState(null);
-const [topProductsImg, setTopProductsImg] = useState(null);
-const [clientClassificationImg, setClientClassificationImg] = useState(null);
-const [supplierClassificationImg, setSupplierClassificationImg] = useState(null);
-const [budgetPredictionImg, setBudgetPredictionImg] = useState(null);
-const [performanceImg, setPerformanceImg] = useState(null);
-  const [transactionsImg, setTransactionsImg] = useState(null);
-  const [paymentImg, setPaymentImg] = useState(null);
-  const reportRef = useRef();
+  const [transactionsData, setTransactionsData] = useState([]);
+  const [paymentsData, setPaymentsData] = useState([]);
   const today = new Date().toISOString().split('T')[0];
   const fileName = `rapport-administratif-${today}.pdf`;
 
-  const handleGenerateReport = async () => {
-    // Additional logic before generating PDF if needed
+  const handleStartDateChange = (e) => {
+    const newStartDate = e.target.value;
+    setStartDate(newStartDate);
+    if (newStartDate && endDate && newStartDate > endDate) {
+      setEndDate('');
+    }
   };
+
+  const handleEndDateChange = (e) => {
+    const newEndDate = e.target.value;
+    if (!startDate || newEndDate >= startDate) {
+      setEndDate(newEndDate);
+    }
+  };
+
+  const handleTransactionsData = (data, total) => {
+    setTransactionsData(Array.isArray(data) ? data : []);
+    setTotalAmount(typeof total === 'number' ? total : 0);
+  };
+  
+  const handlePaymentsData = (data) => {
+    setPaymentsData(Array.isArray(data) ? data : []);
+  };
+  
+  
+
+  // ✅ Fixed PDF Download Function
+  const handleGeneratePDF = async () => {
+  const blob = await pdf(
+    <ReportDocument
+      startDate={startDate}
+      endDate={endDate}
+      totalAmount={totalAmount}
+      reportType={reportType}
+      view={view}
+      transactionsData={transactionsData}
+      paymentsData={paymentsData}
+    />
+  ).toBlob();
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+
 
   return (
     <div className="p-6 bg-base-100">
       <div className="flex flex-col gap-4 mb-8">
         <h1 className="text-3xl font-bold">Génération de Rapports Administratifs</h1>
-        
         <div className="flex flex-wrap gap-4 items-center">
           <select
             value={reportType}
@@ -58,7 +88,6 @@ const [performanceImg, setPerformanceImg] = useState(null);
               onChange={(e) => setView(e.target.value)}
               className="select select-bordered"
             >
-              <option value="graphs">Graphiques</option>
               <option value="tables">Tableaux</option>
             </select>
           )}
@@ -67,100 +96,73 @@ const [performanceImg, setPerformanceImg] = useState(null);
             <input
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="input input-bordered"
+              onChange={handleStartDateChange}
+              max={today}
+              className="p-2 border rounded"
             />
             <span>à</span>
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="input input-bordered"
+              onChange={handleEndDateChange}
+              min={startDate || undefined}
+              max={today}
+              className="p-2 border rounded"
+              disabled={!startDate}
             />
           </div>
         </div>
       </div>
 
-      <div ref={reportRef} className="report-content">
+      <div className="report-content">
         {reportType === 'stats' ? (
-          view === 'tables' ? (
-            <>
-              <TransactionsTable 
-                startDate={startDate}
-                endDate={endDate}
-                onTotalChange={setTotalAmount}
-                onDataCapture={setTransactionsImg}
-              />
-              <PaymentTable 
-                startDate={startDate}
-                endDate={endDate}
-                onDataCapture={setPaymentImg}
-              />
-              <div className="mt-4 p-4 bg-base-200 rounded-lg">
-                <h3 className="text-xl font-semibold">
-                  Total des Transactions: {totalAmount.toFixed(2)} DH
-                </h3>
-              </div>
-            </>
-          ) : (
-            <>
-              <PerformanceIndicators token={session?.user.accessToken}  onCapture={setPerformanceImg} />
-              <DashboardCharts token={session?.user.accessToken} onCapture={setDashboardImg}/>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                <BudgetChart token={session?.user.accessToken} onCapture={setBudgetImg} />
-                <TopProductsChart token={session?.user.accessToken} onCapture={setTopProductsImg} />
-              </div>
-            </>
-          )
-        ) : (
           <>
-            <div className="flex justify-end p-4">
-              <select
-                value={view}
-                onChange={(e) => setView(e.target.value)}
-                className="select select-bordered"
-              >
-                <option value="client">Classification des Clients</option>
-                <option value="supplier">Classification des Fournisseurs</option>
-              </select>
-            </div>
+            <TransactionsTableSimple
+              startDate={startDate}
+              endDate={endDate}
+              onTotalChange={setTotalAmount}
+              onDataCapture={handleTransactionsData}
+              disableAdd={true}
+            />
+            <PaymentTable
+              startDate={startDate}
+              endDate={endDate}
+              onDataCapture={handlePaymentsData}
+              refreshTrigger={`${startDate}-${endDate}`}
+            />
+           <div className="mt-4 p-4 bg-base-200 rounded-lg">
+  <h3 className="text-xl font-semibold">
+    Total des Transactions:{' '}
+    {transactionsData
+      .reduce((sum, transaction) => {
+        const amount = parseFloat(transaction.amount);
+        return Number.isFinite(amount) ? sum + amount : sum;
+      }, 0)
+      .toFixed(2)}{' '}
+    DH
+  </h3>
+</div>
 
-            {view === "client" && <ClientClassification onCapture={setClientClassificationImg} />}
-            {view === "supplier" && <SupplierClassification onCapture={setSupplierClassificationImg}/>}
-            <BudgetPrediction onCapture={setBudgetPredictionImg} />
           </>
+        ) : (
+          <div className="p-4">
+            <p className="text-lg">
+              Veuillez sélectionner le type de rapport "Statistiques" pour afficher les tableaux de transactions et paiements.
+            </p>
+          </div>
         )}
       </div>
 
       <div className="mt-8 flex justify-end">
-  <PDFDownloadLink
-    document={
-      <ReportDocument 
-        startDate={startDate}
-        endDate={endDate}
-        totalAmount={totalAmount}
-        reportType={reportType}
-        view={view}
-        transactionsImg={transactionsImg}
-        paymentImg={paymentImg}
-        dashboardImg={dashboardImg}
-        budgetImg={budgetImg}
-        topProductsImg={topProductsImg}
-        clientClassificationImg={clientClassificationImg}
-        supplierClassificationImg={supplierClassificationImg}
-        budgetPredictionImg={budgetPredictionImg}
-        performanceImg={performanceImg}
-      />
-    }
-     fileName={fileName}
-  >
-    {({ loading }) => (
-      <button className="btn btn-primary" disabled={loading}>
-        {loading ? 'Génération...' : 'Télécharger PDF'}
-      </button>
-    )}
-  </PDFDownloadLink>
-</div>
+        {startDate && endDate && (
+          <button
+            onClick={handleGeneratePDF}
+            className="btn btn-primary"
+          >
+            Télécharger PDF
+          </button>
+        )}
+      </div>
     </div>
   );
 }

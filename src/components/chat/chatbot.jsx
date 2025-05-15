@@ -41,17 +41,26 @@ export default function Chatbot() {
     ],
   };
 
+  // Gestion du thème
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-  }, [messages, isBotTyping]);
+    const applyTheme = () => {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    };
 
+    applyTheme();
+    
+    const handleThemeChange = () => applyTheme();
+    window.addEventListener('themeChange', handleThemeChange);
+    return () => window.removeEventListener('themeChange', handleThemeChange);
+  }, []);
+
+  // Function to handle sending messages
   const handleSend = async () => {
     if (!input.trim()) return;
     const userMessage = input.trim();
     const timestamp = new Date().toLocaleTimeString();
-    setMessages(prev => [...prev, { sender: 'user', text: userMessage, timestamp }]);
+    setMessages((prev) => [...prev, { sender: 'user', text: userMessage, timestamp }]);
     setInput('');
     setIsBotTyping(true);
 
@@ -63,18 +72,30 @@ export default function Chatbot() {
       });
 
       const data = await res.json();
-      setMessages(prev => [...prev, { sender: 'bot', text: data.reply, timestamp: new Date().toLocaleTimeString() }]);
+      setMessages((prev) => [
+        ...prev,
+        { sender: 'bot', text: data.reply, timestamp: new Date().toLocaleTimeString() },
+      ]);
     } catch {
-      setMessages(prev => [...prev, { sender: 'bot', text: 'Erreur lors de la réponse du chatbot.', timestamp: new Date().toLocaleTimeString() }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender: 'bot',
+          text: 'Erreur lors de la réponse du chatbot.',
+          timestamp: new Date().toLocaleTimeString(),
+        },
+      ]);
     } finally {
       setIsBotTyping(false);
     }
   };
 
+  // Function to handle reactions to bot messages (like reply)
   const handleReactionReply = (text) => {
     setInput(`@bot ${text}`);
   };
 
+  // Function to handle question selection
   const handleQuestionSelect = (question, category) => {
     setInput(question);
     // Close the category details
@@ -85,120 +106,62 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-gradient-to-br from-gray-50 to-blue-100">
-      {/* Custom Styles */}
+    <div className="w-full h-screen flex flex-col bg-base-100">
       <style>{`
         @keyframes slideIn {
           from { transform: translateY(10px); opacity: 0; }
           to { transform: translateY(0); opacity: 1; }
         }
-        @keyframes pulseGlow {
-          0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.5); }
-          70% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-        }
-        @keyframes bounceDot {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-4px); }
-        }
         .animate-message { animation: slideIn 0.3s ease-out; }
-        .animate-glow { animation: pulseGlow 1.5s infinite; }
-        .animate-dot-1 { animation: bounceDot 0.6s infinite; }
-        .animate-dot-2 { animation: bounceDot 0.6s infinite 0.15s; }
-        .animate-dot-3 { animation: bounceDot 0.6s infinite 0.3s; }
-        details > div { transition: max-height 0.2s ease, opacity 0.2s ease; }
-        details:not([open]) > div { max-height: 0; opacity: 0; overflow: hidden; }
-        details[open] > div { max-height: 400px; opacity: 1; }
       `}</style>
 
-      {/* Header */}
-      <div className="flex items-center gap-3 p-5 bg-gradient-to-r from-blue-700 to-indigo-700 text-white shadow-xl">
-        <FaCircle className="text-emerald-400 animate-pulse" />
+      {/* En-tête */}
+      <div className="flex items-center gap-3 p-5 bg-base-200 text-base-content shadow-xl">
+        <FaCircle className="text-secondary animate-pulse" />
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Assistant Financier</h2>
-          <p className="text-sm opacity-80 font-medium">Support transactionnel intelligent</p>
+          <h2 className="text-2xl font-bold">Assistant Financier</h2>
+          <p className="text-sm opacity-80">Support transactionnel intelligent</p>
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto space-y-4 p-6 scrollbar-thin scrollbar-thumb-blue-300 scrollbar-track-blue-50"
-      >
+      {/* Messages */}
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-message`}
-            style={{ animationDelay: `${idx * 0.05}s` }}
-          >
-            <div className="relative group max-w-[80%]">
-              <div
-                className={`px-5 py-3 rounded-2xl shadow-md transition-all duration-300 ${
-                  msg.sender === 'user'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white ml-10 hover:shadow-lg'
-                    : 'bg-white text-gray-800 mr-10 border border-gray-100 hover:shadow-lg'
-                }`}
-              >
-                <p className="text-sm leading-relaxed font-medium">{msg.text}</p>
-                <span className="absolute -bottom-5 text-[0.65rem] text-gray-500 font-medium tracking-tight">
-                  {msg.timestamp}
-                </span>
-              </div>
-
-              {/* Message Actions */}
-              {msg.sender === 'bot' && (
-                <div className="absolute -right-10 top-1/2 -translate-y-1/2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <button
-                    className="p-2 hover:bg-blue-100 rounded-full transition-colors"
-                    onClick={() => navigator.clipboard.writeText(msg.text)}
-                  >
-                    <FaRegCopy className="w-4 h-4 text-blue-600" />
-                  </button>
-                  <button
-                    className="p-2 hover:bg-blue-100 rounded-full transition-colors"
-                    onClick={() => handleReactionReply(msg.text)}
-                  >
-                    <FaReply className="w-4 h-4 text-blue-600" />
-                  </button>
-                </div>
-              )}
+          <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-message`}>
+            <div className={`px-5 py-3 rounded-2xl shadow-md ${msg.sender === 'user' ? 'bg-primary text-primary-content' : 'bg-base-200 text-base-content'}`}>
+              <p className="text-sm">{msg.text}</p>
             </div>
           </div>
         ))}
-
-        {/* Typing Indicator */}
+        {/* Typing indicator */}
         {isBotTyping && (
           <div className="flex justify-start items-center gap-2 ml-4">
-            <div className="px-5 py-3 rounded-2xl bg-white shadow-md border border-gray-100">
+            <div className="px-5 py-3 rounded-2xl bg-base-200 shadow-md">
               <div className="flex space-x-2">
-                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-dot-1" />
-                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-dot-2" />
-                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-dot-3" />
+                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse" />
+                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse" />
+                <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse" />
               </div>
             </div>
           </div>
         )}
       </div>
 
-      {/* Questions Section */}
-      <div className="p-4 border-t bg-white/95 backdrop-blur-md shadow-2xl">
+      {/* Sélection de questions */}
+      <div className="p-4 border-t bg-base-200">
         <div className="mb-4 space-y-2">
           {Object.entries(questions).map(([category, categoryQuestions]) => (
-            <details
-              key={category}
-              data-category={category}
-              className="group border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow"
-            >
-              <summary className="flex justify-between items-center p-2 bg-gradient-to-r from-gray-50 to-blue-50 cursor-pointer hover:bg-blue-100 transition-colors">
-                <h3 className="text-sm font-semibold text-gray-800">{category}</h3>
-                <FaChevronDown className="w-4 h-4 text-gray-600 transform group-open:rotate-180 transition-transform duration-200" />
+            <details key={category} className="group border border-base-300 rounded-lg overflow-hidden">
+              <summary className="flex justify-between items-center p-2 bg-base-100 cursor-pointer hover:bg-base-300">
+                <h3 className="text-sm font-semibold">{category}</h3>
+                <FaChevronDown className="w-4 h-4 transform group-open:rotate-180 transition-transform" />
               </summary>
-              <div className="p-2 space-y-1 bg-gray-50">
+              <div className="p-2 space-y-1 bg-base-100">
                 {categoryQuestions.map((question, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleQuestionSelect(question, category)}
-                    className="w-full py-1.5 px-2 text-left text-xs rounded-md hover:bg-blue-100 transition-colors border border-transparent hover:border-blue-200 hover:shadow-sm animate-[slideIn_0.2s_ease-out] focus:outline-none focus:ring-1 focus:ring-blue-300"
+                    className="w-full py-1.5 px-2 text-left text-sm rounded-md hover:bg-base-300 transition-colors"
                   >
                     {question}
                   </button>
@@ -208,20 +171,20 @@ export default function Chatbot() {
           ))}
         </div>
 
-        {/* Input Area */}
-        <div className="flex items-center gap-3 relative">
+        {/* Zone de saisie */}
+        <div className="flex items-center gap-3">
           <input
             type="text"
             value={input}
-            readOnly
-            className={`w-full p-3 rounded-xl border-2 border-gray-200 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all pr-14 ${input ? 'animate-glow' : ''}`}
+            onChange={(e) => setInput(e.target.value)}
+            className="input input-bordered flex-1 bg-base-100"
             placeholder="Sélectionnez une question..."
           />
-          <button
+          <button 
             onClick={handleSend}
-            className="absolute right-2 p-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+            className="btn btn-primary"
           >
-            <FaPaperPlane className="w-4 h-4 transform -rotate-45" />
+            <FaPaperPlane />
           </button>
         </div>
       </div>
