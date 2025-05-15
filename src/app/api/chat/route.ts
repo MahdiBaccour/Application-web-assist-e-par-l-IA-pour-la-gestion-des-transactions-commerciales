@@ -9,6 +9,7 @@ export async function POST(req: Request) {
       'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`, // Set this in your .env
       'Content-Type': 'application/json'
     },
+    
     body: JSON.stringify({
       model: 'openai/gpt-3.5-turbo',
       messages: [{ role: 'user', content: message }]
