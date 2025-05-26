@@ -9,6 +9,8 @@ import { NotificationsDropdown } from "@/components/profile/NotificationsDropdow
 import { getCacheBustedUrl } from "@/utils/image";
 import { useUserContext } from '@/contexts/UserContext';
 import { getAuthorizedLinks, customTitles } from "@/config/dashboard-links";
+import {logoutUser} from "@/services/users/userService";
+import { showErrorAlert, showSuccessAlert } from "@/utils/swalConfig";
 
 export const Navbar = () => {
   const { data: session } = useSession();
@@ -73,10 +75,33 @@ export const Navbar = () => {
     return DEFAULT_AVATARS[genderChoice];
   };
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
+  try {
+    if (session?.user?.accessToken) {
+      const result = await logoutUser(session.user.accessToken);
+      if (!result.success) {
+        showErrorAlert(
+          session?.user?.theme || "light",
+          result.message || "Échec de la déconnexion côté serveur."
+        );
+      } else {
+        showSuccessAlert(
+          session?.user?.theme || "light",
+          "Déconnexion enregistrée avec succès."
+        );
+      }
+    }
+
     await signOut({ redirect: false });
     router.push('/');
-  };
+  } catch (error) {
+    showErrorAlert(
+      session?.user?.theme || "light",
+      "Erreur inattendue lors de la déconnexion."
+    );
+    console.error("Erreur de déconnexion :", error);
+  }
+};
 
 
   const fetchNotifications = async () => {

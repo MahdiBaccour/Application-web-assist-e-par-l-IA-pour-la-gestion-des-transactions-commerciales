@@ -7,6 +7,8 @@ import {
   FiFileText, FiCode, FiMail, FiLogOut, FiHome
 } from "react-icons/fi";
 import { pageTitles } from '@/utils/pageTitles';
+import { showErrorAlert, showSuccessAlert } from "@/utils/swalConfig";
+import { logoutUser } from "@/services/users/userService";
 
 
 export default function Navbar() {
@@ -60,12 +62,37 @@ export default function Navbar() {
     window.dispatchEvent(new Event("themeChange"));
   };
 
-  const handleLogout = async () => {
+const handleLogout = async () => {
+  try {
+    if (session?.user?.accessToken) {
+      const result = await logoutUser(session.user.accessToken);
+
+      if (!result.success) {
+        showErrorAlert(
+          session.user.theme || "light",
+          result.message || "Erreur lors de la déconnexion côté serveur."
+        );
+      } else {
+        showSuccessAlert(
+          session.user.theme || "light",
+          "Déconnexion enregistrée avec succès."
+        );
+      }
+    }
+
+    // Clear client-side session and redirect
     await signOut({ redirect: false });
-    setSession(null);
-    setShowLogoutModal(false);
+    setSession(null); // if you're manually managing session
+    setShowLogoutModal(false); // hide modal
     router.push("/");
-  };
+  } catch (error) {
+    showErrorAlert(
+      session?.user?.theme || "light",
+      "Erreur inattendue lors de la déconnexion."
+    );
+    console.error("Logout error:", error);
+  }
+};
 
   const navItem = (label, path, icon) => (
     <button

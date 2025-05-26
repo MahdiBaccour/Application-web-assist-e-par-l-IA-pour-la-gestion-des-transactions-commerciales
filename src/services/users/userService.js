@@ -130,4 +130,27 @@ export const updateUserStatus = async (id, status, token) => {
       return false;
     }
   };
-  
+ 
+ //logout user 
+export const logoutUser = async (token) => {
+  try {
+    const response = await fetch(`${API_URL}/auth/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return { success: false, message: data.message || "Échec de la déconnexion." };
+    }
+
+    return { success: true, message: data.message || "Déconnexion réussie." };
+  } catch (error) {
+    console.error("Error during logout:", error);
+    return { success: false, message: "Erreur de connexion au serveur." };
+  }
+};  

@@ -36,7 +36,8 @@ router.post("/", middleware.auth, async (req, res, next) => {
 });
 
 // 📌 GET all budget entries
-router.get("/", middleware.auth, async (req, res) => {
+router.get("/", middleware.auth, async (req, res,next) => {
+  if (req.user.role !== "owner") return next();
   try {
     const result = await pool.query("SELECT * FROM total_budget ORDER BY month_date ASC");
     res.status(200).json({ success: true, budgets: result.rows });
@@ -47,8 +48,8 @@ router.get("/", middleware.auth, async (req, res) => {
 });
 
 // 📌 UPDATE an existing budget entry
-router.put("/:id", middleware.auth, async (req, res) => {
-  if (req.user.role !== "owner") return res.status(403).json({ success: false, message: "Non autorisé." });
+router.put("/:id", middleware.auth, async (req, res,next) => {
+  if (req.user.role !== "owner") return next();
 
   const { id } = req.params;
   const { budget, month_date } = req.body;

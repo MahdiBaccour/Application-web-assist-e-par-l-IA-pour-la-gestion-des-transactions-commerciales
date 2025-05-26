@@ -39,7 +39,7 @@ export default function ProductForm({ onActionSuccess, onGoBack }) {
         setSuppliers(suppliersResponse?.suppliers || []);
       } catch (error) {
         console.error("Error loading categories or suppliers:", error);
-        showErrorAlert("Failed to load categories or suppliers.");
+        showErrorAlert(session?.user.theme,"Failed to load categories or suppliers.");
       } finally {
         setLoading(false); // Set loading state to false once data is loaded
       }

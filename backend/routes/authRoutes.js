@@ -240,16 +240,21 @@ router.post("/login", async (req, res) => {
 });
 
 //logout
-router.post("/logout", async (req, res) => {
-  try {
-    const userId = req.user.id; // Extract user ID from the authenticated token
 
-    // Update last_logout timestamp
+router.post("/logout", middleware.auth, (req, res, next) => {
+if (req.user.role) {
+  return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
+}
+}, async (req, res) => {
+  try {
+    console.log("Déconnexion de l'utilisateur:", req.user.id);
+    const userId = req.user.id;
+
     await pool.query("UPDATE users SET last_logout = NOW() WHERE id = $1", [userId]);
 
-    res.status(200).json({ success: true, message: "Logout successful" });
+    res.status(200).json({ success: true, message: "Déconnexion réussie" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Error logging out", error: error.message });
+    res.status(500).json({ success: false, message: "Erreur lors de la déconnexion", error: error.message });
   }
 });
 
