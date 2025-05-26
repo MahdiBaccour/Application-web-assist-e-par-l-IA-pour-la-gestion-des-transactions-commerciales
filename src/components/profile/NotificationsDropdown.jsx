@@ -39,7 +39,6 @@ export const NotificationsDropdown = ({ userId, accessToken }) => {
     try {
       const response = await getNotifications(accessToken, pageNumber, 10);
       if (response.success) {
-        // Filter out duplicates using a Set
         const newNotifications = response.notifications.filter(
           newNote => !notifications.some(existingNote => existingNote.id === newNote.id)
         );
@@ -63,12 +62,15 @@ export const NotificationsDropdown = ({ userId, accessToken }) => {
 
   useEffect(() => {
     if (isOpen) {
+      setNotifications([]);
+      setPage(1);
+      setHasMore(true);
       loadNotifications(1);
     }
   }, [isOpen]);
 
   return (
-    <div className="dropdown dropdown-bottom dropdown-left">
+    <div className="dropdown dropdown-bottom dropdown-end">
       <button 
         className="btn btn-ghost btn-circle hover:bg-gray-100 relative"
         onClick={() => setIsOpen(!isOpen)}
@@ -82,15 +84,12 @@ export const NotificationsDropdown = ({ userId, accessToken }) => {
           )}
         </div>
       </button>
-      
+
       {isOpen && (
-      <div 
-      className="mt-2 z-50 p-2 shadow-xl menu dropdown-content bg-base-100 rounded-box w-full sm:w-96 max-h-[70vh] overflow-hidden"
-      style={{ marginLeft: '-8rem' }} // You can adjust this value
-      onScroll={handleScroll}
-    >
-          <div className="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
+        <div className="mt-2 z-50 shadow-xl dropdown-content bg-base-100 rounded-box w-80">
+          {/* Header */}
+          <div className="flex items-center justify-between px-3 py-2 border-b bg-gray-50 sticky top-0 z-10">
+            <h3 className="font-semibold text-base flex items-center gap-2">
               <FaBell className="text-primary" />
               Notifications ({totalNotifications})
             </h3>
@@ -101,52 +100,61 @@ export const NotificationsDropdown = ({ userId, accessToken }) => {
               <FaChevronDown className="transform rotate-180 text-gray-500" />
             </button>
           </div>
-          
-          <div className="divide-y">
-            {notifications.map(notification => (
-              <Link
-                key={notification.id}
-                href={`/notifications/${notification.id}`}
-                className="group p-4 hover:bg-gray-50 transition-colors flex items-start gap-3"
-              >
-                <div className="flex-shrink-0 pt-1 flex flex-col gap-2">
-                  {transactionIcons[notification.type]}
-                  {severityIcons[notification.severity.toLowerCase()] || severityIcons.low}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-900 capitalize">
-                      {notification.type} - {notification.severity}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {new Date(notification.sent_date).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-600 line-clamp-2">
-                    {notification.message}
-                  </p>
-                </div>
-              </Link>
-            ))}
+
+          {/* Scrollable area for notifications */}
+          <div 
+            className="max-h-[60vh] overflow-y-auto"
+            onScroll={handleScroll}
+          >
+            <ul className="divide-y">
+              {notifications.map(notification => (
+                <li key={notification.id}>
+                  <Link
+                    href={`/notifications/${notification.id}`}
+                    className="flex items-start gap-3 p-4 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-shrink-0 pt-1 flex flex-col gap-2">
+                      {transactionIcons[notification.type]}
+                      {severityIcons[notification.severity.toLowerCase()] || severityIcons.low}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium text-gray-900 capitalize">
+                          {notification.type} - {notification.severity}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {new Date(notification.sent_date).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 line-clamp-2">
+                        {notification.message}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+
+            {/* Loading Spinner */}
+            {loading && (
+              <div className="p-4 flex justify-center">
+                <ImSpinner2 className="animate-spin text-primary text-xl" />
+              </div>
+            )}
+
+            {/* No more notifications */}
+            {!hasMore && (
+              <div className="p-4 text-center text-gray-500 text-sm bg-gray-50">
+                No more notifications to show
+              </div>
+            )}
           </div>
-
-          {loading && (
-            <div className="p-4 flex justify-center">
-              <ImSpinner2 className="animate-spin text-primary text-xl" />
-            </div>
-          )}
-
-          {!hasMore && (
-            <div className="p-4 text-center text-gray-500 text-sm bg-gray-50">
-              No more notifications to show
-            </div>
-          )}
         </div>
       )}
     </div>
