@@ -177,7 +177,7 @@ export default function ReportPage() {
                     return Number.isFinite(amount) ? sum + amount : sum;
                   }, 0)
                   .toFixed(2)}{' '}
-                DH
+                DT
               </h3>
             </div>
           </>

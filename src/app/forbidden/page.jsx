@@ -57,7 +57,7 @@ function ForbiddenPage() {
               <FiArrowRight className="text-xl" />
             </Link>
             
-            <Link href="/contact" className="btn btn-outline gap-2">
+            <Link href="/administration/contact" className="btn btn-outline gap-2">
               <FiMail className="text-xl" />
               Contact Administrateur
             </Link>
