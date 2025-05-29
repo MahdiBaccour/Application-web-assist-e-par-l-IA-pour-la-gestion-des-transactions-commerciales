@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getLogs } from "@/services/logs/logService";
-import { FaSpinner, FaUser, FaUserShield, FaUserTie, FaList, FaFilter } from "react-icons/fa";
+import { FaSpinner, FaUser, FaUserShield, FaUserTie, FaList, FaFilter, FaSearch } from "react-icons/fa";
 import { showErrorAlert } from "@/utils/swalConfig";
 import { useSession } from "next-auth/react";
 
@@ -13,6 +13,7 @@ export default function LogsTable({ limit = 5 }) {
   const [roleFilter, setRoleFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalLogs, setTotalLogs] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const logsPerPage = limit;
   const totalPages = Math.ceil(totalLogs / logsPerPage);
@@ -75,6 +76,49 @@ export default function LogsTable({ limit = 5 }) {
     return pages;
   };
 
+  const formatDateTime = (isoString) => {
+    if (!isoString) return '-';
+    const date = new Date(isoString);
+    return (
+      date.toLocaleDateString('fr-FR') + 
+      ' ' + 
+      date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    );
+  };
+
+  const formatDuration = (seconds) => {
+    if (!seconds || seconds <= 0) return '-';
+    
+    const units = [
+      { label: 'mo', value: 2592000 }, // 30 days
+      { label: 'w', value: 604800 },
+      { label: 'd', value: 86400 },
+      { label: 'h', value: 3600 },
+      { label: 'm', value: 60 },
+      { label: 's', value: 1 }
+    ];
+
+    let remaining = seconds;
+    const parts = [];
+
+    for (const unit of units) {
+      const count = Math.floor(remaining / unit.value);
+      if (count > 0) {
+        parts.push(`${count}${unit.label}`);
+        remaining -= count * unit.value;
+      }
+      // Show max 2 units for readability
+      if (parts.length >= 2) break;
+    }
+
+    return parts.join(' ') || `${seconds.toFixed(2)}s`;
+  };
+
+  // Filter logs by username based on search term
+  const filteredLogs = logs.filter(log => 
+    log.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64">
@@ -96,29 +140,43 @@ export default function LogsTable({ limit = 5 }) {
 
   return (
     <div className="overflow-x-auto">
-      {/* Filtres */}
-      <div className="flex flex-wrap gap-2 mb-4 items-center">
-        <div className="flex items-center gap-2 text-sm font-semibold">
-          <FaFilter className="text-gray-500" /> Filtres :
+      <div className="flex flex-wrap justify-between items-center mb-4 gap-4">
+        {/* Role filters */}
+        <div className="flex flex-wrap gap-2 items-center">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <FaFilter className="text-gray-500" /> Filtres :
+          </div>
+          {Object.entries({
+            all: "Tous",
+            owner: "Propriétaire",
+            employee: "Employé",
+            client: "Client",
+            supplier: "Fournisseur"
+          }).map(([key, value]) => (
+            <button
+              key={key}
+              onClick={() => handleRoleFilter(key)}
+              className={`btn btn-sm flex items-center gap-2 ${
+                roleFilter === (key === "all" ? null : key) ? "btn-primary" : "btn-outline"
+              }`}
+            >
+              {roleIcons[key]}
+              {value}
+            </button>
+          ))}
         </div>
-        {Object.entries({
-          all: "Tous",
-          owner: "Propriétaire",
-          employee: "Employé",
-          client: "Client",
-          supplier: "Fournisseur"
-        }).map(([key, value]) => (
-          <button
-            key={key}
-            onClick={() => handleRoleFilter(key)}
-            className={`btn btn-sm flex items-center gap-2 ${
-              roleFilter === (key === "all" ? null : key) ? "btn-primary" : "btn-outline"
-            }`}
-          >
-            {roleIcons[key]}
-            {value}
-          </button>
-        ))}
+        
+        {/* Search input */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Rechercher par nom"
+            className="input input-bordered pl-10 pr-4"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+        </div>
       </div>
 
       <h2 className="text-xl font-bold mb-4">
@@ -137,8 +195,8 @@ export default function LogsTable({ limit = 5 }) {
           </tr>
         </thead>
         <tbody>
-          {logs.length > 0 ? (
-            logs.map((log) => (
+          {filteredLogs.length > 0 ? (
+            filteredLogs.map((log) => (
               <tr key={log.id}>
                 <td className="font-medium">{log.username}</td>
                 <td>
@@ -148,19 +206,17 @@ export default function LogsTable({ limit = 5 }) {
                   </div>
                 </td>
                 <td>{log.log_data?.action || "-"}</td>
-                <td>{log.log_data?.login_time || "-"}</td>
-                <td>{log.log_data?.logout_time || "-"}</td>
-                <td>
-                  {log.log_data?.session_duration
-                    ? `${Number(log.log_data.session_duration).toFixed(2)}s`
-                    : "-"}
-                </td>
+                <td>{formatDateTime(log.log_data?.login_time)}</td>
+                <td>{formatDateTime(log.log_data?.logout_time)}</td>
+                <td>{formatDuration(log.log_data?.session_duration)}</td>
               </tr>
             ))
           ) : (
             <tr>
               <td colSpan="6" className="text-center py-4">
-                Aucun log trouvé
+                {searchTerm ? 
+                  "Aucun log trouvé avec ce nom d'utilisateur" : 
+                  "Aucun log trouvé"}
               </td>
             </tr>
           )}

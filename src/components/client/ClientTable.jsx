@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getClients, updateClientStatus } from "@/services/clients/clientService";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner,FaSearch } from "react-icons/fa";
 import { FaUserPlus, FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
 import UpdateClientForm from "./UpdateClientForm";
 import ClientForm from "./ClientForm";
@@ -10,7 +10,7 @@ import {
   showConfirmationDialog,
   showSuccessAlert,
   showErrorAlert,
-} from "@/utils/swalConfig"; // Import the success and error alerts
+} from "@/utils/swalConfig"; 
 import { useSession } from 'next-auth/react';
 import { useRouter } from "next/navigation";
 export default function ClientTable() {
@@ -22,7 +22,8 @@ export default function ClientTable() {
   const [isAddingNewClient, setIsAddingNewClient] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [error, setError] = useState(null); // Added state for error message
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -115,10 +116,19 @@ export default function ClientTable() {
     setIsAddingNewClient(false);
   };
 
-  const filteredClients = clients.filter((client) => {
-    if (filterStatus === "all") return true;
-    return client.status_client === filterStatus;
-  });
+    const filteredClients = clients.filter((client) => {
+      // Status filter
+      if (filterStatus !== "all" && client.status_client !== filterStatus) {
+        return false;
+      }
+      
+      // Name search filter
+      if (searchTerm && !client.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        return false;
+      }
+      
+      return true;
+    });
 
   const indexOfLastClient = currentPage * clientsPerPage;
   const indexOfFirstClient = indexOfLastClient - clientsPerPage;
@@ -168,42 +178,56 @@ export default function ClientTable() {
         />
       ) : (
         <>
-          <div className="flex gap-2 mb-4">
-            {/* Add New Client */}
-            <button
-              onClick={() => setIsAddingNewClient(true)}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FaUserPlus /> Ajouter un nouveau client
-            </button>
+          <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+            <div className="flex flex-wrap gap-2">
+              {/* Add New Client */}
+              <button
+                onClick={() => setIsAddingNewClient(true)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <FaUserPlus /> Ajouter un nouveau client
+              </button>
 
-            {/* Status Filters */}
-            <button
-              onClick={() => setFilterStatus("all")}
-              className={`btn flex items-center gap-2 ${
-                filterStatus === "all" ? "btn-info" : "btn-outline"
-              }`}
-            >
-              <FaUsers /> Tous
-            </button>
+              {/* Status Filters */}
+              <button
+                onClick={() => setFilterStatus("all")}
+                className={`btn flex items-center gap-2 ${
+                  filterStatus === "all" ? "btn-info" : "btn-outline"
+                }`}
+              >
+                <FaUsers /> Tous
+              </button>
 
-            <button
-              onClick={() => setFilterStatus("active")}
-              className={`btn flex items-center gap-2 ${
-                filterStatus === "active" ? "btn-success" : "btn-outline"
-              }`}
-            >
-              <FaUserCheck /> Actif
-            </button>
+              <button
+                onClick={() => setFilterStatus("active")}
+                className={`btn flex items-center gap-2 ${
+                  filterStatus === "active" ? "btn-success" : "btn-outline"
+                }`}
+              >
+                <FaUserCheck /> Actif
+              </button>
 
-            <button
-              onClick={() => setFilterStatus("inactive")}
-              className={`btn flex items-center gap-2 ${
-                filterStatus === "inactive" ? "btn-error" : "btn-outline"
-              }`}
-            >
-              <FaUserTimes /> Inactif
-            </button>
+              <button
+                onClick={() => setFilterStatus("inactive")}
+                className={`btn flex items-center gap-2 ${
+                  filterStatus === "inactive" ? "btn-error" : "btn-outline"
+                }`}
+              >
+                <FaUserTimes /> Inactif
+              </button>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Rechercher par nom..."
+                className="input input-bordered pl-10 pr-4"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+            </div>
           </div>
 
           <table className="table w-full table-zebra">

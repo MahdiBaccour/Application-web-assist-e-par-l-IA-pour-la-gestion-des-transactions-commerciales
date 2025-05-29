@@ -12,6 +12,9 @@ router.post("/",middleware.auth, async (req, res,next) => {
   const { name, description, selling_price, category_id, supplier_id, status, created_at, created_by=7, stock_quantity } = req.body;
 
   try {
+    await pool.query("BEGIN");
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     // Insert the new product directly into the products table
     const productResult = await pool.query(
       "INSERT INTO products (name, description, selling_price, category_id, supplier_id, status, created_at, created_by, stock_quantity) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
@@ -19,10 +22,11 @@ router.post("/",middleware.auth, async (req, res,next) => {
     );
 
     const newProduct = productResult.rows[0];
-
+    await pool.query("COMMIT");
     res.status(201).json({ success: true, product: newProduct, message: "Product created with stock initialized." });
 
   } catch (error) {
+    await pool.query("ROLLBACK");
     console.error("Error creating product:", error);
     res.status(500).json({ success: false, message: "Error creating product", error: error.message });
   }
@@ -128,6 +132,7 @@ router.put("/:id",middleware.auth,(req, res, next) => {
 
   try {
     // Fetch the existing product data
+    await pool.query("BEGIN");
     const existingProduct = await pool.query("SELECT * FROM products WHERE id = $1", [id]);
     if (existingProduct.rows.length === 0) {
       return res.status(404).json({ success: false, message: "Product not found" });
@@ -163,13 +168,17 @@ router.put("/:id",middleware.auth,(req, res, next) => {
     }
 
     values.push(id); // Add the product ID as the last parameter
-
+     
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     const query = `UPDATE products SET ${updateFields.join(", ")} WHERE id = $${index} RETURNING *`;
 
     const result = await pool.query(query, values);
+    await pool.query("COMMIT");
     res.status(200).json({ success: true, message: "Product updated successfully", product: result.rows[0] });
 
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error updating product", error: error.message });
   }
 });
@@ -187,7 +196,8 @@ router.patch("/:id/status",middleware.auth,(req, res, next) => {
 
   try {
     await pool.query("BEGIN");
-
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     let updateQuery = "UPDATE products SET status = $1 WHERE id = $2 RETURNING *";
     let updateParams = [status_product, id];
     const result = await pool.query(updateQuery, updateParams);

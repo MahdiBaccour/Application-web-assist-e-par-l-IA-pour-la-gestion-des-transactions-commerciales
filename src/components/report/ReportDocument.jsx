@@ -88,7 +88,7 @@ const ReportDocument = ({
           {(reportType === 'stats' || reportType === 'credit') && view === 'tables' && (
             <>
               <Text style={styles.label}>
-                Total des Transactions: {totalAmount || totalTransactionAmount} DT
+                Total des Transactions: {totalAmount || totalTransactionAmount} TND
               </Text>
 
               {/* Transactions Table */}
@@ -107,7 +107,7 @@ const ReportDocument = ({
                     <Text style={[styles.tableCell, { width: '25%' }]}>{transaction.date || 'N/A'}</Text>
                     <Text style={[styles.tableCell, { width: '25%' }]}>{transaction.description || 'N/A'}</Text>
                     <Text style={[styles.tableCell, { width: '25%' }]}>
-                      {Number(transaction.amount).toFixed(2)} DT
+                      {Number(transaction.amount).toFixed(2)} TND
                     </Text>
                   </View>
                 ))}
@@ -115,7 +115,7 @@ const ReportDocument = ({
                 <View style={styles.tableRow}>
                   <Text style={[styles.tableCell, { width: '75%', fontWeight: 'bold' }]}>Total</Text>
                   <Text style={[styles.tableCell, { width: '25%', fontWeight: 'bold' }]}>
-                    {totalTransactionAmount} DH
+                    {totalTransactionAmount} DT
                   </Text>
                 </View>
               </View>

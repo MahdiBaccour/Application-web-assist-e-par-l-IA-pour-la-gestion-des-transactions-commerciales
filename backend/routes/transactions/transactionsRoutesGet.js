@@ -40,7 +40,7 @@ router.get("/", middleware.auth, (req, res, next) => {
   if (conditions.length > 0) {
     query += " WHERE " + conditions.join(" AND ");
   }
-
+    query += " ORDER BY t.date DESC";
   try {
     const result = await pool.query(query, params);
     res.status(200).json({ success: true, transactions: result.rows });

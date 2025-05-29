@@ -96,10 +96,10 @@ export default function ClientForm({ onActionSuccess, onGoBack }) {
       const newClient = await createClient(client,session.user.accessToken);
       if (!newClient) throw new Error("Échec de l'ajout d'un client");
   
-      showSuccessAlert("Client ajouté avec succès!");
+      showSuccessAlert(session.user?.theme,"Client ajouté avec succès!");
   
       // Update the clients list in the parent component
-      onActionSuccess(session.user.theme,newClient.client);
+      onActionSuccess(newClient.client);
     } catch (error) {
       showErrorAlert("Échec de l'ajout d'un client");
     } finally {

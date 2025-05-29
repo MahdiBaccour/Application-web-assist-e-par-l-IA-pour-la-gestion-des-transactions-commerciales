@@ -17,7 +17,7 @@ export default function PaymentStep({
         </label>
         <input
           type="text"
-          value={`$${transactionData.amount.toFixed(2)}`}
+          value={`TND ${transactionData.amount.toFixed(2)}`}
           className="input input-bordered"
           disabled
         />
@@ -29,7 +29,7 @@ export default function PaymentStep({
         </label>
         <input
           type="text"
-          value={`$${transactionData.remaining_balance.toFixed(2)}`}
+          value={`TND ${transactionData.remaining_balance.toFixed(2)}`}
           className={`input input-bordered ${transactionData.remaining_balance < 0 ? 'input-error' : ''}`}
           disabled
         />
@@ -65,7 +65,7 @@ export default function PaymentStep({
                 payment_method_id: e.target.value
               }))}
             >
-              <option value="">Select Method</option>
+              <option value="">Sélectionner la méthode</option>
               {paymentMethods.map(method => (
                 <option key={method.id} value={method.id}>
                   {method.name}

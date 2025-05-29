@@ -23,10 +23,18 @@ export default function TransactionCard({ transaction, isCredit }) {
     <tr className="hover">
       <td>{new Date(transaction.date).toLocaleDateString()}</td>
       <td>{transaction.reference_number}</td>
-      <td>{transaction.amount} $</td>
+      <td>{transaction.amount} TND</td>
       <td>
         <span className={`badge ${getStatusBadge(transaction.status)}`}>
-          {transaction.status}
+              {
+      transaction.status === "paid"
+        ? "Payée"
+        : transaction.status === "pending"
+        ? "En attente"
+        : transaction.status === "overdue"
+        ? "En retard"
+        : "Statut inconnu"
+    }
         </span>
       </td>
       <td>{isCredit ? transaction.client_name || "N/A" : transaction.supplier_name || "N/A"}</td>
@@ -35,7 +43,7 @@ export default function TransactionCard({ transaction, isCredit }) {
           onClick={() => router.push(`${pathname}/${transaction.id}`)} // Correctly append the transaction ID
           className="btn btn-xs btn-info flex items-center gap-1"
         >
-          <FaEye /> Details
+          <FaEye /> Détails
         </button>
       </td>
     </tr>

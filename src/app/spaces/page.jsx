@@ -18,7 +18,7 @@ export default function SpacesPage() {
 
   const sections = [
     {
-      id: 'admin',
+      id: 'administration',
       title: 'Espace Administration',
       description: 'Gestion complète des paramètres système et des utilisateurs',
       bgImage: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1746543210/admin_bg.jpg',

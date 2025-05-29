@@ -158,55 +158,76 @@ export default function TransactionForm()  {
     return true;
   };
 
-  const handleSubmit = async () => {
-    setLoading(true);
-    try {
-      const total_cost = transactionData.products.reduce(
-        (sum, product) => sum + (product.quantity * product.current_cost_price),
-        0
-      );
+    const handleSubmit = async () => {
+      // ── 1. clear previous errors
+      setErrors({});              // if you already keep an errors object
+      const missing = {};
 
-      const initial_payment = transactionData.payments.reduce(
-        (sum, payment) => sum + Number(payment.amount_paid),
-        0
-      );
-
-      const reference_number = `REF${Math.floor(100000 + Math.random() * 900000)}`;
-
-      const finalData = {
-        type: transactionData.type,
-        amount: transactionData.amount,
-        total_cost,
-        date: new Date().toISOString().split('T')[0],
-        description: transactionData.description,
-        client_id: transactionData.client_id || null,
-        supplier_id: transactionData.supplier_id || null,
-        payment_method_id: transactionData.payments[0]?.payment_method_id || null,
-        reference_number,
-        products: transactionData.products.map(p => ({
-          product_id: p.id,
-          quantity: p.quantity,
-          unit_price: p.selling_price
-        })),
-        due_date: transactionData.due_date,
-        initial_payment,
-        due_status: transactionData.remaining_balance <= 0 ? 'paid' : 'pending'
-      };
-
-      const response = await createTransaction(finalData, session.user.accessToken);
-
-      if (response.success) {
-        showSuccessAlert(session.user.theme, 'Transaction créée avec succès !');
-        router.push('/home/transactions');
-      } else {
-        showErrorAlert(session?.user.theme, response.message);
+      // ── 2. check required fields
+      if (!transactionData.due_date) {
+        missing.due_date = "Obligatoire";
       }
-    } catch (error) {
-      showErrorAlert(session?.user.theme, error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+      if (!transactionData.description?.trim()) {
+        missing.description = "Obligatoire";
+      }
+
+      // ── 3. if anything missing → show alert & abort
+      if (Object.keys(missing).length) {
+        setErrors(missing);       // makes the inputs turn red (see step 2)
+        showErrorAlert(
+          session?.user?.theme,
+          "Veuillez remplir tous les champs obligatoires."
+        );
+        return;                   // ⟵ stop submission
+      }
+
+      /*  … everything below stays the same …  */
+      setLoading(true);
+      try {
+        const total_cost = transactionData.products.reduce(
+          (sum, p) => sum + p.quantity * p.current_cost_price,
+          0
+        );
+        const initial_payment = transactionData.payments.reduce(
+          (s, pay) => s + Number(pay.amount_paid),
+          0
+        );
+        const reference_number = `REF${Math.floor(100000 + Math.random() * 900000)}`;
+
+        const finalData = {
+          type: transactionData.type,
+          amount: transactionData.amount,
+          total_cost,
+          date: new Date().toISOString().split('T')[0],
+          description: transactionData.description,
+          client_id: transactionData.client_id || null,
+          supplier_id: transactionData.supplier_id || null,
+          payment_method_id: transactionData.payments[0]?.payment_method_id || null,
+          reference_number,
+          products: transactionData.products.map(p => ({
+            product_id: p.id,
+            quantity: p.quantity,
+            unit_price: p.selling_price,
+          })),
+          due_date: transactionData.due_date,
+          initial_payment,
+          due_status: transactionData.remaining_balance <= 0 ? 'paid' : 'pending',
+        };
+
+        const response = await createTransaction(finalData, session.user.accessToken);
+
+        if (response.success) {
+          showSuccessAlert(session.user.theme, 'Transaction créée avec succès !');
+          router.push('/home/transactions');
+        } else {
+          showErrorAlert(session?.user.theme, response.message);
+        }
+      } catch (err) {
+        showErrorAlert(session?.user.theme, err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
   useEffect(() => {
     if (currentStep === 4) {
@@ -235,7 +256,7 @@ export default function TransactionForm()  {
       <div className="steps steps-horizontal w-full">
         {[1, 2, 3, 4, 5].map(step => (
           <div className={`step ${currentStep >= step ? 'step-primary' : ''}`} key={step}>
-            Step {step}
+            Étape {step}
           </div>
         ))}
       </div>
@@ -288,10 +309,10 @@ export default function TransactionForm()  {
             <table className="table table-zebra">
               <thead>
                 <tr>
-                  <th>Product</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th>
-                  <th>Total</th>
+                  <th>Produit</th>
+                  <th>Quantité</th>
+                  <th>Prix unitaire</th>
+                  <th>Total Prix Produit</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -300,8 +321,8 @@ export default function TransactionForm()  {
                   <tr key={product.id}>
                     <td>{product.name}</td>
                     <td>{product.quantity}</td>
-                    <td>${product.selling_price}</td>
-                    <td>${(product.selling_price * product.quantity).toFixed(2)}</td>
+                    <td>TND {product.selling_price}</td>
+                    <td>TND {(product.selling_price * product.quantity).toFixed(2)}</td>
                     <td>
                       <button
                         className="btn btn-xs btn-error"
@@ -321,6 +342,15 @@ export default function TransactionForm()  {
                   </tr>
                 ))}
               </tbody>
+               <tfoot>
+          <tr>
+            <td colSpan={3} className="text-right font-bold">Montant total :</td>
+            <td className="font-bold text-primary">
+              {Number(transactionData.amount.toFixed(2))} TND
+            </td>
+            <td />
+          </tr>
+        </tfoot>
             </table>
           </div>
         </div>
@@ -359,9 +389,9 @@ export default function TransactionForm()  {
           <div className="alert alert-info">
             <div className="flex-1">
               <label className="alert-title">Résumé de la transaction</label>
-              <p>Total Amount: ${transactionData.amount.toFixed(2)}</p>
-              <p>Total Payments: ${(transactionData.amount - transactionData.remaining_balance).toFixed(2)}</p>
-              <p>Remaining Balance: ${transactionData.remaining_balance.toFixed(2)}</p>
+              <p>Total Amount: TND{transactionData.amount.toFixed(2)}</p>
+              <p>Total Payments: TND{(transactionData.amount - transactionData.remaining_balance).toFixed(2)}</p>
+              <p>Remaining Balance: TND{transactionData.remaining_balance.toFixed(2)}</p>
             </div>
           </div>
 
@@ -371,7 +401,7 @@ export default function TransactionForm()  {
             </label>
             <input
               type="date"
-              className="input input-bordered"
+              className={`input input-bordered ${errors.due_date ? 'input-error' : ''}`}
               value={transactionData.due_date}
               onChange={(e) => setTransactionData(prev => ({
                 ...prev,
@@ -394,7 +424,7 @@ export default function TransactionForm()  {
                 description: e.target.value
               }))}
             />
-            {errors.description && <div className="text-error text-sm">{errors.description}</div>}
+         
           </div>
         </div>
       )}
