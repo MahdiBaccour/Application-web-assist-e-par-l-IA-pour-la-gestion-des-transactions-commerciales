@@ -128,12 +128,13 @@ function NotFound() {
               <FiArrowRight className="text-xl" />
             </Link>
             <Link 
-              href="/contact-admin" 
-              className="btn btn-ghost gap-2 border border-base-content/20 hover:border-base-content/40"
-            >
-              <FiMail className="text-xl" />
-              <span className="hover:underline">Contact Administrateur</span>
-            </Link>
+  href="/administration/contact"
+  className="btn btn-ghost gap-2 border border-base-content/20 hover:border-base-content/40"
+>
+  <FiMail className="text-xl" />
+  <span className="hover:underline">Contact Administrateur</span>
+</Link>
+
           </div>
 
           {/* Footer Note */}

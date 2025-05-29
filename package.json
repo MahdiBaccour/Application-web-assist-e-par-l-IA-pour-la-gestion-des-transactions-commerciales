@@ -39,6 +39,8 @@
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.510.0",
+    "mailersend": "^2.6.0",
+    "mailsender": "^1.1.2",
     "next": "^15.1.7",
     "next-auth": "^4.24.11",
     "next-cloudinary": "^6.16.0",
