@@ -98,6 +98,11 @@ export default function TransactionsTable({
     setFilterDate
   } = useTransactionFilters(transactions, typeFilter);
 
+  const handleCreateClick = () => {
+  const basePath = pathname.includes("transactions") ? pathname : `${pathname}/transactions`;
+  router.push(`${basePath}/create`);
+  };
+
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
   const currentTransactions = filteredTransactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
@@ -114,8 +119,8 @@ export default function TransactionsTable({
     <div className="overflow-x-auto">
     {!disableAdd && (session?.user.role === "owner" || session?.user.role === "employee") && (
   <div className="mb-6 flex justify-between items-center">
-    <button onClick={() => router.push(`${pathname}/create`)} className="btn btn-primary flex items-center gap-2">
-      <FaPlus /> Create Transaction
+    <button  onClick={handleCreateClick} className="btn btn-primary flex items-center gap-2">
+      <FaPlus /> Créer une transaction
     </button>
   </div>
 )}
@@ -126,13 +131,13 @@ export default function TransactionsTable({
             onClick={() => setTypeFilter("credit")}
             className={`btn btn-sm flex items-center gap-1 ${typeFilter === "credit" ? "btn-error" : "btn-outline"}`}
           >
-            <FaArrowRight className="text-sm" /> Credit
+            <FaArrowRight className="text-sm" /> Crédit
           </button>
           <button
             onClick={() => setTypeFilter("debit")}
             className={`btn btn-sm flex items-center gap-1 ${typeFilter === "debit" ? "btn-success" : "btn-outline"}`}
           >
-            <FaArrowLeft className="text-sm" /> Debit
+            <FaArrowLeft className="text-sm" /> Débit
           </button>
         </div>
 
@@ -141,7 +146,7 @@ export default function TransactionsTable({
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm" />
             <input
               type="text"
-              placeholder="Search Reference"
+              placeholder="Recherche de référence"
               className="input input-sm input-bordered pl-8"
               value={searchReference}
               onChange={(e) => setSearchReference(e.target.value)}
@@ -166,10 +171,10 @@ export default function TransactionsTable({
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="">All Statuses</option>
-                <option value="paid">Paid</option>
-                <option value="pending">Pending</option>
-                <option value="overdue">Overdue</option>
+                <option value="">Tous les statuts</option>
+                <option value="paid">Payé</option>
+                <option value="pending">En attente</option>
+                <option value="overdue">En retard</option>
               </select>
             </div>
           </div>
@@ -180,9 +185,9 @@ export default function TransactionsTable({
         <thead>
           <tr>
             <th>Date</th>
-            <th>Reference</th>
-            <th>Amount</th>
-            <th>Status</th>
+            <th>Référence</th>
+            <th>Montant</th>
+            <th>Statut</th>
             <th>{typeFilter === "credit" ? "Client" : "Supplier"}</th>
             <th>Actions</th>
           </tr>
@@ -195,7 +200,7 @@ export default function TransactionsTable({
           ) : (
             <tr>
               <td colSpan="6" className="text-center text-gray-400">
-                No transactions available
+                Aucune transaction disponible
               </td>
             </tr>
           )}
@@ -203,11 +208,11 @@ export default function TransactionsTable({
       </table>
 
       <div className="flex justify-center mt-6">
-        <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="btn btn-sm">First</button>
-        <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1} className="btn btn-sm mx-2">Previous</button>
-        <span className="text-center mx-2">Page {currentPage} of {totalPages}</span>
-        <button onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="btn btn-sm mx-2">Next</button>
-        <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="btn btn-sm">Last</button>
+        <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="btn btn-sm">Première</button>
+        <button onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))} disabled={currentPage === 1} className="btn btn-sm mx-2">Précédente</button>
+        <span className="text-center mx-2">Page {currentPage} de {totalPages}</span>
+        <button onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))} disabled={currentPage === totalPages} className="btn btn-sm mx-2">Suivant</button>
+        <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="btn btn-sm">Dernière</button>
       </div>
     </div>
   );
@@ -265,10 +270,10 @@ export function TransactionsTableSimple({ startDate, endDate, onTotalChange = ()
         <thead>
           <tr>
             <th>Date</th>
-            <th>Reference</th>
+            <th>Référence</th>
             <th>Amount</th>
-            <th>Status</th>
-            <th>Client/Supplier</th>
+            <th>Montant</th>
+            <th>Client/Fournisseur</th>
           </tr>
         </thead>
         <tbody>
@@ -279,7 +284,7 @@ export function TransactionsTableSimple({ startDate, endDate, onTotalChange = ()
           ) : (
             <tr>
               <td colSpan="5" className="text-center text-gray-400">
-                No transactions available
+                Pas de transactions disponibles
               </td>
             </tr>
           )}

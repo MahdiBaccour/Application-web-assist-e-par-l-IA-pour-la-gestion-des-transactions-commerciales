@@ -11,7 +11,7 @@ import {
   showErrorAlert,
 } from "@/utils/swalConfig";
 import { ImSpinner2 } from "react-icons/im";
-import { FaUserTie, FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { FaUserTie, FaUsers, FaUserCheck, FaUserTimes,FaSearch } from "react-icons/fa";
 import UpdateSupplierForm from "./UpdateSupplierForm";
 import SupplierForm from "./SupplierForm";
 import SupplierCard from "./SupplierCard";
@@ -28,6 +28,7 @@ export default function SupplierTable() {
   const [isLoadingStatus, setIsLoadingStatus] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
   const suppliersPerPage = 5;
@@ -58,14 +59,17 @@ export default function SupplierTable() {
     loadSuppliers();
   }, [statusFilter, session?.user.accessToken]);
 
-
+      
+        const filteredSuppliers = suppliers.filter(supplier => 
+          supplier.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
   const handleEdit = (id) => setSelectedSupplierId(id);
 
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
 
-    const result = await showConfirmationDialog({
+    const result = await showConfirmationDialog(session.user.theme, {
       title: `Changer le statut à ${newStatus}?`,
       text: "Vous pouvez modifier cela à tout moment.",
       confirmText: `Oui, changer à ${newStatus}`,
@@ -122,9 +126,9 @@ export default function SupplierTable() {
 
   const indexOfLastSupplier = currentPage * suppliersPerPage;
   const indexOfFirstSupplier = indexOfLastSupplier - suppliersPerPage;
-  const currentSuppliers = suppliers.slice(indexOfFirstSupplier, indexOfLastSupplier);
-  const totalPages = Math.ceil(suppliers.length / suppliersPerPage);
-
+  const currentSuppliers = filteredSuppliers.slice(indexOfFirstSupplier, indexOfLastSupplier);
+  const totalPages = Math.ceil(filteredSuppliers.length / suppliersPerPage);
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center mt-10">
@@ -157,42 +161,57 @@ export default function SupplierTable() {
           onUpdateSuccess={handleSupplierUpdate}
         />
       ) : (
-        <>
-          <div className="flex gap-2 mb-4">
-            <button
-              onClick={() => setIsAddingNewSupplier(true)}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FaUserTie /> Nouveau fournisseur
-            </button>
+       <>
+          <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setIsAddingNewSupplier(true)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <FaUserTie /> Nouveau fournisseur
+              </button>
 
-            <button
-              onClick={() => setStatusFilter("all")}
-              className={`btn flex items-center gap-2 ${
-                statusFilter === "all" ? "btn-info" : "btn-outline"
-              }`}
-            >
-              <FaUsers /> Tous
-            </button>
+              <button
+                onClick={() => setStatusFilter("all")}
+                className={`btn flex items-center gap-2 ${
+                  statusFilter === "all" ? "btn-info" : "btn-outline"
+                }`}
+              >
+                <FaUsers /> Tous
+              </button>
 
-            <button
-              onClick={() => setStatusFilter("active")}
-              className={`btn flex items-center gap-2 ${
-                statusFilter === "active" ? "btn-success" : "btn-outline"
-              }`}
-            >
-              <FaUserCheck /> Actifs
-            </button>
+              <button
+                onClick={() => setStatusFilter("active")}
+                className={`btn flex items-center gap-2 ${
+                  statusFilter === "active" ? "btn-success" : "btn-outline"
+                }`}
+              >
+                <FaUserCheck /> Actifs
+              </button>
 
-            <button
-              onClick={() => setStatusFilter("inactive")}
-              className={`btn flex items-center gap-2 ${
-                statusFilter === "inactive" ? "btn-error" : "btn-outline"
-              }`}
-            >
-              <FaUserTimes /> Inactifs
-            </button>
+              <button
+                onClick={() => setStatusFilter("inactive")}
+                className={`btn flex items-center gap-2 ${
+                  statusFilter === "inactive" ? "btn-error" : "btn-outline"
+                }`}
+              >
+                <FaUserTimes /> Inactifs
+              </button>
+            </div>
+            
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Rechercher par nom..."
+                className="input input-bordered pl-10 pr-4"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+            </div>
           </div>
+
 
           <table className="table w-full table-zebra">
             <thead>

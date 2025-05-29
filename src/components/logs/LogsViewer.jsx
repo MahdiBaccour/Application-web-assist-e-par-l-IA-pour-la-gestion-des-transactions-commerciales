@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FaSpinner, FaClipboardList, FaSearch } from "react-icons/fa";
 import LogsTable from "./LogsTable";
-import { showErrorAlert } from "@/utils/swalConfig";
+import AuditTrail from "@/components/audit/AuditTrail"; // Assuming you have an AuditTrail component
 
 export default function LogsViewer() {
   const { data: session } = useSession();
@@ -51,9 +51,10 @@ export default function LogsViewer() {
       {viewType === "logs" && <LogsTable limit={10} />}
       
       {viewType === "audit" && (
-        <div className="alert alert-info">
-          <span>Module Audit Trail en cours d’implémentation...</span>
-        </div>
+        // <div className="alert alert-info">
+        //   <span>Module Audit Trail en cours d’implémentation...</span>
+        // </div>
+<AuditTrail limit={10} />
       )}
     </div>
   );

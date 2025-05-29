@@ -39,6 +39,8 @@ export const getAuthorizedLinks = (role) => {
     case 'employee':
       return [
         ...baseLinks,
+         { path: "/home/clients", icon: 'FaUserTie', label: "Clients" },
+        { path: "/home/suppliers", icon: 'FaIndustry', label: "Fournisseurs" },
         { path: "/home/products", icon: 'FaBoxOpen', label: "Produits" },
         { path: "/home/categories", icon: 'FaTags', label: "Catégories" },
         { path: "/home/transactions", icon: 'FaExchangeAlt', label: "Transactions" },

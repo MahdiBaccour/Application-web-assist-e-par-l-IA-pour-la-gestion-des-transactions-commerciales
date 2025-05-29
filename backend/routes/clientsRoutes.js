@@ -5,20 +5,24 @@ import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new client
 router.post("/",middleware.auth, (req, res, next) => {
   // Check if the user is  an owner
-  if (req.user.role === "owner" )  {
+  if (req.user.role === "owner" || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 }, async (req, res) => {
   
   const { name, email, phone, address,note } = req.body;
   try {
+    await pool.query("BEGIN");
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     const result = await pool.query(
       "INSERT INTO clients (name, email, phone, address,note) VALUES ($1, $2, $3, $4,$5) RETURNING *",
       [name, email, phone, address,note]
     );
-    
+    await pool.query("COMMIT");
     res.status(201).json({ success: true, client: result.rows[0] });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error creating client", error: error.message });
   }
 });
@@ -141,13 +145,17 @@ router.put("/:id",middleware.auth, (req, res, next) => {
     }
 
     values.push(id); // Add the ID as the last parameter
+    await pool.query("BEGIN");
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
 
     const query = `UPDATE clients SET ${updateFields.join(", ")} WHERE id = $${index} RETURNING *`;
 
     const result = await pool.query(query, values);
     res.status(200).json({ success: true, message: "Client updated successfully", client: result.rows[0] });
-
+    pool.query("COMMIT");
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error updating client", error: error.message });
   }
 });
@@ -165,6 +173,10 @@ router.patch("/:id/status",middleware.auth, (req, res, next) => {
   const { status } = req.body;
   
   try {
+    await pool.query("BEGIN");
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
+
     const result = await pool.query(
       "UPDATE clients SET status_client = $1 WHERE id = $2 RETURNING *",
       [status, id]
@@ -173,9 +185,10 @@ router.patch("/:id/status",middleware.auth, (req, res, next) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: "Client not found" });
     }
-    
+    await pool.query("COMMIT");
     res.status(200).json({ success: true, client: result.rows[0] });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error updating status", error: error.message });
   }
 });

@@ -188,6 +188,7 @@ def predict_budget():
         models = {key: LinearRegression().fit(features, target) for key, target in targets.items()}
 
         predictions = []
+        print(df["month_date"].max())
         last_date = df["month_date"].max()
         year = last_date.year
         month = last_date.month

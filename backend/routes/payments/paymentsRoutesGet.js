@@ -11,18 +11,27 @@ router.get("/", middleware.auth, async (req, res) => {
     }
 
     const { startDate, endDate } = req.query;
+
+    /* ── build query ─────────────────────────────────────────── */
     let query = `
-      SELECT p.*, pm.name AS payment_method 
+      SELECT
+        p.*,
+        pm.name               AS payment_method,
+        t.reference_number    AS reference          -- ← add reference
       FROM payments p
       LEFT JOIN payment_methods pm ON p.payment_method_id = pm.id
+      LEFT JOIN transactions    t  ON p.transaction_id   = t.id
     `;
 
     const params = [];
     if (startDate && endDate) {
-      query += " WHERE p.payment_date >= $1 AND p.payment_date <= $2";
+      query += ` WHERE p.payment_date >= $1 AND p.payment_date <= $2`;
       params.push(startDate, endDate);
     }
 
+    query += " ORDER BY p.payment_date DESC";
+
+    /* ── run & return ────────────────────────────────────────── */
     const result = await pool.query(query, params);
     res.status(200).json({ success: true, payments: result.rows });
   } catch (error) {

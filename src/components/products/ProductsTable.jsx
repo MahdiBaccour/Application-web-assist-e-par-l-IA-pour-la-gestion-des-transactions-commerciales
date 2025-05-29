@@ -16,6 +16,7 @@ import {
   FaCheckCircle,
   FaTimesCircle,
   FaSpinner,
+  FaSearch
 } from "react-icons/fa";
 import { ImSpinner2 } from "react-icons/im";
 import { FaPlus } from "react-icons/fa";
@@ -37,6 +38,7 @@ export default function ProductsTable() {
   const [isLoadingStatus, setIsLoadingStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [error,setError]=useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 5;
 
 
@@ -157,11 +159,17 @@ export default function ProductsTable() {
     );
     setSelectedProductId(null);
   };
+  const filteredProducts = products.filter(product => 
+  product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(products.length / productsPerPage);
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+    useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   if (loading)
     return (
@@ -181,7 +189,7 @@ export default function ProductsTable() {
       </div>
     );}
 
-  return (
+return (
     <div className="overflow-x-auto">
       {isAddingNewProduct ? (
         <ProductForm onActionSuccess={handleNewProduct} onGoBack={handleGoBack} />
@@ -196,10 +204,10 @@ export default function ProductsTable() {
           {/* First Row: Add Product + Status Filters */}
           <div className="flex justify-between items-center mb-4">
             <button onClick={() => setIsAddingNewProduct(true)} className="btn btn-primary flex items-center gap-2">
-              <FaPlus /> Add Product
+              <FaPlus /> Ajouter un produit
             </button>
             <div className="flex gap-2">
-                  <button
+              <button
                 onClick={() => setSelectedStatus("all")}
                 className={`btn flex items-center justify-center gap-2 w-28 ${
                   selectedStatus === "all" ? "btn-info" : "btn-outline"
@@ -208,17 +216,34 @@ export default function ProductsTable() {
                 <FaList size={18} /> Tous
               </button>
               <button onClick={() => setSelectedStatus("active")} className={`btn ${selectedStatus === "active" ? "btn-success" : "btn-outline"}`}>
-               <FaCheckCircle/>  Actif
+                <FaCheckCircle /> Actif
               </button>
               <button onClick={() => setSelectedStatus("inactive")} className={`btn ${selectedStatus === "inactive" ? "btn-error" : "btn-outline"}`}>
-              <FaTimesCircle/>   Inactif
+                <FaTimesCircle /> Inactif
               </button>
             </div>
           </div>
 
-          {/* Second Row: Category Filter */}
-          <div className="flex justify-end mb-4">
-            <select className="select select-bordered select-sm" value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+          {/* Second Row: Search + Category Filter */}
+          <div className="flex justify-between items-center mb-4">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Rechercher par nom..."
+                className="input input-bordered pl-10 pr-4 w-full max-w-xs"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+            </div>
+            
+            {/* Category Filter */}
+            <select 
+              className="select select-bordered select-sm" 
+              value={selectedCategory} 
+              onChange={(e) => setSelectedCategory(e.target.value)}
+            >
               <option value="">Toutes les catégories</option>
               {categories?.map((category) => (
                 <option key={category.id} value={category.id}>
@@ -232,7 +257,7 @@ export default function ProductsTable() {
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
-              <th>Nom</th>
+                <th>Nom</th>
                 <th>Catégorie</th>
                 <th>Prix de vente</th>
                 <th>Stock</th>
@@ -244,7 +269,7 @@ export default function ProductsTable() {
               {currentProducts.length > 0 ? (
                 currentProducts.map((product) => (
                   <ProductCard
-                  key={product.id} 
+                    key={product.id}
                     product={product}
                     onEdit={handleEdit}
                     onViewDetails={handleViewDetails}
@@ -255,7 +280,9 @@ export default function ProductsTable() {
               ) : (
                 <tr>
                   <td colSpan="6" className="text-center">
-                  Pas de produits disponibles
+                    {searchTerm ? 
+                      "Aucun produit trouvé avec ce nom" : 
+                      "Pas de produits disponibles"}
                   </td>
                 </tr>
               )}
@@ -265,23 +292,24 @@ export default function ProductsTable() {
           {/* Pagination */}
           <div className="flex justify-center mt-4">
             <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1} className="btn btn-sm">
-            Première
+              Première
             </button>
             <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1} className="btn btn-sm mx-2">
-            Précédent
+              Précédent
             </button>
             <span className="text-center mx-2">
               Page {currentPage} de {totalPages}
             </span>
             <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages} className="btn btn-sm mx-2">
-            Suivant
+              Suivant
             </button>
             <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages} className="btn btn-sm">
-            Dernière
+              Dernière
             </button>
           </div>
         </>
       )}
     </div>
   );
+
 }

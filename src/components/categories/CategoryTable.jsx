@@ -4,8 +4,10 @@ import { useRouter } from 'next/navigation';
 import {
   FaPlus,
   FaSpinner,
-  FaToggleOn,
-  FaToggleOff,
+  FaList,
+  FaCheckCircle,
+  FaTimesCircle 
+
 } from 'react-icons/fa';
 import { getCategories, updateCategoryStatus } from '@/services/categories/categoryService';
 import {
@@ -189,20 +191,26 @@ export default function CategoriesTable() {
               onClick={() => setFilterStatus("all")}
               className={`btn ${filterStatus === "all" ? "btn-info" : "btn-outline"}`}
             >
+              <FaList className="mr-2" />
               Toutes
             </button>
+
             <button
               onClick={() => setFilterStatus("active")}
               className={`btn ${filterStatus === "active" ? "btn-success" : "btn-outline"}`}
             >
+              <FaCheckCircle className="mr-2" />
               Actives
             </button>
+
             <button
               onClick={() => setFilterStatus("inactive")}
               className={`btn ${filterStatus === "inactive" ? "btn-error" : "btn-outline"}`}
             >
+              <FaTimesCircle className="mr-2" />
               Inactives
             </button>
+
           </div>
 
           <table className="table w-full table-zebra">

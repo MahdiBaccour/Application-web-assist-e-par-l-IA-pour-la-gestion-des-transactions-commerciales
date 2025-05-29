@@ -154,33 +154,38 @@ export default function ReportPage() {
 
       <div className="report-content">
         {reportType === 'stats' ? (
-          <>
-            <TransactionsTableSimple
-              startDate={startDate}
-              endDate={endDate}
-              onTotalChange={setTotalAmount}
-              onDataCapture={handleTransactionsData}
-              disableAdd={true}
-            />
-            <PaymentTable
-              startDate={startDate}
-              endDate={endDate}
-              onDataCapture={handlePaymentsData}
-              refreshTrigger={`${startDate}-${endDate}`}
-            />
-            <div className="mt-4 p-4 bg-base-200 rounded-lg">
-              <h3 className="text-xl font-semibold">
-                Total des Transactions:{' '}
-                {transactionsData
-                  .reduce((sum, transaction) => {
-                    const amount = parseFloat(transaction.amount);
-                    return Number.isFinite(amount) ? sum + amount : sum;
-                  }, 0)
-                  .toFixed(2)}{' '}
-                DT
-              </h3>
-            </div>
-          </>
+      <>
+        <TransactionsTableSimple
+          startDate={startDate}
+          endDate={endDate}
+          onTotalChange={setTotalAmount}
+          onDataCapture={handleTransactionsData}
+          disableAdd={true}
+        />
+
+        {/* spacer */}
+        <div className="mt-8">
+          <PaymentTable
+            startDate={startDate}
+            endDate={endDate}
+            onDataCapture={handlePaymentsData}
+            refreshTrigger={`${startDate}-${endDate}`}
+          />
+        </div>
+
+        <div className="mt-4 p-4 bg-base-200 rounded-lg">
+          <h3 className="text-xl font-semibold">
+            Total des Transactions:{' '}
+            {transactionsData
+              .reduce((sum, t) => {
+                const amt = parseFloat(t.amount);
+                return Number.isFinite(amt) ? sum + amt : sum;
+              }, 0)
+              .toFixed(2)}{' '}
+            TND
+          </h3>
+        </div>
+      </>
         ) : (
           <div className="p-4">
             <p className="text-lg">

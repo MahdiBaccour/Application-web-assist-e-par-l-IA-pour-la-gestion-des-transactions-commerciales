@@ -14,6 +14,7 @@ import {
   FaUniversity,
   FaMobileAlt,
   FaFileInvoiceDollar,
+  FaSearch,
 } from "react-icons/fa";
 import PaymentForm from "./PaymentForm";
 import PaymentCard from "./PaymentCard";
@@ -52,6 +53,7 @@ export function PaymentTable({
   const [filterMethod, setFilterMethod] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [paymentsPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (
@@ -158,12 +160,17 @@ export function PaymentTable({
     }
   };
 
-  const filteredPayments = payments.filter((p) =>
-    filterMethod === "all"
-      ? true
-      : paymentMethods.find((m) => m.name === filterMethod)?.id ===
-        p.payment_method_id
-  );
+  // Combined filter function with search - FIXED
+  const filteredPayments = payments.filter((p) => {
+    // Apply payment method filter
+    const methodMatch = filterMethod === "all" || 
+      paymentMethods.find((m) => m.name === filterMethod)?.id === p.payment_method_id;
+    
+    // Apply search term filter - FIXED
+    const searchMatch = String(p.reference || "").toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return methodMatch && searchMatch;
+  });
 
   const indexOfLast = currentPage * paymentsPerPage;
   const indexOfFirst = indexOfLast - paymentsPerPage;
@@ -196,40 +203,54 @@ export function PaymentTable({
         />
       ) : (
         <>
-          <div className="flex gap-2 mb-4 flex-wrap">
-            <button
-              onClick={handleAddNewPayment}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FaPlus /> Ajouter un nouveau paiement
-            </button>
-
-            <button
-              onClick={() => setFilterMethod("all")}
-              className={`btn flex items-center gap-2 ${
-                filterMethod === "all" ? "btn-info" : "btn-outline"
-              }`}
-            >
-              <FaMoneyCheckAlt /> Tous
-            </button>
-
-            {paymentMethods.map((method) => (
+          <div className="flex flex-wrap justify-between items-center mb-4 gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
-                key={method.id}
-                onClick={() => setFilterMethod(method.name)}
+                onClick={handleAddNewPayment}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <FaPlus /> Ajouter un nouveau paiement
+              </button>
+
+              <button
+                onClick={() => setFilterMethod("all")}
                 className={`btn flex items-center gap-2 ${
-                  filterMethod === method.name ? "btn-success" : "btn-outline"
+                  filterMethod === "all" ? "btn-info" : "btn-outline"
                 }`}
               >
-                {method.icon} {method.name}
+                <FaMoneyCheckAlt /> Tous
               </button>
-            ))}
+
+              {paymentMethods.map((method) => (
+                <button
+                  key={method.id}
+                  onClick={() => setFilterMethod(method.name)}
+                  className={`btn flex items-center gap-2 ${
+                    filterMethod === method.name ? "btn-success" : "btn-outline"
+                  }`}
+                >
+                  {method.icon} {method.name}
+                </button>
+              ))}
+            </div>
+            
+            {/* Search input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Rechercher par référence"
+                className="input input-bordered pl-10 pr-4"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="absolute left-3 top-3.5 text-gray-400" />
+            </div>
           </div>
 
           <table className="table w-full table-zebra">
             <thead>
               <tr className="bg-base-300 text-base-content">
-                <th>Transaction ID</th>
+                <th>Réference Transaction</th>
                 <th>Montant</th>
                 <th>Méthode</th>
                 <th>Date</th>
@@ -250,7 +271,9 @@ export function PaymentTable({
               ) : (
                 <tr>
                   <td colSpan="5" className="text-center">
-                    Aucun paiement trouvé
+                    {searchTerm ? 
+                      "Aucun paiement trouvé avec cette référence" : 
+                      "Aucun paiement trouvé"}
                   </td>
                 </tr>
               )}
@@ -296,18 +319,17 @@ export function PaymentTable({
   );
 }
 
-// Export tableau simple en lecture seule
 export function SimplePaymentTable({ payments }) {
   if (payments.length === 0) {
     return (
       <div className="text-center text-sm text-gray-500 mt-8">
-        No payments found.
+        Aucun paiement trouvé
       </div>
     );
   }
 
   const getMethodName = (methodId) => {
-    return paymentMethods.find((m) => m.id === methodId)?.name || "Unknown";
+    return paymentMethods.find((m) => m.id === methodId)?.name || "Inconnu";
   };
 
   return (
@@ -315,17 +337,17 @@ export function SimplePaymentTable({ payments }) {
       <table className="table w-full">
         <thead>
           <tr>
-            <th>Transaction ID</th>
-            <th>Amount</th>
-            <th>Method</th>
+            <th>Réference Transaction</th>
+            <th>Montant</th>
+            <th>Méthode</th>
             <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {payments.map((payment) => (
             <tr key={payment.id}>
-              <td>{payment.transaction_id}</td>
-              <td>{(payment.amount_paid || 0).toFixed(2)} DH</td>
+              <td>{payment.reference}</td>
+              <td>{(payment.amount_paid || 0).toFixed(2)} TND</td>
               <td>{getMethodName(payment.payment_method_id)}</td>
               <td>
                 {new Date(payment.payment_date).toLocaleDateString("fr-FR")}

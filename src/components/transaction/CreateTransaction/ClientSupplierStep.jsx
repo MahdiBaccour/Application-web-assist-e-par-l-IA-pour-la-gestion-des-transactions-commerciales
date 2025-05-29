@@ -42,7 +42,7 @@ export default function ClientSupplierStep({ type, error, onSelect, onError }) {
           }
         }}
       >
-        <option value="">Select {type === 'credit' ? 'Client' : 'Supplier'}</option>
+        <option value="">Sélectionner {type === 'credit' ? 'Client' : 'Supplier'}</option>
         {options.map(option => (
           <option key={option.id} value={option.id}>
             {option.name}

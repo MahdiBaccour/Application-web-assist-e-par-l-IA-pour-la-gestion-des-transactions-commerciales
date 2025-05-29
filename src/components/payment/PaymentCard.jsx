@@ -10,8 +10,8 @@ export default function PaymentCard({
 }) {
   return (
     <tr className="hover">
-      <td>{payment.transaction_id}</td>
-      <td>${payment.amount_paid}</td>
+      <td>{payment.reference}</td>
+      <td>TND {payment.amount_paid}</td>
       <td className="capitalize">{payment.payment_method}</td>
       <td>{new Date(payment.payment_date).toLocaleDateString()}</td>
       <td>

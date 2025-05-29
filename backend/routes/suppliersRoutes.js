@@ -6,7 +6,7 @@ import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new supplier
 router.post("/",middleware.auth,(req, res, next) => {
   // Check if the user is  an owner
-  if (req.user.role === "owner" )  {
+  if (req.user.role === "owner" || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 }, async (req, res) => {
@@ -14,21 +14,24 @@ router.post("/",middleware.auth,(req, res, next) => {
   const { name, email, phone, address, note } = req.body;
 
   try {
+    await pool.query("BEGIN");
     // Check if the phone number already exists
     const phoneCheck = await pool.query("SELECT id FROM suppliers WHERE phone = $1", [phone]);
     if (phoneCheck.rows.length > 0) {
       return res.status(400).json({ success: false, message: "Phone number already exists" });
     }
-
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     // Insert the new supplier
     const result = await pool.query(
       `INSERT INTO suppliers (name, email, phone, address, note)
        VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [name, email, phone, address, note]
     );
-
+    await pool.query("COMMIT");
     res.status(201).json({ success: true, supplier: result.rows[0] });
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error adding supplier", error: error.message });
   }
 });
@@ -108,7 +111,7 @@ router.post("/check-phone",middleware.auth,(req, res, next) => {
 // 📌 UPDATE a supplier
 router.put("/:id",middleware.auth,(req, res, next) => {
   // Check if the user is an owner
-  if (req.user.role === "owner" )  {
+  if (req.user.role === "owner" || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 }, async (req, res) => {
@@ -117,6 +120,7 @@ router.put("/:id",middleware.auth,(req, res, next) => {
   const { name, email, phone, address, note } = req.body;
 
   try {
+    await pool.query("BEGIN");
     const existingSupplier = await pool.query("SELECT * FROM suppliers WHERE id = $1", [id]);
     if (existingSupplier.rows.length === 0) {
       return res.status(404).json({ success: false, message: "Supplier not found" });
@@ -145,14 +149,17 @@ router.put("/:id",middleware.auth,(req, res, next) => {
     if (updateFields.length === 0) {
       return res.status(400).json({ success: false, message: "No valid fields provided for update" });
     }
-
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     values.push(id);
     const query = `UPDATE suppliers SET ${updateFields.join(", ")} WHERE id = $${index} RETURNING *`;
 
     const result = await pool.query(query, values);
+    await pool.query("COMMIT");
     res.status(200).json({ success: true, message: "Supplier updated successfully", supplier: result.rows[0] });
 
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error updating supplier", error: error.message });
   }
 });
@@ -173,6 +180,9 @@ router.patch("/:id/status",middleware.auth, (req, res, next) => {
   }
 
   try {
+    await pool.query("BEGIN");
+    const currentUserId = req.user.id;
+    await pool.query(`SET LOCAL myapp.current_user_id = '${currentUserId}'`);
     const result = await pool.query(
       "UPDATE suppliers SET status_supplier = $1 WHERE id = $2 RETURNING *",
       [status_supplier, id]
@@ -181,10 +191,11 @@ router.patch("/:id/status",middleware.auth, (req, res, next) => {
     if (result.rows.length === 0) {
       return res.status(404).json({ success: false, message: "Supplier not found" });
     }
-
+    await pool.query("COMMIT");
     res.status(200).json({ success: true, message: `Supplier status set to ${status_supplier}`, supplier: result.rows[0] });
 
   } catch (error) {
+    await pool.query("ROLLBACK");
     res.status(500).json({ success: false, message: "Error updating supplier status", error: error.message });
   }
 });
