@@ -155,12 +155,13 @@ const handleLogout = async () => {
                 <FiFileText /> Documentation
               </label>
               <ul tabIndex={0} className="dropdown-content menu p-2 shadow rounded-box w-52 bg-base-100">
-                <li>{navItem("Guide", "/documentation", <FiBookOpen />)}</li>
+      
                 <li>{navItem("API", "/api-reference", <FiCode />)}</li>
               </ul>
             </div>
             {navItem("Conditions", "/terms-of-service", <FiBookOpen />)}
-            {navItem("Contact", "/contact", <FiMail />)}
+            {session && navItem("Contact", "/contact", <FiMail />)}
+         
 
            
           </div>

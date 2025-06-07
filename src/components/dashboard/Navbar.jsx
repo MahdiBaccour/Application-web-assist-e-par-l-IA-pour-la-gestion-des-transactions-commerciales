@@ -209,21 +209,13 @@ const handleLogout = async () => {
                   <li>
                     <Link 
                       href="/home/profile" 
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-lg"
+                      className="flex items-center gap-2 px-4 py-2  rounded-lg"
                     >
-                      <FaUser className="text-gray-600" />
-                      <span className="text-gray-700">Profil</span>
+                      <FaUser className="text-base-content" />
+                      <span className="text-base-content">Profil</span>
                     </Link>
                   </li>
-                  <li>
-                    <Link 
-                      href="/home/settings" 
-                      className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-lg"
-                    >
-                      <FaCog className="text-gray-600" />
-                      <span className="text-gray-700">Paramètres</span>
-                    </Link>
-                  </li>
+                 
                   <li>
                     <button 
                       onClick={() => setShowLogoutModal(true)}

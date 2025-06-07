@@ -4,12 +4,12 @@ import { useRouter, usePathname } from "next/navigation";
 import { getProductById } from "@/services/products/productService";
 import { getHistoricalCosts } from "@/services/transactionProducts/transactionProductsService";
 import { ImSpinner2 } from "react-icons/im";
-import { 
-  FaArrowLeft, 
-  FaTags, 
-  FaBox, 
-  FaWarehouse, 
-  FaCalendarAlt, 
+import {
+  FaArrowLeft,
+  FaTags,
+  FaBox,
+  FaWarehouse,
+  FaCalendarAlt,
   FaDollarSign,
   FaAngleLeft,
   FaAngleRight
@@ -22,6 +22,7 @@ export default function ProductDetails() {
   const router = useRouter();
   const pathname = usePathname();
   const id = pathname.split("/").pop();
+
   const [product, setProduct] = useState(null);
   const [historicalCosts, setHistoricalCosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,61 +32,63 @@ export default function ProductDetails() {
   const [itemsPerPage] = useState(5);
 
   useEffect(() => {
-    if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
+    if (session?.user.role !== "owner" && session?.user.role !== "employee") {
       router.push("/home/forbidden");
     }
-  }, [ session, router]);
+  }, [session, router]);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const data = await getProductById(id, session?.user.accessToken);
-       if(!data.success) setError(data.message);
-       else setProduct(data.product);
-       
+        const data = await getProductById(id, session?.user?.accessToken);
+        if (!data.success) setError(data.message);
+        else setProduct(data.product);
       } catch (error) {
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
-    if (id) fetchProduct();
-  }, [id]);
+    if (id && session?.user?.accessToken) fetchProduct();
+  }, [id, session]);
 
   useEffect(() => {
     const loadHistoricalCosts = async () => {
       try {
-        const data = await getHistoricalCosts(id, session?.user.accessToken);
+        const data = await getHistoricalCosts(id, session?.user?.accessToken);
         if (!data.success) {
           setError(data.message);
         } else {
-          console.log("Historical Costs Data:", data); // Debugging
           setHistoricalCosts(data.historicalCosts);
         }
       } catch (error) {
         setError(error.message);
+      } finally {
+        setLoadingHistorical(false);
       }
-      setLoadingHistorical(false);
     };
-  
-    if (id) loadHistoricalCosts();
-  }, [id]);
+
+    if (id && session?.user?.accessToken) loadHistoricalCosts();
+  }, [id, session]);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
   const prevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
 
-  // Calculate pagination values
+  const totalPages = Array.isArray(historicalCosts) && historicalCosts.length > 0
+    ? Math.ceil(historicalCosts.length / itemsPerPage)
+    : 1;
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = historicalCosts.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(historicalCosts.length / itemsPerPage);
+  const currentItems = Array.isArray(historicalCosts)
+    ? historicalCosts.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
 
-  // Modified return button
   const handleReturn = () => {
     router.push('/home/products');
   };
-
   if (error) {
     return (
       <div className="alert alert-error mt-4">
@@ -121,7 +124,7 @@ return (
         <p className="flex items-center gap-2"><FaTags className="text-blue-400" /> <strong>Nom:</strong> {product.name}</p>
         <p className="flex items-center gap-2"><MdCategory className="text-yellow-400" /> <strong>Catégorie:</strong> {product.category_name}</p>
         <p className="flex items-center gap-2"><FaWarehouse className="text-green-400" /> <strong>Supplier:</strong> {product.supplier_name}</p>
-        <p className="flex items-center gap-2"><FaDollarSign className="text-orange-400" /> <strong>Prix:</strong> ${product.selling_price}</p>
+        <p className="flex items-center gap-2"><FaDollarSign className="text-orange-400" /> <strong>Prix:</strong> TND {product.selling_price}</p>
         <p className="flex items-center gap-2"><MdInventory2 className="text-purple-400" /> <strong>Stock:</strong> {product.stock_quantity}</p>
         <p className="flex items-center gap-2"><FaCalendarAlt className="text-pink-400" /> <strong>Créé à:</strong> {new Date(product.created_at).toLocaleDateString()}</p>
       </div>

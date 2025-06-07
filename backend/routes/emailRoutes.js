@@ -93,4 +93,93 @@ console.log(response) ;
   }
 });
 
+// API route pour /email-logs
+router.get("/",middleware.auth, (req, res, next) => {
+  if (req.user.role === "owner") return next();
+  res.status(403).json({ success: false, message: "Forbidden" });
+}, async (req, res) => {
+  try {
+    // Récupération des paramètres de requête
+    const { 
+      status, 
+      email, 
+      username, 
+      start_date, 
+      end_date,
+      limit = 50,
+      page = 1
+    } = req.query;
+
+    // Calcul offset pour pagination
+    const offset = (page - 1) * limit;
+
+    // Construction de la requête SQL
+    let query = `
+      SELECT 
+        email_logs.*,
+        users.username,
+        users.email AS user_email
+      FROM email_logs
+      LEFT JOIN users ON email_logs.user_id = users.id
+      WHERE 1=1
+    `;
+
+    const params = [];
+    let paramCount = 1;
+
+    // Filtres dynamiques
+    if (status) {
+      query += ` AND email_logs.status = $${paramCount++}`;
+      params.push(status);
+    }
+
+    if (email) {
+      query += ` AND users.email ILIKE $${paramCount++}`;
+      params.push(`%${email}%`);
+    }
+
+    if (username) {
+      query += ` AND users.username ILIKE $${paramCount++}`;
+      params.push(`%${username}%`);
+    }
+
+    if (start_date) {
+      query += ` AND email_logs.sent_at >= $${paramCount++}`;
+      params.push(new Date(start_date));
+    }
+
+    if (end_date) {
+      query += ` AND email_logs.sent_at <= $${paramCount++}`;
+      params.push(new Date(end_date));
+    }
+
+    // Compte total pour pagination
+    const countQuery = `SELECT COUNT(*) FROM (${query}) AS total`;
+    query += ` ORDER BY email_logs.sent_at DESC LIMIT $${paramCount++} OFFSET $${paramCount++}`;
+    params.push(parseInt(limit), offset);
+
+    // Exécution des requêtes
+    const countResult = await pool.query(countQuery, params.slice(0, paramCount - 3));
+    const result = await pool.query(query, params);
+
+    const totalCount = parseInt(countResult.rows[0].count);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    res.status(200).json({
+      success: true,
+      logs: result.rows,
+      count: totalCount,
+      totalPages,
+      currentPage: parseInt(page)
+    });
+
+  } catch (error) {
+    console.error("Erreur récupération logs emails:", error);
+    res.status(500).json({
+      success: false,
+      message: "Erreur serveur",
+      error: error.message
+    });
+  }
+});
 export default router;
