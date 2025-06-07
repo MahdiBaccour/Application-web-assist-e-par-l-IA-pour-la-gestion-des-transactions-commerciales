@@ -4,13 +4,15 @@ import { Router } from "express";
 import pool from "../db.js";
 const router = Router();
 import middleware from "../middleware/auth.js";
+import { genSalt, hash } from "bcryptjs";
+
 
 // 📌 CREATE a new user (Only owner can create)
-router.post("/", middleware.auth, (req, res, next) => {
-  if (req.user.role === "owner") {
-    return next();
+router.post("/", middleware.auth, async (req, res, next) => {
+  if (req.user.role !== "owner") {
+    return res.status(403).json({ success: false, message: "Accès refusé" });
   }
-}, async (req, res) => {
+
   const { username, email, password, role, image, verified_status } = req.body;
 
   try {
@@ -26,11 +28,15 @@ router.post("/", middleware.auth, (req, res, next) => {
       return res.status(409).json({ success: false, message: "Nom d'utilisateur déjà utilisé." });
     }
 
-    // ✅ Insert user
+    // 🔒 Hash the password
+    const salt = await genSalt(10);
+    const hashedPassword = await hash(password, salt);
+
+    // ✅ Insert user with hashed password
     const result = await pool.query(
       `INSERT INTO users (username, email, password, role, image, verified_status) 
        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [username, email, password, role, image, verified_status]
+      [username, email, hashedPassword, role, image, verified_status]
     );
 
     res.status(201).json({ success: true, user: result.rows[0] });

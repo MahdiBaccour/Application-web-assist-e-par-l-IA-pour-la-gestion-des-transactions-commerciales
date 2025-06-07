@@ -20,15 +20,53 @@ export default function ContactAdmin() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Le nom complet est requis';
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) newErrors.email = 'Email invalide';
-    if (!formData.phone.match(/^[0-9]{10}$/)) newErrors.phone = 'Numéro invalide (10 chiffres)';
-    if (!formData.subject.trim()) newErrors.subject = 'Le sujet est requis';
-    if (!formData.problem.trim()) newErrors.problem = 'Veuillez décrire votre problème';
-    return newErrors;
-  };
+ const validateForm = () => {
+  let isValid = true;
+  const newErrors = {};
+
+  // Nom complet
+  if (!formData.fullName || formData.fullName.trim() === "") {
+    newErrors.fullName = "Le nom complet est requis";
+    isValid = false;
+  }
+
+  // Email
+  if (!formData.email || formData.email.trim() === "") {
+    newErrors.email = "L'email est requis";
+    isValid = false;
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    newErrors.email = "Email invalide";
+    isValid = false;
+  }
+
+  // Téléphone
+  if (!formData.phone || formData.phone.trim() === "") {
+    newErrors.phone = "Le téléphone est requis";
+    isValid = false;
+  } else {
+    const phoneRegex = /^\+216 [23459]\d{1} \d{3} \d{3}$/;
+    if (!phoneRegex.test(formData.phone)) {
+      newErrors.phone = "Format attendu : +216 55 555 555";
+      isValid = false;
+    }
+  }
+
+  // Sujet
+  if (!formData.subject || formData.subject.trim() === "") {
+    newErrors.subject = "Le sujet est requis";
+    isValid = false;
+  }
+
+  // Problème
+  if (!formData.problem || formData.problem.trim() === "") {
+    newErrors.problem = "Veuillez décrire votre problème";
+    isValid = false;
+  }
+
+  setErrors(newErrors);
+  return isValid;
+};
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();

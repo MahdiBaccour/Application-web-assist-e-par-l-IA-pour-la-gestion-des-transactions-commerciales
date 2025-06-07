@@ -30,7 +30,8 @@ export default function ClientTable() {
   const [clientsPerPage] = useState(5);
 
   useEffect(() => {
-    if ( session?.user.role !== "owner" ) {
+    if ( session?.user.role !== "owner" &&
+      session?.user.role !== "employee" ) {
       router.push("/forbidden");
     }
   }, [ session, router]);

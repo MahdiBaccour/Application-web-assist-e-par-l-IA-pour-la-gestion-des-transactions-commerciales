@@ -34,7 +34,8 @@ export default function SupplierTable() {
   const suppliersPerPage = 5;
 
   useEffect(() => {
-    if ( session?.user.role !== "owner") {
+    if ( session?.user.role !== "owner" &&
+      session?.user.role !== "employee") {
       router.push("/home/forbidden");
     }
   }, [ session, router]);

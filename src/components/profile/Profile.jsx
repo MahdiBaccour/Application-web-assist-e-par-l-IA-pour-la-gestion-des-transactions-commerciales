@@ -41,7 +41,7 @@ export default function Profile() {
   });
 
   useEffect(() => {
-    if ( session?.user.role !== "owner" && session?.user.role !== "employee") {
+    if ( session?.user.role !== "owner" && session?.user.role !== "employee" && session?.user.role !== "client" && session?.user.role !== "supplier") {
       router.push("/home/forbidden");
     }
   }, [ session, router]);
