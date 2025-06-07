@@ -15,8 +15,9 @@ import dashboard from "./routes/dashboard/dashboard.js";
 import usersRoutes from "./routes/usersRoutes.js";
 import totalBudgetRoutes from "./routes/total_budgetRoutes.js";
 import logsRoutes from "./routes/logRoutes.js"; // Import logs routes
-import sendEmailRoutes from "./routes/sendEmailRoutes.js";
+import EmailRoutes from "./routes/emailRoutes.js";
 import auditRoutes from "./routes/auditRoutes.js"; // Import audit routes
+import chatRoute from "./routes/chatRoute.js"; // Import chat route
 import pool from "./db.js";
 //import { importData } from "./importDataViaAPI.js"; // Import the importData function
 
@@ -90,8 +91,9 @@ app.use("/api/stats", dashboard);
 app.use("/api/users", usersRoutes);
 app.use("/api/total_budget", totalBudgetRoutes); // Register total budget routes
 app.use("/api/logs", logsRoutes); // Register logs routes
-app.use("/api/contact-admin",sendEmailRoutes);
+app.use("/api/contact-admin",EmailRoutes);
 app.use("/api/audit-trail", auditRoutes); // Register audit routes
+app.use("/api/chat", chatRoute); // Register chat route
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
  // importData();

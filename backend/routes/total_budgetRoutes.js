@@ -39,7 +39,15 @@ router.post("/", middleware.auth, async (req, res, next) => {
 router.get("/", middleware.auth, async (req, res,next) => {
   if (req.user.role !== "owner") return next();
   try {
-    const result = await pool.query("SELECT * FROM total_budget ORDER BY month_date ASC");
+    const result = await pool.query(`SELECT  id,
+  total_income_brut,
+  total_income_net,
+  total_expenses,
+  net_balance,
+  budget,
+  TO_CHAR(month_date, 'YYYY-MM-DD') AS month_date  -- Format as string
+FROM total_budget
+ORDER BY month_date ASC`);
     res.status(200).json({ success: true, budgets: result.rows });
   } catch (error) {
     console.error("Erreur de récupération des budgets:", error);

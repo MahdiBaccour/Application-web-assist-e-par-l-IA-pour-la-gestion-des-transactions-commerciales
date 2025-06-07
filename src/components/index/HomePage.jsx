@@ -43,7 +43,7 @@ export default function HomePage() {
         };
 
         validateToken();
-      }, 500); // Delay to ensure session is ready
+      }, 2000); // Delay to ensure session is ready
 
       return () => clearTimeout(timeout);
     }

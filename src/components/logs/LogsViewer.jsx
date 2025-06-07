@@ -1,10 +1,12 @@
+// components/logs/LogsViewer.jsx
 "use client";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FaSpinner, FaClipboardList, FaSearch } from "react-icons/fa";
+import { FaSpinner, FaClipboardList, FaSearch, FaEnvelope, FaHistory } from "react-icons/fa";
 import LogsTable from "./LogsTable";
-import AuditTrail from "@/components/audit/AuditTrail"; // Assuming you have an AuditTrail component
+import AuditTrail from "@/components/audit/AuditTrail";
+import EmailLogsTable from "./EmailLogsTable";
 
 export default function LogsViewer() {
   const { data: session } = useSession();
@@ -25,7 +27,7 @@ export default function LogsViewer() {
 
   return (
     <div className="p-4">
-      <div className="flex gap-4 mb-4">
+      <div className="flex flex-wrap gap-4 mb-4">
         <button
           className={`btn ${viewType === "logs" ? "btn-primary" : "btn-outline"}`}
           onClick={() => handleViewChange("logs")}
@@ -38,6 +40,12 @@ export default function LogsViewer() {
         >
           <FaSearch className="mr-2" /> Audit Trail
         </button>
+        <button
+          className={`btn ${viewType === "emailLogs" ? "btn-primary" : "btn-outline"}`}
+          onClick={() => handleViewChange("emailLogs")}
+        >
+          <FaEnvelope className="mr-2" /> Journal des Emails
+        </button>
       </div>
 
       {error && (
@@ -49,13 +57,8 @@ export default function LogsViewer() {
       )}
 
       {viewType === "logs" && <LogsTable limit={10} />}
-      
-      {viewType === "audit" && (
-        // <div className="alert alert-info">
-        //   <span>Module Audit Trail en cours d’implémentation...</span>
-        // </div>
-<AuditTrail limit={10} />
-      )}
+      {viewType === "audit" && <AuditTrail limit={10} />}
+      {viewType === "emailLogs" && <EmailLogsTable limit={10} />}
     </div>
   );
 }

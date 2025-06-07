@@ -28,7 +28,7 @@ export default function BudgetTable() {
           setError(message);
         } else {
           setBudgets(budgets);
-          updateFilteredBudgets(budgets, selectedDate); // Remove the automatic date selection
+          updateFilteredBudgets(budgets, selectedDate);
           checkBudgetStatus(budgets);
         }
       } catch (error) {
@@ -40,40 +40,46 @@ export default function BudgetTable() {
     loadBudgets();
   }, [session]);
 
+  const updateFilteredBudgets = (budgets, date) => {
+    if (!date) {
+      setFilteredBudgets(budgets);
+      return;
+    }
 
-      const updateFilteredBudgets = (budgets, date) => {
-
-      if (!date) {
-        setFilteredBudgets(budgets);
-        return;
+    const [year, month] = date.split('-');
+    const filtered = budgets.filter(b => {
+      try {
+        // Add 1 day to compensate for UTC conversion
+        const budgetDate = new Date(new Date(b.month_date).getTime() + 86400000);
+        return budgetDate.getUTCFullYear() === Number(year) && 
+               budgetDate.getUTCMonth() === Number(month) - 1;
+      } catch (e) {
+        console.error('Invalid date format:', b.month_date);
+        return false;
       }
-
-      const [year, month] = date.split('-');
-      const filtered = budgets.filter(b => {
-        try {
-          const budgetDate = new Date(b.month_date);
-          return budgetDate.getUTCFullYear() === Number(year) && 
-                budgetDate.getUTCMonth() === Number(month) - 1;
-        } catch (e) {
-          console.error('Invalid date format:', b.month_date);
-          return false;
-        }
-      });
-      setFilteredBudgets(filtered);
-    };
+    });
+    setFilteredBudgets(filtered);
+  };
 
   const checkBudgetStatus = (budgets) => {
     const now = new Date();
-    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const currentMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+    const nextMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
     
-    const currentBudget = budgets.find(b => 
-      new Date(b.month_date).getTime() === currentMonth.getTime()
-    );
+    const currentBudget = budgets.find(b => {
+      // Add 1 day to compensate for UTC conversion
+      const budgetDate = new Date(new Date(b.month_date).getTime() + 86400000);
+      return budgetDate.getUTCFullYear() === currentMonth.getUTCFullYear() &&
+             budgetDate.getUTCMonth() === currentMonth.getUTCMonth();
+    });
 
     const needsNextMonthBudget = 
       (nextMonth - now) < 7 * 24 * 60 * 60 * 1000 &&
-      !budgets.some(b => new Date(b.month_date).getTime() === nextMonth.getTime());
+      !budgets.some(b => {
+        const budgetDate = new Date(new Date(b.month_date).getTime() + 86400000);
+        return budgetDate.getUTCFullYear() === nextMonth.getUTCFullYear() &&
+               budgetDate.getUTCMonth() === nextMonth.getUTCMonth();
+      });
 
     setCurrentMonthStatus({
       current: !!currentBudget,
@@ -137,7 +143,7 @@ export default function BudgetTable() {
               className="btn btn-primary"
             >
               <FaMoneyCheckAlt className="mr-2" />
-              {currentMonthStatus.current ? 'Mettre à jour le budget' : 'Définir le budget'}
+              {currentMonthStatus.current ? 'Définir le budget' : 'Définir le budget'}
             </button>
           </div>
 
@@ -182,22 +188,23 @@ export default function BudgetTable() {
           </tr>
         </thead>
         <tbody>
-          {filteredBudgets.map(budget => {
-            const monthDate = new Date(budget.month_date);
-            const isCurrentMonth = new Date().getMonth() === monthDate.getMonth();
-            
-            return (
-              <tr 
-                key={budget.id}
-                className={isCurrentMonth && !budget.budget ? 'bg-error/20' : ''}
-              >
-                    <td>
-        {new Date(budget.month_date).toLocaleDateString('fr-FR', { 
-          month: 'long', 
-          year: 'numeric',
-          timeZone: 'UTC'
-        })}
-      </td>
+      {filteredBudgets.map(budget => {
+        const monthDate = new Date(new Date(budget.month_date).getTime() + 86400000);
+        const isCurrentMonth = new Date().getUTCMonth() === monthDate.getUTCMonth();
+        
+        return (
+          <tr 
+            key={budget.id}
+            className={isCurrentMonth && !budget.budget ? 'bg-error/20' : ''}
+          >
+            {/* Fixed date display */}
+            <td>
+              {monthDate.toLocaleDateString('fr-FR', { 
+                month: 'long', 
+                year: 'numeric',
+                timeZone: 'UTC'
+              })}
+            </td>
                 <td>
                   {budget.budget ? 
                     new Intl.NumberFormat('fr-FR', { 
