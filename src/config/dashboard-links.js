@@ -32,7 +32,6 @@ export const getAuthorizedLinks = (role) => {
         { path: "/home/ai-predictions", icon: 'FaBrain', label: "IA & Prédictions" },
         { path: "/home/logs", icon: 'FaHistory', label: "Journaux & Audits" },
         { path: "/home/messages", icon: 'FaComments', label: "Messages & Chatbot" },
-        { path: "/home/q-and-a", icon: 'FaQuestionCircle', label: "Questions & Réponses" },
         { path: "/home/budget", icon: 'FaWallet', label: "Budget Global" }, 
         { path: "/home/users", icon: 'FaUsers', label: "Utilisateurs" }
       ];
@@ -45,14 +44,11 @@ export const getAuthorizedLinks = (role) => {
         { path: "/home/categories", icon: 'FaTags', label: "Catégories" },
         { path: "/home/transactions", icon: 'FaExchangeAlt', label: "Transactions" },
         { path: "/home/payments", icon: 'FaExchangeAlt', label: "Paiements" },
-        { path: "/home/q-and-a", icon: 'FaQuestionCircle', label: "Questions & Réponses" },
-        { path: "/home/messages", icon: 'FaComments', label: "Messages & Chatbot" }
       ];
     case 'client':
     case 'supplier':
       return [
         ...baseLinks,
-        { path: "/home/q-and-a", icon: 'FaQuestionCircle', label: "Questions & Réponses" },
         { path: "/home/messages", icon: 'FaComments', label: "Messages & Chatbot" }
       ];
     default:

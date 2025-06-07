@@ -87,7 +87,7 @@ export default function PaymentStep({
           <h4 className="text-lg font-semibold mb-2">Paiements effectués</h4>
           {transactionData.payments.map((payment, index) => (
             <div key={index} className="flex justify-between items-center border-b py-2">
-              <span>${payment.amount_paid.toFixed(2)}</span>
+              <span>TND{payment.amount_paid.toFixed(2)}</span>
               <span>{paymentMethods.find(m => m.id === payment.payment_method_id)?.name}</span>
             </div>
           ))}
