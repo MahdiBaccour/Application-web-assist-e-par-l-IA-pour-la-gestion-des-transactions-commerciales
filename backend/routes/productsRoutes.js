@@ -5,7 +5,7 @@ import middleware from "../middleware/auth.js"; // Import middleware
 // 📌 CREATE a new product (initialize stock directly in products table)
 router.post("/",middleware.auth, async (req, res,next) => {
    // Check if the user is  an owner
-   if (req.user.role !== "owner")  {
+   if (req.user.role !== "owner" && req.user.role !== "employee")  {
     return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
    }
  
@@ -113,7 +113,7 @@ router.get("/:id",middleware.auth,(req, res, next) => {
 // 📌 UPDATE a product
 router.put("/:id",middleware.auth,(req, res, next) => {
   // Check if the user is  or an owner
-  if (req.user.role === "owner" )  {
+  if (req.user.role === "owner"  || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 }, async (req, res,) => {
@@ -186,7 +186,7 @@ router.put("/:id",middleware.auth,(req, res, next) => {
 // 📌 Update product status (active/inactive) and update stock if necessary
 router.patch("/:id/status",middleware.auth,(req, res, next) => {
   // Check if the user is  an owner
-  if (req.user.role === "owner")  {
+  if (req.user.role === "owner" || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 }, async (req, res) => {

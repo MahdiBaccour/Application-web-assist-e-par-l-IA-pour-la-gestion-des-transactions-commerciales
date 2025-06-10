@@ -2,7 +2,15 @@
 import { useEffect, useState } from "react";
 import { getUsers, updateUserStatus } from "@/services/users/userService";
 import { ImSpinner2 } from "react-icons/im";
-import { FaUserPlus, FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
+import { 
+  FaUserPlus, 
+  FaUsers, 
+  FaUserCheck, 
+  FaUserTimes, 
+  FaSearch,
+  FaUserTag,
+  FaTimes
+} from "react-icons/fa";
 import {
   showConfirmationDialog,
   showSuccessAlert,
@@ -10,8 +18,16 @@ import {
 } from "@/utils/swalConfig";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import UserCard from "./UserCard";
 import UserForm from "./UserForm";
+
+
+const roleMap = {
+  owner: "Propriétaire",
+  employee: "Employé",
+  client: "Client",
+  supplier: "Fournisseur",
+  user: "Utilisateur"
+};
 
 export default function UserTable() {
   const { data: session } = useSession();
@@ -25,6 +41,8 @@ export default function UserTable() {
   const [updatingId, setUpdatingId] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [usersPerPage] = useState(5);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterRole, setFilterRole] = useState("all");
 
   useEffect(() => {
     if (session?.user.role !== "owner") {
@@ -51,6 +69,11 @@ export default function UserTable() {
     };
     loadUsers();
   }, [session?.user.accessToken]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus, searchTerm, filterRole]);
 
   const handleToggleStatus = async (id, currentStatus) => {
     const newStatus = currentStatus === "vérifié" ? "non vérifié" : "vérifié";
@@ -82,8 +105,18 @@ export default function UserTable() {
   };
 
   const filteredUsers = users.filter((user) => {
-    if (filterStatus === "all") return true;
-    return user.verified_status === filterStatus;
+    // Status filter
+    const statusMatch = filterStatus === "all" || user.verified_status === filterStatus;
+    
+    // Role filter
+    const roleMatch = filterRole === "all" || user.role === filterRole;
+    
+    // Search filter (username or email)
+    const searchMatch = 
+      user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return statusMatch && roleMatch && searchMatch;
   });
 
   const indexOfLastUser = currentPage * usersPerPage;
@@ -111,7 +144,6 @@ export default function UserTable() {
 
   return (
     <div className="overflow-x-auto">
-      {/* Add User or Show Filters */}
       {isAddingNewUser ? (
         <div className="my-6">
           <UserForm
@@ -124,35 +156,85 @@ export default function UserTable() {
         </div>
       ) : (
         <>
-          {/* Filter Buttons */}
-          <div className="flex gap-2 mb-4 flex-wrap">
-            <button
-              onClick={() => setIsAddingNewUser(true)}
-              className="btn btn-primary flex items-center gap-2"
-            >
-              <FaUserPlus /> Ajouter un utilisateur
-            </button>
+          {/* Filter Section - Improved layout */}
+          <div className="flex flex-col gap-4 mb-6">
+            {/* Top Row: Action Buttons */}
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => setIsAddingNewUser(true)}
+                className="btn btn-primary flex items-center gap-2"
+              >
+                <FaUserPlus /> Ajouter un utilisateur
+              </button>
 
-            <button
-              onClick={() => setFilterStatus("all")}
-              className={`btn flex items-center gap-2 ${filterStatus === "all" ? "btn-info" : "btn-outline"}`}
-            >
-              <FaUsers /> Tous
-            </button>
+              <button
+                onClick={() => setFilterStatus("all")}
+                className={`btn flex items-center gap-2 ${filterStatus === "all" ? "btn-info" : "btn-outline"}`}
+              >
+                <FaUsers /> Tous
+              </button>
 
-            <button
-              onClick={() => setFilterStatus("vérifié")}
-              className={`btn flex items-center gap-2 ${filterStatus === "vérifié" ? "btn-success" : "btn-outline"}`}
-            >
-              <FaUserCheck /> Vérifiés
-            </button>
+              <button
+                onClick={() => setFilterStatus("vérifié")}
+                className={`btn flex items-center gap-2 ${filterStatus === "vérifié" ? "btn-success" : "btn-outline"}`}
+              >
+                <FaUserCheck /> Vérifiés
+              </button>
 
-            <button
-              onClick={() => setFilterStatus("non vérifié")}
-              className={`btn flex items-center gap-2 ${filterStatus === "non vérifié" ? "btn-error" : "btn-outline"}`}
-            >
-              <FaUserTimes /> Non vérifiés
-            </button>
+              <button
+                onClick={() => setFilterStatus("non vérifié")}
+                className={`btn flex items-center gap-2 ${filterStatus === "non vérifié" ? "btn-error" : "btn-outline"}`}
+              >
+                <FaUserTimes /> Non vérifiés
+              </button>
+            </div>
+
+            {/* Bottom Row: Compact search and role filters */}
+            <div className="flex flex-wrap gap-4 items-center">
+              {/* Search Input - Improved alignment */}
+              <div className="relative flex-1 min-w-[250px] max-w-[400px]">
+                <div className="join w-full">
+                  <div className="join-item bg-base-300 px-4 flex items-center">
+                    <FaSearch />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Rechercher par nom ou email..."
+                    className="input input-bordered join-item w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button 
+                      className="join-item btn btn-ghost"
+                      onClick={() => setSearchTerm("")}
+                    >
+                      <FaTimes />
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Role Select - Improved alignment */}
+              <div className="min-w-[200px] max-w-[300px]">
+                <div className="join w-full">
+                  <div className="join-item bg-base-300 px-4 flex items-center">
+                    <FaUserTag />
+                  </div>
+                  <select
+                    className="select select-bordered join-item w-full"
+                    value={filterRole}
+                    onChange={(e) => setFilterRole(e.target.value)}
+                  >
+                    <option value="all">Tous les rôles</option>
+                    <option value="owner">Propriétaire</option>
+                    <option value="employee">Employé</option>
+                    <option value="client">Client</option>
+                    <option value="supplier">Fournisseur</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Table */}
@@ -172,7 +254,8 @@ export default function UserTable() {
                   <tr key={user.id}>
                     <td>{user.username}</td>
                     <td>{user.email}</td>
-                    <td>{user.role}</td>
+                    {/* Map role to French display name */}
+                    <td>{roleMap[user.role] || user.role}</td>
                     <td>{user.verified_status}</td>
                     <td>
                       <button
@@ -204,39 +287,41 @@ export default function UserTable() {
           </table>
 
           {/* Pagination */}
-          <div className="flex justify-center mt-4 flex-wrap gap-2">
-            <button
-              onClick={() => handlePageChange(1)}
-              disabled={currentPage === 1}
-              className="btn btn-sm"
-            >
-              Premier
-            </button>
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="btn btn-sm"
-            >
-              Précédent
-            </button>
-            <span className="text-center self-center">
-              Page {currentPage} sur {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="btn btn-sm"
-            >
-              Suivant
-            </button>
-            <button
-              onClick={() => handlePageChange(totalPages)}
-              disabled={currentPage === totalPages}
-              className="btn btn-sm"
-            >
-              Dernier
-            </button>
-          </div>
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-4 flex-wrap gap-2">
+              <button
+                onClick={() => handlePageChange(1)}
+                disabled={currentPage === 1}
+                className="btn btn-sm"
+              >
+                Premier
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="btn btn-sm"
+              >
+                Précédent
+              </button>
+              <span className="text-center self-center">
+                Page {currentPage} sur {totalPages}
+              </span>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="btn btn-sm"
+              >
+                Suivant
+              </button>
+              <button
+                onClick={() => handlePageChange(totalPages)}
+                disabled={currentPage === totalPages}
+                className="btn btn-sm"
+              >
+                Dernier
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>

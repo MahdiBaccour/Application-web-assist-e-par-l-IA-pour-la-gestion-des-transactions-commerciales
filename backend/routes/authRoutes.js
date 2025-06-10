@@ -16,7 +16,7 @@ const generateAccessToken = (user) => {
   return sign(
     payload,
     process.env.TOKEN_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "2h" }
   );
 };
 
@@ -92,11 +92,11 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await hash(password, salt);
 
     // Create user
-    const newUser = await pool.query(
-      `INSERT INTO users (username, email, password, role)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, username, email, role, image`,
-      [username, email, hashedPassword, role]
+      const newUser = await pool.query(
+      `INSERT INTO users (username, email, password, role, verified_status)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id, username, email, role, image, verified_status`,
+      [username, email, hashedPassword, role, 'non vérifié']
     );
 
     // Handle image upload

@@ -117,7 +117,7 @@ export default function ReportPage() {
             className="select select-bordered"
           >
             <option value="stats">Statistiques</option>
-            <option value="predictions">Prédictions IA</option>
+            {/* <option value="predictions">Prédictions IA</option> */}
           </select>
 
           {reportType === 'stats' && (

@@ -23,7 +23,7 @@ export default function EspacePartenaire() {
       description:
         "Consultez et téléchargez le détail de toutes vos commandes passées avec l’entreprise :",
       image:
-        "https://res.cloudinary.com/dmnuz4h65/image/upload/v1746695425/projet-pfe/other/partner_transactions_fqyeky.jpg",
+        "https://res.cloudinary.com/dmnuz4h65/image/upload/v1749542620/projet-pfe/other/historiqueTransactions_j1tpeb.png",
       features: [
         { icon: <FiBarChart />, text: "Suivi du statut de règlement" }
       ]
@@ -33,7 +33,7 @@ export default function EspacePartenaire() {
       description:
         "Posez vos questions 24 h/24 ; notre assistant IA vous répond instantanément :",
       image:
-        "https://res.cloudinary.com/dmnuz4h65/image/upload/v1746695578/projet-pfe/other/chatbot_rhglth.jpg",
+        "https://res.cloudinary.com/dmnuz4h65/image/upload/v1749541858/projet-pfe/other/chatbotPFE_m1ixus.jpg",
       features: [
         { icon: <FiMessageCircle />, text: "Réponses produit & livraison" },
         { icon: <FiShield />, text: "Aide sur la facturation sécurisée" }
