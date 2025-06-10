@@ -46,7 +46,7 @@ export default function IndexPage() {
 
   const carouselItems = [
     {
-      image: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1746467096/projet-pfe/other/dashboard_chxykp.png',
+      image: 'https://res.cloudinary.com/dmnuz4h65/image/upload/v1749543404/projet-pfe/other/dashboardAdminPFE_pzdidj.png',
       title: 'Tableau de bord complet',
     },
     {

@@ -43,7 +43,7 @@ export const getAuthorizedLinks = (role) => {
         { path: "/home/products", icon: 'FaBoxOpen', label: "Produits" },
         { path: "/home/categories", icon: 'FaTags', label: "Catégories" },
         { path: "/home/transactions", icon: 'FaExchangeAlt', label: "Transactions" },
-        { path: "/home/payments", icon: 'FaExchangeAlt', label: "Paiements" },
+        { path: "/home/payments", icon: 'FaCreditCard', label: "Paiements" },
       ];
     case 'client':
     case 'supplier':

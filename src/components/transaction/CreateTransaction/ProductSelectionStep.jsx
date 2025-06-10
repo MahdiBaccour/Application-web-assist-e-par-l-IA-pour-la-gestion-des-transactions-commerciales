@@ -79,7 +79,7 @@ export default function ProductSelectionStep({ onAddProduct, onUpdateTotal }) {
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
-          <option value="">Select Category</option>
+          <option value="">Sélectionnez une catégorie</option>
           {categories.map(category => (
             <option key={category.id} value={category.id}>{category.name}</option>
           ))}

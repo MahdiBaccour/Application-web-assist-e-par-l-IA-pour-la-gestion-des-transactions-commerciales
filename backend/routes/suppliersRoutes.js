@@ -167,7 +167,7 @@ router.put("/:id",middleware.auth,(req, res, next) => {
 // Update status endpoint
 router.patch("/:id/status",middleware.auth, (req, res, next) => {
   // Check if the user is  an owner
-  if (req.user.role === "owner" )  {
+  if (req.user.role === "owner" || req.user.role === "employee")  {
    return next();  // If one of the conditions is true, proceed to the next middleware or the route handler
   }
 },async (req, res) => {

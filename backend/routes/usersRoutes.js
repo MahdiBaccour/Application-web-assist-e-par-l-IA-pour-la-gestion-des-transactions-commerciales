@@ -54,7 +54,8 @@ router.get("/", middleware.auth, (req, res, next) => {
   }
 }, async (req, res) => {
   try {
-    const result = await pool.query("SELECT id, username, email, role, last_login, last_logout, image, verified_status FROM users");
+  const result = await pool.query(
+  "SELECT id, username, email, role, last_login, last_logout, image, verified_status FROM users ORDER BY id DESC");
     res.status(200).json({ success: true, users: result.rows });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error fetching users", error: error.message });

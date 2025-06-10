@@ -128,7 +128,7 @@ function NotFound() {
               <FiArrowRight className="text-xl" />
             </Link>
             <Link 
-  href="/administration/contact"
+  href="/contact"
   className="btn btn-ghost gap-2 border border-base-content/20 hover:border-base-content/40"
 >
   <FiMail className="text-xl" />

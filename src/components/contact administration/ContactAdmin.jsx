@@ -53,7 +53,7 @@ export default function ContactAdmin() {
     try {
       await sendEmailToAdmin(formData, session.user.accessToken);
       showSuccessAlert(session.user.theme, 'Message envoyé avec succès', 'Nous traitons votre demande sous 24h');
-      router.push('/dashboard');
+      router.push('/');
     } catch (err) {
       showErrorAlert(session.user.theme, err.message || "Erreur lors de l'envoi du message");
     } finally {

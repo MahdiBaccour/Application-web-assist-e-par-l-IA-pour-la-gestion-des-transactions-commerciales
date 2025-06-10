@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { FaSave, FaEdit, FaCloudUploadAlt, FaUserShield, FaCheckCircle, FaTimesCircle, FaUser, FaIdCard, FaLock } from 'react-icons/fa';
+import { FaSave, FaEdit, FaCloudUploadAlt, FaUserShield, FaCheckCircle, FaTimesCircle, FaUser, FaIdCard, FaLock, FaEye , FaEyeSlash  } from 'react-icons/fa';
 import { updateProfile, getCurrentUserProfile } from '@/services/profile/profileService';
 import { useSession } from 'next-auth/react';
 import { getCacheBustedUrl } from "@/utils/image"; // ⬅️ Helper that appends ?v=...
@@ -38,6 +38,11 @@ export default function Profile() {
     current: '', 
     newPass: '', 
     confirmNewPass: '' 
+  });
+  const [showPasswords, setShowPasswords] = useState({
+    current: false,
+    new: false,
+    confirm: false,
   });
 
   useEffect(() => {
@@ -310,40 +315,67 @@ export default function Profile() {
                   {showPasswordFields && (
                     <>
                       <div className="form-control md:col-span-2">
-                        <label className="label">
-                          <span className="label-text">Mot de passe actuel</span>
-                        </label>
+                      <label className="label">
+                        <span className="label-text">Mot de passe actuel</span>
+                      </label>
+                      <div className="relative w-72">
                         <input
-                          type="password"
-                          className="input input-bordered"
+                          type={showPasswords.current ? 'text' : 'password'}
+                          className="input input-bordered w-full pr-10"
                           value={passwords.current}
                           onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
                         />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-3 text-lg text-base-content/70"
+                          onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
+                        >
+                          {showPasswords.current ? <FaEyeSlash /> : <FaEye />}
+                        </button>
                       </div>
+                    </div>
 
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text">Nouveau mot de passe</span>
-                        </label>
-                        <input
-                          type="password"
-                          className="input input-bordered"
-                          value={passwords.newPass}
-                          onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })}
-                        />
-                      </div>
+                  <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Nouveau mot de passe</span>
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPasswords.new ? 'text' : 'password'}
+                    className="input input-bordered w-full pr-10"
+                    value={passwords.newPass}
+                    onChange={(e) => setPasswords({ ...passwords, newPass: e.target.value })}
+                  />
+                  <button
+                    type="button"
+                    className="absolute right-3 top-3 text-lg text-base-content/70"
+                    onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
+                  >
+                    {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+                </div>
 
-                      <div className="form-control">
-                        <label className="label">
-                          <span className="label-text">Confirmer le mot de passe</span>
-                        </label>
-                        <input
-                          type="password"
-                          className="input input-bordered"
-                          value={passwords.confirmNewPass}
-                          onChange={(e) => setPasswords({ ...passwords, confirmNewPass: e.target.value })}
-                        />
-                      </div>
+                    <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Confirmer le mot de passe</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPasswords.confirm ? 'text' : 'password'}
+                      className="input input-bordered w-full pr-10"
+                      value={passwords.confirmNewPass}
+                      onChange={(e) => setPasswords({ ...passwords, confirmNewPass: e.target.value })}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3 text-lg text-base-content/70"
+                      onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
+                    >
+                      {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
                     </>
                   )}
                 </>

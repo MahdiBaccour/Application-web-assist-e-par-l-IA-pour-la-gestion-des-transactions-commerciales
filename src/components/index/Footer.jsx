@@ -16,18 +16,9 @@ export default function Footer() {
           <div>
               <h4 className=" text-lg font-semibold mb-4">Liens rapides</h4>
               <ul className="space-y-2">
+               
                 <li>
-                  <a href="#">
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                  Études de cas
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
+                  <a href="api-reference">
                   Référence API
                   </a>
                 </li>
@@ -36,21 +27,13 @@ export default function Footer() {
             <div>
               <h4 className="text-lg font-semibold mb-4">Juridique</h4>
               <ul className="space-y-2">
+            
                 <li>
-                  <a href="#">
-                  Politique de confidentialité
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
+                  <a href="terms-of-service">
                   Conditions d'utilisation
                   </a>
                 </li>
-                <li>
-                  <a href="#">
-                  Sécurité
-                  </a>
-                </li>
+                
               </ul>
             </div>
             <div>
