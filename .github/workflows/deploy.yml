@@ -1,9 +1,9 @@
-name: Deploy Project
+name: Build Project
 
 on:
   push:
     branches:
-      - main   # or your default branch
+      - main
 
 jobs:
   build:
@@ -19,22 +19,20 @@ jobs:
       TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
       REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
       REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
       CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
       CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
       CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
       MAIL_API_KEY: ${{ secrets.MAIL_API_KEY }}
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm install
 
       - name: Build project
         run: npm run build
-
-      - name: Start project or run tests
-        run: npm start
