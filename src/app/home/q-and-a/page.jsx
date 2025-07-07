@@ -1,9 +1,10 @@
-//import QandA from "@/components/help/QandA";
+// import QandA from "@/components/help/QandA";
 
 export default function HelpPage() {
   return (
     <div>
-      <QandA />
+      {/* QandA component removed for now */}
+      <p>Help content coming soon...</p>
     </div>
   );
 }
