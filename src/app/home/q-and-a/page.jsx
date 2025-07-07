@@ -1,4 +1,4 @@
-import QandA from "@/components/help/QandA";
+//import QandA from "@/components/help/QandA";
 
 export default function HelpPage() {
   return (
