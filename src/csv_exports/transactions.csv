@@ -79,3 +79,4 @@ id,type,amount,date,client_id,supplier_id,payment_method_id,reference_number
 78,credit,1300.00,2025-04-20T23:00:00.000Z,1,,6,REF748664
 79,debit,2469.97,2025-04-09T23:00:00.000Z,,5,4,REF299932
 80,credit,150.00,2025-03-31T23:00:00.000Z,3,,4,REF311485
+92,debit,1825.87,2025-06-10T23:00:00.000Z,,3,2,REF657765

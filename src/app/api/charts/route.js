@@ -1,5 +1,6 @@
 export async function POST(req) {
-    const { reportType, view, startDate, endDate } = await req.json();
+    const { reportType, view } = await req.json();
+
   
     try {
       // Placeholder data (replace with your database query)
