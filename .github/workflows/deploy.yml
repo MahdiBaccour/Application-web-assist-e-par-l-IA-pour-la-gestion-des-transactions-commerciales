@@ -25,6 +25,7 @@ jobs:
       MAIL_API_KEY: ${{ secrets.MAIL_API_KEY }}
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
 
     steps:
       - uses: actions/checkout@v3
